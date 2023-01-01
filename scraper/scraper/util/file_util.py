@@ -15,7 +15,6 @@ def overwrite_json_file(json_file, data):
 
 def append_json_file(json_file, data):
     existing = read_json_file(json_file)
-    print("EXISTING \n", existing)
     with open(json_file, 'w+') as outfile:
         existing.append(data)
         outfile.write(json.dumps(existing))
