@@ -1,0 +1,19 @@
+{
+    "index": 1,
+    "start_urls": [
+        "https://quotes.toscrape.com/page/1/"
+    ],
+    "xpaths": [
+        "//title/text()"
+    ],
+    "selectors": [],
+    "xpath_selectors": [],
+    "form_data": {},
+    "response": {},
+    "custom_settings": {
+        "LOG_ENABLED": false
+    },
+    "links": [],
+    "output_xpaths": [],
+    "output_selectors": []
+}
