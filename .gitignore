@@ -127,4 +127,4 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
-scraper/json/secret.json
+scraper/scraper/json/secret.json

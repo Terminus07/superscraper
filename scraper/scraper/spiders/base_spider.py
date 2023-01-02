@@ -45,7 +45,7 @@ class BaseSpider(scrapy.Spider):
             self.download_links.extend(response.xpath(d).getall())
                         
         for link in self.download_links: 
-            # check if 
+            # check if filename is valid
             f = link.split("/")[-1]
             file =  f if is_valid_filename(f) else None
 
@@ -74,5 +74,8 @@ class BaseSpider(scrapy.Spider):
         self.json_settings["output_xpaths"] = self.output_xpaths
         self.json_settings["output_selectors"] = self.output_selectors
         self.json_settings["index"] = self.index
+        
+        # start next spider
+        
         # UNCOMMENT
         # append_json_file("json/spiders.json", self.json_settings)
