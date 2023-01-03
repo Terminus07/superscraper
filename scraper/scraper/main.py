@@ -1,7 +1,7 @@
 from typing import List
 from scrapy.crawler import CrawlerProcess
 from scrapy.utils.project import get_project_settings
-from util.file_util import read_json_file
+from util.file_util import read_json_file, append_json_file
 
 class Spider():
     name = ''
@@ -9,11 +9,16 @@ class Spider():
     custom_settings = ''
     json_file = ''
     
-    def __init__(self, name, json_file):
-        self.name = name
+    def __init__(self, name=None, json_file=None, json_object=None):
         self.json_file = json_file
-        self.settings = read_json_file(self.json_file)
+        
+        if json_file == None:
+            self.settings = json_object
+        else:
+            self.settings = read_json_file(self.json_file)
+        
         self.custom_settings = self.get_custom_settings()
+        self.name =  self.settings["name"]  if name is None else name
 
     def get_custom_settings(self):
         project_settings = get_project_settings()
@@ -23,15 +28,20 @@ class Spider():
         return project_settings
 
 class SpiderController():
-
+    spiders = []
+    
     def __init__(self):
-        pass
+        self.spiders = self.get_spiders()
     
     def get_spiders(self):
         #read json file
-        spiders = read_json_file("json/spiders.json")
+        spiders = []
+        settings = read_json_file("json/spiders.json")
+        for s in settings:
+            spider = Spider(json_object=s)
+            spiders.append(spider)
         return spiders
-    
+
     def create_spiders_json(self, spiders:List[Spider]):
         pass
     
@@ -44,14 +54,10 @@ class SpiderController():
         process.crawl(spider.name, **spider.settings)
         process.start()
 
-spiders = [Spider("base", "json/secret.json")]
-
 controller = SpiderController()
-print(controller.get_spiders())
+spiders = controller.get_spiders()
 
-# for index, spider in enumerate(spiders):
-#     print(spider.custom_settings)
-#     process = CrawlerProcess(spider.custom_settings)
-#     spider.settings['index'] = index
-#     process.crawl(spider.name, **spider.settings)
-# process.start()
+# check if spider.json is valid
+# get spiders from spiders.json
+# create spiders from spiders.json
+# 
