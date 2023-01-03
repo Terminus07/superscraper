@@ -1,3 +1,4 @@
+from typing import List
 from scrapy.crawler import CrawlerProcess
 from scrapy.utils.project import get_project_settings
 from util.file_util import read_json_file
@@ -22,22 +23,35 @@ class Spider():
         return project_settings
 
 class SpiderController():
-    spiders = []
 
-    def __init__(self) -> None:
+    def __init__(self):
         pass
     
-    def create_spider_process(self, spider:Spider):
+    def get_spiders(self):
+        #read json file
+        spiders = read_json_file("json/spiders.json")
+        return spiders
+    
+    def create_spiders_json(self, spiders:List[Spider]):
+        pass
+    
+    def get_current_spider(self):
+        pass
+    
+    def create_spider_process(self, spider_index):
         spider:Spider
         process = CrawlerProcess(spider.custom_settings)
         process.crawl(spider.name, **spider.settings)
         process.start()
 
-spiders = [Spider("base", "json/secret.json"), Spider("base", "json/secret.json")]
+spiders = [Spider("base", "json/secret.json")]
 
-for index, spider in enumerate(spiders):
-    print(spider.custom_settings)
-    process = CrawlerProcess(spider.custom_settings)
-    spider.settings['index'] = index
-    process.crawl(spider.name, **spider.settings)
-process.start()
+controller = SpiderController()
+print(controller.get_spiders())
+
+# for index, spider in enumerate(spiders):
+#     print(spider.custom_settings)
+#     process = CrawlerProcess(spider.custom_settings)
+#     spider.settings['index'] = index
+#     process.crawl(spider.name, **spider.settings)
+# process.start()

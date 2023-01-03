@@ -77,5 +77,4 @@ class BaseSpider(scrapy.Spider):
         
         # start next spider
         
-        # UNCOMMENT
         # append_json_file("json/spiders.json", self.json_settings)
