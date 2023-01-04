@@ -52,7 +52,7 @@
         "form_data": {},
         "response": {},
         "custom_settings": {
-            "LOG_ENABLED": true
+            "LOG_ENABLED": false
         },
         "links": [],
         "download_links": [],

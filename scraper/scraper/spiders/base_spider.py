@@ -1,7 +1,7 @@
 import scrapy
 import requests
 import shutil
-import os
+import os, signal
 from scrapy.http import FormRequest, Response
 from scraper.util.file_util import read_json_file, overwrite_json_file,append_json_file
 from scrapy.crawler import CrawlerProcess
@@ -11,7 +11,10 @@ import time
 
 class BaseSpider(scrapy.Spider):
     name = "base"
- 
+    
+    #spider controller
+    controller = ''
+    
     # spider json objects
     json_settings = []
     json_spider = []
@@ -31,6 +34,11 @@ class BaseSpider(scrapy.Spider):
     
     def __init__(self, *args, **kwargs):
         self.json_settings = kwargs
+        
+        # get spider controller
+        from scraper.main import SpiderController
+        self.controller = SpiderController()
+        
         super(BaseSpider, self).__init__(*args, **kwargs)
         
     def parse(self, response):
@@ -66,7 +74,6 @@ class BaseSpider(scrapy.Spider):
             '//a[contains(@href, "course/view.php")]/@href').getall()
 
     def closed(self, reason):
-        
         # update json settings
         self.json_settings["output_xpaths"] = self.output_xpaths
         self.json_settings["output_selectors"] = self.output_selectors
@@ -74,15 +81,12 @@ class BaseSpider(scrapy.Spider):
         
         print(self.index)
         print(self.output_xpaths)
-       
-        from scraper.main import SpiderController
-        
-        # start next spider process
-        print("SPIDER CLOSED")
-        controller = SpiderController()
-      
-        if(self.index != len(controller.spiders) - 1):
-            controller.start_spider_process(self.index +1)
+
+        # update spider
+        self.controller.update_spider(self.json_settings, self.index)
+   
+        # start next spider process       
+        if(self.index != len(self.controller.spiders) - 1):
+            self.controller.start_spider_process(self.index +1)
         else:
-            print("hi")
-        # append_json_file("json/spiders.json", self.json_settings)
+            os.kill(os.getpid(), signal.SIGINT)
