@@ -4,6 +4,7 @@ from scrapy.utils.project import get_project_settings
 from util.file_util import read_json_file, append_json_file
 
 class Spider():
+    index = 0
     name = ''
     settings = ''
     custom_settings = ''
@@ -18,6 +19,7 @@ class Spider():
             self.settings = read_json_file(self.json_file)
         
         self.custom_settings = self.get_custom_settings()
+        self.index = self.settings["index"]
         self.name =  self.settings["name"]  if name is None else name
 
     def get_custom_settings(self):
@@ -29,35 +31,33 @@ class Spider():
 
 class SpiderController():
     spiders = []
+    json_file = ''
     
-    def __init__(self):
-        self.spiders = self.get_spiders()
-    
-    def get_spiders(self):
-        #read json file
+    def __init__(self, json_file=None):
+        self.json_file = json_file
+        self.spiders = self.get_spiders(self.json_file)
+        
+    def get_spiders(self, json_file=None):
+        # read spiders.json file
         spiders = []
-        settings = read_json_file("json/spiders.json")
-        for s in settings:
+        settings = read_json_file("json/spiders.json") if json_file is None else read_json_file(json_file)
+
+        for index,s in enumerate(settings):
+            s['index'] = index
             spider = Spider(json_object=s)
             spiders.append(spider)
         return spiders
-
-    def create_spiders_json(self, spiders:List[Spider]):
-        pass
     
-    def get_current_spider(self):
-        pass
-    
-    def create_spider_process(self, spider_index):
-        spider:Spider
+    def create_spider_process(self, spider:Spider):
         process = CrawlerProcess(spider.custom_settings)
-        process.crawl(spider.name, **spider.settings)
-        process.start()
-
-controller = SpiderController()
-spiders = controller.get_spiders()
-
-# check if spider.json is valid
-# get spiders from spiders.json
-# create spiders from spiders.json
-# 
+        process.crawl(spider.name, **spider.settings)    
+        return process
+    
+    def start_spider_process(self, spider_index):
+        process = self.create_spider_process(self.spiders[spider_index])
+        if spider_index == len(self.spiders) -1:
+            process.start()
+            
+if __name__ == "__main__":
+    controller = SpiderController()
+    controller.start_spider_process(0)

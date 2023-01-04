@@ -1,5 +1,5 @@
 {
-    "index": 0,
+    "name": "base",
     "start_urls": [
         "https://quotes.toscrape.com/page/1/"
     ],
@@ -14,6 +14,8 @@
         "LOG_ENABLED": false
     },
     "links": [],
+    "download_links": [],
+    "download_link_xpaths": [],
     "output_xpaths": [],
     "output_selectors": []
 }

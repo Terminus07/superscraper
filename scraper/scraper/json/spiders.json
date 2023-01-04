@@ -1,26 +1,5 @@
 [
     {
-        "name": "red",
-        "index": 0,
-        "start_urls": [
-            "https://quotes.toscrape.com/page/1/"
-        ],
-        "xpaths": [
-            "//title/text()"
-        ],
-        "selectors": [],
-        "xpath_selectors": [],
-        "form_data": {},
-        "response": {},
-        "custom_settings": {
-            "LOG_ENABLED": false
-        },
-        "links": [],
-        "output_xpaths": [],
-        "output_selectors": []
-    },
-    {
-        "index": 1,
         "name": "base",
         "start_urls": [
             "https://quotes.toscrape.com/page/1/"
@@ -36,6 +15,8 @@
             "LOG_ENABLED": false
         },
         "links": [],
+        "download_links": [],
+        "download_link_xpaths": [],
         "output_xpaths": [],
         "output_selectors": []
     }

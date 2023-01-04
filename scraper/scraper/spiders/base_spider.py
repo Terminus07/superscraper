@@ -8,6 +8,7 @@ from scrapy.crawler import CrawlerProcess
 import wget
 from pathvalidate import is_valid_filename
 
+
 class BaseSpider(scrapy.Spider):
     name = "base"
  
@@ -70,11 +71,20 @@ class BaseSpider(scrapy.Spider):
             '//a[contains(@href, "course/view.php")]/@href').getall()
 
     def closed(self, reason):
+        
         # update json settings
         self.json_settings["output_xpaths"] = self.output_xpaths
         self.json_settings["output_selectors"] = self.output_selectors
         self.json_settings["index"] = self.index
         
-        # start next spider
+        print(self.index)
+        print(self.output_xpaths)
+       
+        # from scraper.main import Spider, SpiderController
+
         
+        # start next spider
+        # spider:Spider
+        # process = CrawlerProcess(spider.custom_settings)
+        # process.crawl(spider.name, **spider.settings)
         # append_json_file("json/spiders.json", self.json_settings)
