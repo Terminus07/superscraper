@@ -7,7 +7,7 @@ from scraper.util.file_util import read_json_file, overwrite_json_file,append_js
 from scrapy.crawler import CrawlerProcess
 import wget
 from pathvalidate import is_valid_filename
-
+import time
 
 class BaseSpider(scrapy.Spider):
     name = "base"
@@ -54,11 +54,6 @@ class BaseSpider(scrapy.Spider):
                 yield wget.download(link, out=file)
             except Exception as e:
                 print(e)
-                
-            # file_name = response.url.split("/")[-1]
-        
-            # with open(file_name, "wb") as f:
-            # f.write(response.body)
 
         # test login token
         # self.form_data["loginToken"] = response.xpath('//input[contains(@name, "login")]/@value').getall()
@@ -80,11 +75,14 @@ class BaseSpider(scrapy.Spider):
         print(self.index)
         print(self.output_xpaths)
        
-        # from scraper.main import Spider, SpiderController
-
+        from scraper.main import SpiderController
         
-        # start next spider
-        # spider:Spider
-        # process = CrawlerProcess(spider.custom_settings)
-        # process.crawl(spider.name, **spider.settings)
+        # start next spider process
+        print("SPIDER CLOSED")
+        controller = SpiderController()
+      
+        if(self.index != len(controller.spiders) - 1):
+            controller.start_spider_process(self.index +1)
+        else:
+            print("hi")
         # append_json_file("json/spiders.json", self.json_settings)

@@ -45,9 +45,16 @@ class SpiderController():
         for index,s in enumerate(settings):
             s['index'] = index
             spider = Spider(json_object=s)
+            print(spider)
             spiders.append(spider)
         return spiders
     
+    def print_spiders(self):
+        for spider in self.spiders:
+            spider:Spider
+            print(spider.name)
+            print(spider.settings)
+            
     def create_spider_process(self, spider:Spider):
         process = CrawlerProcess(spider.custom_settings)
         process.crawl(spider.name, **spider.settings)    
@@ -55,9 +62,9 @@ class SpiderController():
     
     def start_spider_process(self, spider_index):
         process = self.create_spider_process(self.spiders[spider_index])
-        if spider_index == len(self.spiders) -1:
-            process.start()
-            
+        process.start(stop_after_crawl=False)
+        
+   
 if __name__ == "__main__":
     controller = SpiderController()
     controller.start_spider_process(0)
