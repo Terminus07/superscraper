@@ -47,12 +47,13 @@ class SpiderController():
             spider = Spider(json_object=s)
             spiders.append(spider)
         return spiders
+    
     def update_spider(self, spider_settings, spider_index):
         spider = self.spiders[spider_index]
         spider: Spider
         spider.settings = spider_settings
-        
-        
+        self.spiders[spider_index] = spider
+     
     def print_spiders(self):
         for spider in self.spiders:
             spider:Spider

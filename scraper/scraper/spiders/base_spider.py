@@ -1,23 +1,17 @@
 import scrapy
-import requests
-import shutil
 import os, signal
-from scrapy.http import FormRequest, Response
-from scraper.util.file_util import read_json_file, overwrite_json_file,append_json_file
-from scrapy.crawler import CrawlerProcess
+from scrapy.http import FormRequest
 import wget
 from pathvalidate import is_valid_filename
-import time
 
 class BaseSpider(scrapy.Spider):
     name = "base"
     
-    #spider controller
+    # spider controller
     controller = ''
     
     # spider json objects
     json_settings = []
-    json_spider = []
     
     # inputs
     index  = 0

@@ -1,0 +1,12 @@
+{
+    "name": "selenium",
+    "start_urls": [
+        "https://quotes.toscrape.com/page/1/"
+    ],
+    "xpaths": [
+        "//title/text()"
+    ],
+    "selectors": [],
+    "xpath_selectors": [],
+    "driver_type": 0
+}
