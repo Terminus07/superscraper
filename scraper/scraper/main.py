@@ -44,7 +44,7 @@ class SpiderController():
         self.json_file = json_file
         self.spiders = self.get_spiders(self.json_file)
         self.output_spiders = self.get_spiders("json/output.json")
-        
+
     def get_spiders(self, json_file=None):
         # read spiders.json file
         spiders = []

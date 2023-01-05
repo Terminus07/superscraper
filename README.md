@@ -6,8 +6,8 @@ Command line interface environment for scraping anything from the web. Super scr
 
 ```
 COMMANDS:
-spider [-h] {base,form,files,items} - Create spider JSON files that can be used with the chain command
-chain [-h] spiders [spider.json ...] - Chain spider JSON files together to extract or automate tasks on the web
+spiders [-h] {base,selenium} - Create spiders.json file that can be used with the run command
+run [-h] [spider.json ...] - Run spiders.json file to extract or automate tasks on the web
 history - View command history
 settings - Shell settings
 help - Shell manual
@@ -24,11 +24,9 @@ Make sure you have installed all of the following prerequisites on your developm
 
 ## Installation
 
-### Linux
-
 #### Step 1: Clone Github repository
 
-`git clone https://github.com/terminus24/superscraper.git`
+`git clone https://github.com/Terminus07/superscraper.git`
 
 #### Step 2: Install Python requirements
 
@@ -37,12 +35,12 @@ Run `setup.sh` with the following command:
 
 #### Step 3 (Optional): Create an alias
 
-An alias is an easy way to access `super-crawler` from anywhere in your terminal. You can read more about aliases [here](https://www.tecmint.com/create-alias-in-linux/). </br>
+An alias is an easy way to access `superscraper` from anywhere in your terminal. You can read more about aliases [here](https://www.tecmint.com/create-alias-in-linux/). </br>
 Creating an alias:
 
 - Press <kbd>Ctrl</kbd> + <kbd>H</kbd> to view all hidden files in your home directory.
 - Add the following line to the `.bashrc` file: </br>
-  `alias {INSERT ALIAS NAME HERE}='(cd {INSERT HOME DIRECTORY HERE}/super-crawler/superscrape} && bash ./main.sh)'` </br>
+  `alias {INSERT ALIAS NAME HERE}='(cd {INSERT HOME DIRECTORY HERE}/superscraper/scraper/scraper} && bash ./main.sh)'` </br>
 - Save `.bashrc` and then reload settings: </br>
   `source ~/.bashrc`
 
@@ -51,7 +49,7 @@ Creating an alias:
 If you created an alias, simply type the alias name that was added in your `.bashrc` file. </br>
 Otherwise, you can run `main.sh` directly: </br>
 
-    cd super-crawler/superscrape
+    cd superscraper/scraper/scraper
     bash main.sh
 
 #### Step 5: Change default download/JSON directory

@@ -9,6 +9,7 @@
     "selectors": [],
     "xpath_selectors": [],
     "form_data": {},
+    "request": {},
     "response": {},
     "custom_settings": {
         "LOG_ENABLED": false

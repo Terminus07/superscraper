@@ -1,6 +1,6 @@
 import scrapy
 import os, signal
-from scrapy.http import FormRequest
+from scrapy.http import FormRequest, Response, Request
 import wget
 from pathvalidate import is_valid_filename
 
@@ -27,6 +27,9 @@ class BaseSpider(scrapy.Spider):
     output_xpaths = []
     output_selectors = []
     
+    def start_requests(self):
+        return super().start_requests()
+    
     def __init__(self, *args, **kwargs):
         self.json_settings = kwargs
         self.index = kwargs['index']
@@ -41,9 +44,15 @@ class BaseSpider(scrapy.Spider):
             print(self.previous_spider)
  
         super(BaseSpider, self).__init__(*args, **kwargs)
-        
+    
+    # get spider request and response
+    
+    
     def parse(self, response):
         # extract text
+        response:Response
+        
+        # give response object to next spider
         for xpath in self.xpaths:
             self.output_xpaths.append(response.xpath(xpath).getall())
             
