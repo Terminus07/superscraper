@@ -9,12 +9,13 @@ class BaseSpider(scrapy.Spider):
     
     # spider controller
     controller = ''
+    previous_spider = None
     
     # spider json objects
     json_settings = []
     
     # inputs
-    index  = 0
+    index = None
     xpaths = []
     selectors = []
     xpath_selectors = []
@@ -28,11 +29,17 @@ class BaseSpider(scrapy.Spider):
     
     def __init__(self, *args, **kwargs):
         self.json_settings = kwargs
+        self.index = kwargs['index']
         
         # get spider controller
-        from scraper.main import SpiderController
+        from scraper.main import SpiderController, Spider
         self.controller = SpiderController()
+        self.previous_spider:Spider
+        self.previous_spider = self.controller.get_previous_spider(self.index)
         
+        if self.previous_spider != None:
+            print(self.previous_spider)
+ 
         super(BaseSpider, self).__init__(*args, **kwargs)
         
     def parse(self, response):
@@ -78,7 +85,7 @@ class BaseSpider(scrapy.Spider):
 
         # update spider
         self.controller.update_spider(self.json_settings, self.index)
-   
+     
         # start next spider process       
         if(self.index != len(self.controller.spiders) - 1):
             self.controller.start_spider_process(self.index +1)

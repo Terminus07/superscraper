@@ -23,11 +23,11 @@ class SeleniumSpider():
         
     
 # initialize driver
-s = Service(ChromeDriverManager().install())
-opts = ChromeOptions()
-opts.add_experimental_option("detach", True)
-driver = webdriver.Chrome(service=s, options=opts)
-driver.get("https://google.com/")
+# s = Service(ChromeDriverManager().install())
+# opts = ChromeOptions()
+# opts.add_experimental_option("detach", True)
+# driver = webdriver.Chrome(service=s, options=opts)
+# driver.get("https://google.com/")
 
 # find elements
 # username = driver.find_element(By.NAME, "_user")
