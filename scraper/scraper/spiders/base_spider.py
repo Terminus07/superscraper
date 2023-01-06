@@ -26,14 +26,13 @@ class BaseSpider(scrapy.Spider):
     # outputs
     output_xpaths = []
     output_selectors = []
-    
-    def start_requests(self):
-        return super().start_requests()
-    
+    request = None
+    response = None
+
     def __init__(self, *args, **kwargs):
         self.json_settings = kwargs
         self.index = kwargs['index']
-        
+
         # get spider controller
         from scraper.main import SpiderController, Spider
         self.controller = SpiderController()
@@ -43,16 +42,24 @@ class BaseSpider(scrapy.Spider):
         if self.previous_spider != None:
             print(self.previous_spider)
  
-        super(BaseSpider, self).__init__(*args, **kwargs)
+        super(BaseSpider, self).__init__(*args, **kwargs)    
     
-    # get spider request and response
-    
+    # override start_requests function from scrapy
+    def start_requests(self):
+        if len(self.start_urls) > 0:
+            return super().start_requests()
+        else:
+            # get previous spider's response
+            url  = "https://www.google.com"
+            return [Request(url, dont_filter=True)]
     
     def parse(self, response):
-        # extract text
         response:Response
+        self.response = dict(response)
         
-        # give response object to next spider
+        print("RESPONSE: ",self.response)
+        
+        # extract text
         for xpath in self.xpaths:
             self.output_xpaths.append(response.xpath(xpath).getall())
             
@@ -80,6 +87,8 @@ class BaseSpider(scrapy.Spider):
             return FormRequest.from_response(response, formdata=self.form_data, callback=self.form_data_response)
  
     def form_data_response(self, response):
+        response:Response
+        # self.response = 
         links = response.xpath(
             '//a[contains(@href, "course/view.php")]/@href').getall()
 
@@ -88,9 +97,8 @@ class BaseSpider(scrapy.Spider):
         self.json_settings["output_xpaths"] = self.output_xpaths
         self.json_settings["output_selectors"] = self.output_selectors
         self.json_settings["index"] = self.index
-        
-        print(self.index)
-        print(self.output_xpaths)
+        self.json_settings["response"] = self.response
+        self.json_settings["request"] = self.request
 
         # update spider
         self.controller.update_spider(self.json_settings, self.index)

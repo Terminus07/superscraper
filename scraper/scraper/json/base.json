@@ -9,8 +9,6 @@
     "selectors": [],
     "xpath_selectors": [],
     "form_data": {},
-    "request": {},
-    "response": {},
     "custom_settings": {
         "LOG_ENABLED": false
     },
@@ -18,5 +16,7 @@
     "download_links": [],
     "download_link_xpaths": [],
     "output_xpaths": [],
-    "output_selectors": []
+    "output_selectors": [],
+    "request": {},
+    "response": {}
 }
