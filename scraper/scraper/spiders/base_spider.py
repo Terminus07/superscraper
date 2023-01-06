@@ -6,7 +6,6 @@ from pathvalidate import is_valid_filename
 from scraper.util.file_util import get_json_object
 import json
 
-
 class BaseSpider(scrapy.Spider):
     name = "base"
     
@@ -57,12 +56,28 @@ class BaseSpider(scrapy.Spider):
             url  = "https://www.google.com"
             return [Request(url, dont_filter=True)]
     
+    def get_response_object(self, response:Response):
+        response:Response
+        self.response = str(response.__dict__)
+        
+        
+        # create your own response object doesn't work
+        # self.response =  {
+        # "status": dict["status"],
+        #  "headers": dict["headers"],
+        #  "protocol": dict["protocol"],
+        #  "ip_address": dict["ip_address"],
+        #  "flags": dict["flags"],
+        #  "encoding": dict["_encoding"],
+        #  }
+     
+        return dict
+        
+    
     def parse(self, response):
-        try:
-            self.response = response.text
-        except Exception as e:
-            print(e)
-            
+        self.get_response_object(response)
+        print("RESPONSE", self.response)
+        
         # extract text
         for xpath in self.xpaths:
             self.output_xpaths.append(response.xpath(xpath).getall())

@@ -1,4 +1,5 @@
 from typing import List
+from scrapy.http import FormRequest, Response, Request
 from scrapy.crawler import CrawlerProcess
 from scrapy.utils.project import get_project_settings
 from util.file_util import read_json_file, overwrite_json_file, append_json_file
@@ -49,7 +50,7 @@ class SpiderController():
         # read spiders.json file
         spiders = []
         settings = read_json_file("json/spiders.json") if json_file is None else read_json_file(json_file)
-                
+        
         for index,s in enumerate(settings):
             s['index'] = index
             spider = Spider(json_object=s)
@@ -86,6 +87,18 @@ class SpiderController():
     def start_spider_process(self, spider_index):
         process = self.get_spider_process(self.spiders[spider_index])
         process.start(stop_after_crawl=False)
+
+class RequestMapper():
+    def __init__(self):
+        pass
+    
+    def get_response_object(self, res):
+        # given a string response, convert to scrapy Response object
+        print(res)
+        
+    
+    def request_to_response(self, request):
+        pass
 
 if __name__ == "__main__":
     controller = SpiderController()
