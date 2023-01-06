@@ -3,6 +3,9 @@ import os, signal
 from scrapy.http import FormRequest, Response, Request
 import wget
 from pathvalidate import is_valid_filename
+from scraper.util.file_util import get_json_object
+import json
+
 
 class BaseSpider(scrapy.Spider):
     name = "base"
@@ -26,8 +29,8 @@ class BaseSpider(scrapy.Spider):
     # outputs
     output_xpaths = []
     output_selectors = []
-    request = None
-    response = None
+    request = {}
+    response = {}
 
     def __init__(self, *args, **kwargs):
         self.json_settings = kwargs
@@ -47,6 +50,7 @@ class BaseSpider(scrapy.Spider):
     # override start_requests function from scrapy
     def start_requests(self):
         if len(self.start_urls) > 0:
+            print("start")
             return super().start_requests()
         else:
             # get previous spider's response
@@ -54,11 +58,11 @@ class BaseSpider(scrapy.Spider):
             return [Request(url, dont_filter=True)]
     
     def parse(self, response):
-        response:Response
-        self.response = dict(response)
-        
-        print("RESPONSE: ",self.response)
-        
+        try:
+            self.response = response.text
+        except Exception as e:
+            print(e)
+            
         # extract text
         for xpath in self.xpaths:
             self.output_xpaths.append(response.xpath(xpath).getall())
@@ -88,7 +92,6 @@ class BaseSpider(scrapy.Spider):
  
     def form_data_response(self, response):
         response:Response
-        # self.response = 
         links = response.xpath(
             '//a[contains(@href, "course/view.php")]/@href').getall()
 
@@ -97,9 +100,9 @@ class BaseSpider(scrapy.Spider):
         self.json_settings["output_xpaths"] = self.output_xpaths
         self.json_settings["output_selectors"] = self.output_selectors
         self.json_settings["index"] = self.index
-        self.json_settings["response"] = self.response
-        self.json_settings["request"] = self.request
-
+        # self.json_settings["request"] = self.request
+        self.json_settings["response"] = self.response    
+        
         # update spider
         self.controller.update_spider(self.json_settings, self.index)
      
@@ -107,4 +110,5 @@ class BaseSpider(scrapy.Spider):
         if(self.index != len(self.controller.spiders) - 1):
             self.controller.start_spider_process(self.index +1)
         else:
+            print("OK")
             os.kill(os.getpid(), signal.SIGINT)

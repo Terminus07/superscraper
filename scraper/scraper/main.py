@@ -68,8 +68,11 @@ class SpiderController():
         self.spiders[spider_index] = spider
         
         # create output.json
-        append_json_file("json/output.json", spider.settings)
-        
+        try:
+            append_json_file("json/output.json", spider.settings)
+        except Exception as e:
+            print(e)
+            
     def print_spiders(self):
         for spider in self.spiders:
             spider:Spider
