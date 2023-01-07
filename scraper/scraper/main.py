@@ -3,6 +3,8 @@ from scrapy.http import FormRequest, Response, Request
 from scrapy.crawler import CrawlerProcess
 from scrapy.utils.project import get_project_settings
 from util.file_util import read_json_file, overwrite_json_file, append_json_file
+import json
+from ast import literal_eval
 
 class Spider():
     index = 0
@@ -89,17 +91,35 @@ class SpiderController():
         process.start(stop_after_crawl=False)
 
 class RequestMapper():
-    def __init__(self):
+    def __init__(self) -> None:
         pass
     
-    def get_response_object(self, res):
-        # given a string response, convert to scrapy Response object
-        print(res)
+    # given a scrapy Response object, convert to json response 
+    def get_json_response(self, response:Response):
         
+        response =  {
+        "url": response.url,
+        "status": response.status,
+        "headers": response.headers.to_unicode_dict(),
+        "protocol": response.protocol,
+        "ip_address": str(response.ip_address),
+        "flags": response.flags,
+        "certificate": str(response.certificate)
+        }
+        return response
     
-    def request_to_response(self, request):
-        pass
-
+    def get_response(self, json):
+        response = Response(url=json["url"], 
+                        status=json["status"], 
+                        headers=json["headers"],
+                        protocol=json["protocol"]
+                        )
+        print(response.headers)
+    
+    def get_request_from_response(self, response:Response):
+        req = Request(response.url)
+        
+        
 if __name__ == "__main__":
     controller = SpiderController()
     controller.start_spider_process(0)

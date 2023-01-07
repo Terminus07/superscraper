@@ -4,7 +4,7 @@ from scrapy.http import FormRequest, Response, Request
 import wget
 from pathvalidate import is_valid_filename
 from scraper.util.file_util import get_json_object
-import json
+from scraper.main import RequestMapper
 
 class BaseSpider(scrapy.Spider):
     name = "base"
@@ -49,34 +49,16 @@ class BaseSpider(scrapy.Spider):
     # override start_requests function from scrapy
     def start_requests(self):
         if len(self.start_urls) > 0:
-            print("start")
             return super().start_requests()
         else:
-            # get previous spider's response
-            url  = "https://www.google.com"
+            url = "https://www.google.com"
             return [Request(url, dont_filter=True)]
-    
-    def get_response_object(self, response:Response):
-        response:Response
-        self.response = str(response.__dict__)
-        
-        
-        # create your own response object doesn't work
-        # self.response =  {
-        # "status": dict["status"],
-        #  "headers": dict["headers"],
-        #  "protocol": dict["protocol"],
-        #  "ip_address": dict["ip_address"],
-        #  "flags": dict["flags"],
-        #  "encoding": dict["_encoding"],
-        #  }
-     
-        return dict
-        
-    
+  
     def parse(self, response):
-        self.get_response_object(response)
-        print("RESPONSE", self.response)
+        response:Response
+        mapper = RequestMapper()
+        self.response = mapper.get_json_response(response)
+        
         
         # extract text
         for xpath in self.xpaths:
@@ -116,14 +98,11 @@ class BaseSpider(scrapy.Spider):
         self.json_settings["output_selectors"] = self.output_selectors
         self.json_settings["index"] = self.index
         # self.json_settings["request"] = self.request
-        self.json_settings["response"] = self.response    
-        
-        # update spider
+        self.json_settings["response"] = self.response
         self.controller.update_spider(self.json_settings, self.index)
      
         # start next spider process       
         if(self.index != len(self.controller.spiders) - 1):
             self.controller.start_spider_process(self.index +1)
         else:
-            print("OK")
             os.kill(os.getpid(), signal.SIGINT)
