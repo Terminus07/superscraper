@@ -3,17 +3,20 @@ import os, signal
 from scrapy.http import FormRequest, Response, Request
 import wget
 from pathvalidate import is_valid_filename
-from scraper.util.file_util import get_json_object
 from scraper.main import RequestMapper
+import json
+ 
 
 class BaseSpider(scrapy.Spider):
     name = "base"
     
-    # spider controller
+    # spider controller and mapper
     controller = ''
-    previous_spider = None
+    mapper = None
     
     # spider json objects
+    previous_spider = None
+    current_spider = None
     json_settings = []
     
     # inputs
@@ -38,27 +41,34 @@ class BaseSpider(scrapy.Spider):
         # get spider controller
         from scraper.main import SpiderController, Spider
         self.controller = SpiderController()
+        self.mapper = RequestMapper()
         self.previous_spider:Spider
+        self.current_spider:Spider
+        self.current_spider = self.controller.get_current_spider(self.index)
         self.previous_spider = self.controller.get_previous_spider(self.index)
         
-        if self.previous_spider != None:
-            print(self.previous_spider)
- 
+        if self.current_spider != None:
+            print("CURRENT",self.current_spider.settings)
+
         super(BaseSpider, self).__init__(*args, **kwargs)    
     
-    # override start_requests function from scrapy
+    # override start_requests function
     def start_requests(self):
-        if len(self.start_urls) > 0:
-            return super().start_requests()
-        else:
-            url = "https://www.google.com"
-            return [Request(url, dont_filter=True)]
-  
+        # if len(self.start_urls) > 0:
+        #     return super().start_requests()
+        # else:
+        #     url = "https://www.google.com"
+        #     return [Request(url, dont_filter=True)]
+        
+        url = self.start_urls[self.index]           
+        self.request = Request(url, dont_filter=True)
+        
+        return [self.request]
+
     def parse(self, response):
         response:Response
-        mapper = RequestMapper()
-        self.response = mapper.get_json_response(response)
-        
+        self.response = self.mapper.get_json_response(response)        
+        self.request = self.mapper.get_json_request(self.request)
         
         # extract text
         for xpath in self.xpaths:
@@ -89,15 +99,15 @@ class BaseSpider(scrapy.Spider):
  
     def form_data_response(self, response):
         response:Response
-        links = response.xpath(
-            '//a[contains(@href, "course/view.php")]/@href').getall()
+        self.response = self.mapper.get_json_response(response)
+        print("RESPONSE", self.response)
 
     def closed(self, reason):
         # update json settings
         self.json_settings["output_xpaths"] = self.output_xpaths
         self.json_settings["output_selectors"] = self.output_selectors
         self.json_settings["index"] = self.index
-        # self.json_settings["request"] = self.request
+        self.json_settings["request"] =  self.request
         self.json_settings["response"] = self.response
         self.controller.update_spider(self.json_settings, self.index)
      

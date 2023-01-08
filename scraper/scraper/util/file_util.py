@@ -20,5 +20,3 @@ def append_json_file(json_file, data):
         outfile.write(json.dumps(existing))
         outfile.close()
         
-def get_json_object(obj):
-    return json.dumps(obj.__dict__)

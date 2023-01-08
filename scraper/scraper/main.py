@@ -63,6 +63,9 @@ class SpiderController():
         if spider_index != 0:
             previous_spider = self.output_spiders[spider_index-1]
             return previous_spider
+        
+    def get_current_spider(self, index):
+        return self.spiders[index]
 
     def update_spider(self, spider_settings, spider_index):
         spider = self.spiders[spider_index]
@@ -94,6 +97,14 @@ class RequestMapper():
     def __init__(self) -> None:
         pass
     
+    def get_json_request(self, request:Request):
+        request = {
+                   "url": request.url
+                   }
+        print("REQUEST",request)
+        
+        return request
+    
     # given a scrapy Response object, convert to json response 
     def get_json_response(self, response:Response):
         
@@ -117,8 +128,8 @@ class RequestMapper():
         print(response.headers)
     
     def get_request_from_response(self, response:Response):
-        req = Request(response.url)
-        
+        req = Request(url=response.url)
+        return req
         
 if __name__ == "__main__":
     controller = SpiderController()
