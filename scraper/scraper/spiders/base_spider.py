@@ -5,7 +5,6 @@ import wget
 from pathvalidate import is_valid_filename
 from scraper.main import RequestMapper
 import json
- 
 
 class BaseSpider(scrapy.Spider):
     name = "base"
@@ -13,7 +12,7 @@ class BaseSpider(scrapy.Spider):
     # spider controller and mapper
     controller = ''
     mapper = None
-    
+        
     # spider json objects
     previous_spider = None
     current_spider = None
@@ -45,33 +44,30 @@ class BaseSpider(scrapy.Spider):
         self.previous_spider:Spider
         self.current_spider:Spider
         self.current_spider = self.controller.get_current_spider(self.index)
-        self.previous_spider = self.controller.get_previous_spider(self.index)
         
-        if self.current_spider != None:
-            print("CURRENT",self.current_spider.settings)
-
+        if(self.index != 0):
+            self.previous_spider = self.controller.get_previous_spider(self.index)
+            print("PREVIOUS",self.previous_spider.settings)
+        print("CURRENT",self.current_spider.settings)
+        
         super(BaseSpider, self).__init__(*args, **kwargs)    
     
     # override start_requests function
     def start_requests(self):
-        # if len(self.start_urls) > 0:
-        #     return super().start_requests()
-        # else:
-        #     url = "https://www.google.com"
-        #     return [Request(url, dont_filter=True)]
-        
-        url = self.start_urls[self.index]           
-        self.request = Request(url, dont_filter=True)
-        
-        return [self.request]
+        for url in self.start_urls:
+            self.request = Request(url, dont_filter=True)
+            yield self.request
 
     def parse(self, response):
+        print("PARSE")
         response:Response
         self.response = self.mapper.get_json_response(response)        
         self.request = self.mapper.get_json_request(self.request)
         
+        print("XPATHS", self.xpaths)
         # extract text
         for xpath in self.xpaths:
+            print(xpath)
             self.output_xpaths.append(response.xpath(xpath).getall())
             
         for selector in self.selectors:
@@ -104,15 +100,18 @@ class BaseSpider(scrapy.Spider):
 
     def closed(self, reason):
         # update json settings
+        print(self.output_xpaths)
         self.json_settings["output_xpaths"] = self.output_xpaths
         self.json_settings["output_selectors"] = self.output_selectors
         self.json_settings["index"] = self.index
         self.json_settings["request"] =  self.request
         self.json_settings["response"] = self.response
         self.controller.update_spider(self.json_settings, self.index)
-     
+
         # start next spider process       
         if(self.index != len(self.controller.spiders) - 1):
+            print("start")
             self.controller.start_spider_process(self.index +1)
         else:
+            print("OK")
             os.kill(os.getpid(), signal.SIGINT)

@@ -6,6 +6,53 @@ from util.file_util import read_json_file, overwrite_json_file, append_json_file
 import json
 from ast import literal_eval
 
+class RequestMapper():    
+    def __init__(self) -> None:
+        pass
+    
+    def get_json_request(self, request:Request):
+        request = {
+                   "url": request.url,
+                   "cookies": request.cookies,
+                   "meta": request.meta,
+                   "headers": request.headers.to_unicode_dict(),
+                   "method": request.method
+                   }
+        return request
+    
+    # given a scrapy Response object, convert to json response 
+    def get_json_response(self, response:Response):
+        
+        response =  {
+        "url": response.url,
+        "status": response.status,
+        "headers": response.headers.to_unicode_dict(),
+        "protocol": response.protocol,
+        "ip_address": str(response.ip_address),
+        "flags": response.flags,
+        "certificate": str(response.certificate)
+        }
+        return response
+    
+    def get_response(self, json):
+        response = Response(url=json["url"], 
+                        status=json["status"], 
+                        headers=json["headers"],
+                        protocol=json["protocol"],
+                        ip_address=json["ip_address"]
+                        )
+        print(response.headers)
+        return response
+    
+    def get_request(self, json):
+        request = Request(url=json['url'], 
+                          headers=json['headers']
+                          )
+    
+    def get_request_from_response(self, response:Response):
+        req = Request(url=response.url)
+        return req
+    
 class Spider():
     index = 0
     name = ''
@@ -15,12 +62,7 @@ class Spider():
     
     def __init__(self, name=None, json_file=None, json_object=None):
         self.json_file = json_file
-        
-        if json_file == None:
-            self.settings = json_object
-        else:
-            self.settings = read_json_file(self.json_file)
-        
+        self.settings  = json_object if json_file is None else read_json_file(self.json_file)
         self.custom_settings = self.get_custom_settings()
         self.index = self.settings["index"]
         self.name =  self.settings["name"]  if name is None else name
@@ -37,7 +79,7 @@ class Spider():
         print("NAME:", self.name)
         print("SETTINGS:", self.settings)
         return ""
-    
+   
 class SpiderController():
     spiders = []
     output_spiders = []
@@ -93,43 +135,8 @@ class SpiderController():
         process = self.get_spider_process(self.spiders[spider_index])
         process.start(stop_after_crawl=False)
 
-class RequestMapper():
-    def __init__(self) -> None:
-        pass
-    
-    def get_json_request(self, request:Request):
-        request = {
-                   "url": request.url
-                   }
-        print("REQUEST",request)
-        
-        return request
-    
-    # given a scrapy Response object, convert to json response 
-    def get_json_response(self, response:Response):
-        
-        response =  {
-        "url": response.url,
-        "status": response.status,
-        "headers": response.headers.to_unicode_dict(),
-        "protocol": response.protocol,
-        "ip_address": str(response.ip_address),
-        "flags": response.flags,
-        "certificate": str(response.certificate)
-        }
-        return response
-    
-    def get_response(self, json):
-        response = Response(url=json["url"], 
-                        status=json["status"], 
-                        headers=json["headers"],
-                        protocol=json["protocol"]
-                        )
-        print(response.headers)
-    
-    def get_request_from_response(self, response:Response):
-        req = Request(url=response.url)
-        return req
+
+  
         
 if __name__ == "__main__":
     controller = SpiderController()
