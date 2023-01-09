@@ -2,9 +2,9 @@ from typing import List
 from scrapy.http import FormRequest, Response, Request
 from scrapy.crawler import CrawlerProcess
 from scrapy.utils.project import get_project_settings
-from util.file_util import read_json_file, overwrite_json_file, append_json_file
-import json
-from ast import literal_eval
+from util.file_util import read_json_file, append_json_file
+from lxml import etree
+
 
 class RequestMapper():    
     def __init__(self) -> None:
@@ -108,6 +108,13 @@ class SpiderController():
         
     def get_current_spider(self, index):
         return self.spiders[index]
+    
+    def get_form_data(self, form_data:dict, response:Response):
+        for key,val in form_data.items():
+            value = response.xpath(val).get()
+            if value != None: # if valid xpath is found
+                form_data[key] = value
+        return form_data
 
     def update_spider(self, spider_settings, spider_index):
         spider = self.spiders[spider_index]
@@ -134,9 +141,6 @@ class SpiderController():
     def start_spider_process(self, spider_index):
         process = self.get_spider_process(self.spiders[spider_index])
         process.start(stop_after_crawl=False)
-
-
-  
         
 if __name__ == "__main__":
     controller = SpiderController()

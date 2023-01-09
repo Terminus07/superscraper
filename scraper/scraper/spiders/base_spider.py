@@ -47,24 +47,26 @@ class BaseSpider(scrapy.Spider):
         
         if(self.index != 0):
             self.previous_spider = self.controller.get_previous_spider(self.index)
-            print("PREVIOUS",self.previous_spider.settings)
-        print("CURRENT",self.current_spider.settings)
         
         super(BaseSpider, self).__init__(*args, **kwargs)    
     
-    # override start_requests function
+    # override start_requests
     def start_requests(self):
+        if not self.start_urls and hasattr(self, 'start_url'):
+            raise AttributeError(
+                "Crawling could not start: 'start_urls' not found "
+                "or empty (but found 'start_url' attribute instead, "
+                "did you miss an 's'?)")
+        
         for url in self.start_urls:
             self.request = Request(url, dont_filter=True)
             yield self.request
 
     def parse(self, response):
-        print("PARSE")
         response:Response
         self.response = self.mapper.get_json_response(response)        
         self.request = self.mapper.get_json_request(self.request)
         
-        print("XPATHS", self.xpaths)
         # extract text
         for xpath in self.xpaths:
             print(xpath)
@@ -88,9 +90,10 @@ class BaseSpider(scrapy.Spider):
                 print(e)
 
         # test login token
-        # self.form_data["loginToken"] = response.xpath('//input[contains(@name, "login")]/@value').getall()
-   
+
         if len(self.form_data) > 0:
+            self.form_data = self.controller.get_form_data(self.form_data, response)
+            print("FORM DATA", self.form_data)
             return FormRequest.from_response(response, formdata=self.form_data, callback=self.form_data_response)
  
     def form_data_response(self, response):
@@ -110,7 +113,6 @@ class BaseSpider(scrapy.Spider):
 
         # start next spider process       
         if(self.index != len(self.controller.spiders) - 1):
-            print("start")
             self.controller.start_spider_process(self.index +1)
         else:
             print("OK")
