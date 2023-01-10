@@ -2,7 +2,7 @@
     {
         "name": "base",
         "start_urls": [
-            "https://quotes.toscrape.com/page/1/"
+            "https://www.google.com"
         ],
         "xpaths": [
             "//title/text()"
@@ -12,7 +12,7 @@
         "form_data": {
             "username": "username",
             "password": "password",
-            "loginToken": "//title/text()"
+            "loginToken": "//input[contains(@name, 'login')]/@value"
         },
         "custom_settings": {
             "LOG_ENABLED": false
@@ -23,6 +23,8 @@
         "output_xpaths": [],
         "output_selectors": [],
         "request": {},
-        "response": {}
+        "response": {},
+        "response_urls": [],
+        "response_url_xpaths": []
     }
 ]

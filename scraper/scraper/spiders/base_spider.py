@@ -32,6 +32,10 @@ class BaseSpider(scrapy.Spider):
     output_selectors = []
     request = {}
     response = {}
+    
+    # response
+    response_urls = []
+    response_url_xpaths = []
 
     def __init__(self, *args, **kwargs):
         self.json_settings = kwargs
@@ -67,9 +71,9 @@ class BaseSpider(scrapy.Spider):
         self.response = self.mapper.get_json_response(response)        
         self.request = self.mapper.get_json_request(self.request)
         
+        
         # extract text
         for xpath in self.xpaths:
-            print(xpath)
             self.output_xpaths.append(response.xpath(xpath).getall())
             
         for selector in self.selectors:
@@ -88,18 +92,18 @@ class BaseSpider(scrapy.Spider):
                 yield wget.download(link, out=file)
             except Exception as e:
                 print(e)
-
-        # test login token
-
+ 
+        # generate form data
         if len(self.form_data) > 0:
             self.form_data = self.controller.get_form_data(self.form_data, response)
             print("FORM DATA", self.form_data)
-            return FormRequest.from_response(response, formdata=self.form_data, callback=self.form_data_response)
- 
+            yield FormRequest.from_response(response, formdata=self.form_data, 
+                                            callback=self.form_data_response)
+    
     def form_data_response(self, response):
         response:Response
-        self.response = self.mapper.get_json_response(response)
-        print("RESPONSE", self.response)
+        links = response.xpath('//a[contains(@href, "course/view.php")]/@href').getall()
+        print("FORM RESPONSE", links)
 
     def closed(self, reason):
         # update json settings
@@ -115,5 +119,5 @@ class BaseSpider(scrapy.Spider):
         if(self.index != len(self.controller.spiders) - 1):
             self.controller.start_spider_process(self.index +1)
         else:
-            print("OK")
+            print(reason)
             os.kill(os.getpid(), signal.SIGINT)

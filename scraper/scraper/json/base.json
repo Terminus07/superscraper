@@ -22,5 +22,7 @@
     "output_xpaths": [],
     "output_selectors": [],
     "request": {},
-    "response": {}
+    "response": {},
+    "response_urls": [],
+    "response_url_xpaths": []
 }

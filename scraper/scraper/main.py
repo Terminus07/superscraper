@@ -111,9 +111,9 @@ class SpiderController():
     
     def get_form_data(self, form_data:dict, response:Response):
         for key,val in form_data.items():
-            value = response.xpath(val).get()
-            if value != None: # if valid xpath is found
-                form_data[key] = value
+            val:str
+            if val.startswith("//"): # xpath
+                form_data[key] = response.xpath(val).get()
         return form_data
 
     def update_spider(self, spider_settings, spider_index):
