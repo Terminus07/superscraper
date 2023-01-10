@@ -65,49 +65,47 @@ class BaseSpider(scrapy.Spider):
         for url in self.start_urls:
             self.request = Request(url, dont_filter=True)
             yield self.request
-
-    def parse(self, response):
-        response:Response
-        self.response = self.mapper.get_json_response(response)        
-        self.request = self.mapper.get_json_request(self.request)
-        
-        
+            
+    def extract_data(self, response:Response):
         # extract text
         for xpath in self.xpaths:
             self.output_xpaths.append(response.xpath(xpath).getall())
             
         for selector in self.selectors:
-            self.output_selectors.append(self.response.css(selector).getall())
-
-        # download files
+            self.output_selectors.append(response.css(selector).getall())
+            
+        # download link xpaths
         for d in self.download_link_xpaths:
-            self.download_links.extend(response.xpath(d).getall())
+            self.download_links.extend(response.xpath(d).getall())  
+ 
+    def parse(self, response):
+        response:Response
+        self.response = self.mapper.get_json_response(response)        
+        self.request = self.mapper.get_json_request(self.request)
+
+        self.extract_data(response)
                         
-        for link in self.download_links: 
-            # check if filename is valid
+        for link in self.download_links:
             f = link.split("/")[-1]
             file =  f if is_valid_filename(f) else None
 
             try:
-                yield wget.download(link, out=file)
+                wget.download(link, out=file)
             except Exception as e:
                 print(e)
  
         # generate form data
         if len(self.form_data) > 0:
             self.form_data = self.controller.get_form_data(self.form_data, response)
-            print("FORM DATA", self.form_data)
             yield FormRequest.from_response(response, formdata=self.form_data, 
                                             callback=self.form_data_response)
     
     def form_data_response(self, response):
         response:Response
-        links = response.xpath('//a[contains(@href, "course/view.php")]/@href').getall()
-        print("FORM RESPONSE", links)
+               
 
     def closed(self, reason):
         # update json settings
-        print(self.output_xpaths)
         self.json_settings["output_xpaths"] = self.output_xpaths
         self.json_settings["output_selectors"] = self.output_selectors
         self.json_settings["index"] = self.index

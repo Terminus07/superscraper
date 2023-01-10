@@ -93,7 +93,9 @@ class SpiderController():
     def get_spiders(self, json_file=None):
         # read spiders.json file
         spiders = []
-        settings = read_json_file("json/spiders.json") if json_file is None else read_json_file(json_file)
+        
+        # change to spiders.json
+        settings = read_json_file("json/secret.json") if json_file is None else read_json_file(json_file)
         
         for index,s in enumerate(settings):
             s['index'] = index

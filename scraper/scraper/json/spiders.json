@@ -2,7 +2,7 @@
     {
         "name": "base",
         "start_urls": [
-            "https://www.google.com"
+            "https://learn.frederick.ac.cy/login/index.php"
         ],
         "xpaths": [
             "//title/text()"
@@ -19,7 +19,9 @@
         },
         "links": [],
         "download_links": [],
-        "download_link_xpaths": [],
+        "download_link_xpaths": [
+            "//a[contains(@href, 'course/view.php')]/@title"
+        ],
         "output_xpaths": [],
         "output_selectors": [],
         "request": {},
