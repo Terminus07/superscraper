@@ -12,10 +12,9 @@ class BaseSpider(scrapy.Spider):
     # spider controller and mapper
     controller = ''
     mapper = None
-        
+    
     # spider json objects
     previous_spider = None
-    current_spider = None
     json_settings = []
     
     # inputs
@@ -34,6 +33,7 @@ class BaseSpider(scrapy.Spider):
     response = {}
     
     # response
+    previous_response_urls = []
     response_urls = []
     response_url_xpaths = []
 
@@ -46,25 +46,35 @@ class BaseSpider(scrapy.Spider):
         self.controller = SpiderController()
         self.mapper = RequestMapper()
         self.previous_spider:Spider
-        self.current_spider:Spider
-        self.current_spider = self.controller.get_current_spider(self.index)
-        
+ 
         if(self.index != 0):
             self.previous_spider = self.controller.get_previous_spider(self.index)
+            self.previous_response_urls =  self.previous_spider.settings['response_urls']
         
         super(BaseSpider, self).__init__(*args, **kwargs)    
-    
+
     # override start_requests
     def start_requests(self):
-        if not self.start_urls and hasattr(self, 'start_url'):
-            raise AttributeError(
-                "Crawling could not start: 'start_urls' not found "
-                "or empty (but found 'start_url' attribute instead, "
-                "did you miss an 's'?)")
+    
+        if len(self.start_urls) == 0:
+            error = "No start urls defined."
+            print(error)
+            raise AttributeError(error)
+            
+        # generate start_urls from xpaths
+        print("START_URLS", self.start_urls)
         
+        
+        # regular urls
         for url in self.start_urls:
             self.request = Request(url, dont_filter=True)
             yield self.request
+
+        
+        # links
+        # links that were previously found from response (response links)
+        
+        
             
     def extract_data(self, response:Response):
         # extract text
@@ -76,7 +86,10 @@ class BaseSpider(scrapy.Spider):
             
         # download link xpaths
         for d in self.download_link_xpaths:
-            self.download_links.extend(response.xpath(d).getall())  
+            self.download_links.extend(response.xpath(d).getall()) 
+            
+        for xpath in self.response_url_xpaths:
+            self.response_urls.append(response.xpath(xpath).getall())
  
     def parse(self, response):
         response:Response
@@ -96,13 +109,14 @@ class BaseSpider(scrapy.Spider):
  
         # generate form data
         if len(self.form_data) > 0:
-            self.form_data = self.controller.get_form_data(self.form_data, response)
+            self.form_data = self.mapper.get_form_data(self.form_data, response)
             yield FormRequest.from_response(response, formdata=self.form_data, 
                                             callback=self.form_data_response)
     
     def form_data_response(self, response):
         response:Response
-               
+        self.response = self.mapper.get_json_response(response)        
+
 
     def closed(self, reason):
         # update json settings
@@ -111,6 +125,8 @@ class BaseSpider(scrapy.Spider):
         self.json_settings["index"] = self.index
         self.json_settings["request"] =  self.request
         self.json_settings["response"] = self.response
+        self.json_settings["response_urls"] = self.response_urls
+        
         self.controller.update_spider(self.json_settings, self.index)
 
         # start next spider process       

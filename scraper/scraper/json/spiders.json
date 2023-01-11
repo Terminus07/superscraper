@@ -2,26 +2,20 @@
     {
         "name": "base",
         "start_urls": [
-            "https://learn.frederick.ac.cy/login/index.php"
+            "https://quotes.toscrape.com/page/1/"
         ],
         "xpaths": [
             "//title/text()"
         ],
         "selectors": [],
         "xpath_selectors": [],
-        "form_data": {
-            "username": "username",
-            "password": "password",
-            "loginToken": "//input[contains(@name, 'login')]/@value"
-        },
+        "form_data": {},
         "custom_settings": {
             "LOG_ENABLED": false
         },
         "links": [],
         "download_links": [],
-        "download_link_xpaths": [
-            "//a[contains(@href, 'course/view.php')]/@title"
-        ],
+        "download_link_xpaths": [],
         "output_xpaths": [],
         "output_selectors": [],
         "request": {},

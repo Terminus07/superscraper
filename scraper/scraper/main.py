@@ -20,6 +20,15 @@ class RequestMapper():
                    }
         return request
     
+    def get_form_data(self, form_data:dict, response:Response):
+        for key,val in form_data.items():
+            val:str
+            if val.startswith("//"): # xpath
+                form_data[key] = response.xpath(val).get()
+                
+        print("SENDING FORM DATA...", form_data)
+        return form_data
+    
     # given a scrapy Response object, convert to json response 
     def get_json_response(self, response:Response):
         
@@ -107,16 +116,8 @@ class SpiderController():
         if spider_index != 0:
             previous_spider = self.output_spiders[spider_index-1]
             return previous_spider
-        
-    def get_current_spider(self, index):
-        return self.spiders[index]
     
-    def get_form_data(self, form_data:dict, response:Response):
-        for key,val in form_data.items():
-            val:str
-            if val.startswith("//"): # xpath
-                form_data[key] = response.xpath(val).get()
-        return form_data
+    
 
     def update_spider(self, spider_settings, spider_index):
         spider = self.spiders[spider_index]

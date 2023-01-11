@@ -8,11 +8,7 @@
     ],
     "selectors": [],
     "xpath_selectors": [],
-    "form_data": {
-        "username": "username",
-        "password": "password",
-        "loginToken": "//input[contains(@name, 'login')]/@value"
-    },
+    "form_data": {},
     "custom_settings": {
         "LOG_ENABLED": false
     },
