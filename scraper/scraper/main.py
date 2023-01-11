@@ -15,11 +15,11 @@ class ArgParser():
         # spider command
         spider = self.subparser.add_parser('spider')
         spider.add_argument('type', choices=['base', 'selenium'], nargs='+')
-        spider.add_argument('dir',  type=lambda s:self.check_file_extension(["json"],s), nargs='?')
+        spider.add_argument('-d', '--directory', type=lambda s:self.check_file_extension(["json"],s) )
         
         # crawl command
         crawl = self.subparser.add_parser('crawl')
-        crawl.add_argument('json', type=lambda s:self.check_file_extension(["json"],s), nargs='+')
+        crawl.add_argument('json', type=lambda s:self.check_file_extension(["json"],s), default="json/spiders.json", nargs='?')
 
         # create args dictionary
         args = vars(self.parser.parse_args())
@@ -34,13 +34,15 @@ class ArgParser():
     def create_command(self, command, args:dict):
         print(args, command)
         if command == "crawl":
-            controller = SpiderController()
+            # check if passed spiders.json file exists
+            file = args['json']
+            controller = SpiderController(file)
             controller.start_spider_process(0)
-            # if json file wasn't passed, use default spider.json file
+            
         elif command == "spider":
             # generate spider.json file
             types= args['type']
-            dir = args['dir']
+            dir = args['directory']
             for type in types:
                 # create json file of each type {base, selenium}
                 data = read_json_file("json/"+type+".json")
@@ -54,8 +56,6 @@ class ArgParser():
         if ext not in choices or ext == '':
             self.parser.error("Invalid file extension. File doesn't end with one of {}".format(choices))
         return fname
-    
-    
     
 class RequestMapper():    
     def __init__(self) -> None:
@@ -198,4 +198,4 @@ if __name__ == "__main__":
     parser = ArgParser()
     # controller = SpiderController()
     # controller.start_spider_process(0)
- 
+    

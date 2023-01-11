@@ -15,10 +15,12 @@ def overwrite_json_file(json_file, data):
 
 def append_json_file(json_file, data):
     existing = read_json_file(json_file)
-    with open(json_file, 'w+') as outfile:
-        existing.append(data)
-        outfile.write(json.dumps(existing))
-        outfile.close()
+    
+    if existing is not None:
+        with open(json_file, 'w+') as outfile:
+            existing.append(data)
+            outfile.write(json.dumps(existing))
+            outfile.close()
         
 # def create_json_file(dir):
 #     with open(dir, 'w+') as outfile:
