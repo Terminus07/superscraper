@@ -1,11 +1,35 @@
-from typing import List
 from scrapy.http import FormRequest, Response, Request
 from scrapy.crawler import CrawlerProcess
 from scrapy.utils.project import get_project_settings
 from util.file_util import read_json_file, append_json_file
-from lxml import etree
+import argparse
+import os
 
+class ArgParser():
+    parser = None
+    def __init__(self) -> None:
+        self.parser = argparse.ArgumentParser()
+        self.subparser = self.parser.add_subparsers(dest="name")
+        
+        spider = self.subparser.add_parser('spider')
+        spider.add_argument('type', choices=['base', 'selenium'], nargs='+')
+        
+        crawl = self.subparser.add_parser('crawl')
+        crawl.add_argument('json', type=lambda s:self.check_file_extension(["json"],s), nargs='+')
 
+        args = vars(self.parser.parse_args())
+
+        if args['name'] is None:
+            self.parser.error("No arguments passed.") 
+        
+    def check_file_extension(self,choices,fname):
+        ext = os.path.splitext(fname)[1][1:]
+        if ext not in choices or ext == '':
+            self.parser.error("Invalid file extension. File doesn't end with one of {}".format(choices))
+        return fname
+    
+    
+    
 class RequestMapper():    
     def __init__(self) -> None:
         pass
@@ -116,8 +140,6 @@ class SpiderController():
         if spider_index != 0:
             previous_spider = self.output_spiders[spider_index-1]
             return previous_spider
-    
-    
 
     def update_spider(self, spider_settings, spider_index):
         spider = self.spiders[spider_index]
@@ -146,5 +168,7 @@ class SpiderController():
         process.start(stop_after_crawl=False)
         
 if __name__ == "__main__":
-    controller = SpiderController()
-    controller.start_spider_process(0)
+    parser = ArgParser()
+    # controller = SpiderController()
+    # controller.start_spider_process(0)
+ 
