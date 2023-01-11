@@ -20,3 +20,8 @@ def append_json_file(json_file, data):
         outfile.write(json.dumps(existing))
         outfile.close()
         
+# def create_json_file(dir):
+#     with open(dir, 'w+') as outfile:
+#         outfile.write(json.dumps([]))
+#         outfile.close()
+        

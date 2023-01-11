@@ -1,26 +1,53 @@
 from scrapy.http import FormRequest, Response, Request
 from scrapy.crawler import CrawlerProcess
 from scrapy.utils.project import get_project_settings
-from util.file_util import read_json_file, append_json_file
+from util.file_util import read_json_file, append_json_file, overwrite_json_file
 import argparse
 import os
 
 class ArgParser():
     parser = None
+    
     def __init__(self) -> None:
         self.parser = argparse.ArgumentParser()
         self.subparser = self.parser.add_subparsers(dest="name")
         
+        # spider command
         spider = self.subparser.add_parser('spider')
         spider.add_argument('type', choices=['base', 'selenium'], nargs='+')
+        spider.add_argument('dir',  type=lambda s:self.check_file_extension(["json"],s), nargs='?')
         
+        # crawl command
         crawl = self.subparser.add_parser('crawl')
         crawl.add_argument('json', type=lambda s:self.check_file_extension(["json"],s), nargs='+')
 
+        # create args dictionary
         args = vars(self.parser.parse_args())
 
         if args['name'] is None:
-            self.parser.error("No arguments passed.") 
+            self.parser.error("No arguments passed.")
+        else: 
+            # start functions
+            cmd = args['name']
+            self.create_command(cmd, args)
+
+    def create_command(self, command, args:dict):
+        print(args, command)
+        if command == "crawl":
+            controller = SpiderController()
+            controller.start_spider_process(0)
+            # if json file wasn't passed, use default spider.json file
+        elif command == "spider":
+            # generate spider.json file
+            types= args['type']
+            dir = args['dir']
+            for type in types:
+                # create json file of each type {base, selenium}
+                data = read_json_file("json/"+type+".json")
+                
+                #  spiders.json is default directory for the file
+                dir = "json/spiders.json" if dir is None else dir
+                append_json_file(dir, data)
         
     def check_file_extension(self,choices,fname):
         ext = os.path.splitext(fname)[1][1:]
