@@ -13,7 +13,7 @@ help_text(){
     echo -e "Usage: command [--option]: "
     echo -e "Commands:"
     echo -e "\tspider {base, selenium}: Create spiders.json file that can be used with the crawl command"
-    echo -e "\tcrawl {spider.json}: Run spiders.json file to extract or automate tasks on the web"
+    echo -e "\tcrawl [spider.json]: Run spiders.json file to extract or automate tasks on the web"
     echo -e "\thistory: Command history"
     echo -e "\tsettings: Shell settings"
     echo -e "\thelp: Manual for Super Scraper"
@@ -40,9 +40,9 @@ main_menu(){
     OPTIONS=($OPTION)
     history -s "$OPTION"
     case $OPTION in
-        "spider "*) execute_script "main.py"
+        "spider "*) execute_script "main.py spider"
         ;;
-        "crawl "*) execute_script "main.py"
+        "crawl "*) execute_script "main.py crawl"
         ;;
         clear) clear
         ;;
