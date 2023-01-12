@@ -1,7 +1,7 @@
 from scrapy.http import FormRequest, Response, Request
 from scrapy.crawler import CrawlerProcess
 from scrapy.utils.project import get_project_settings
-from util.file_util import read_json_file, append_json_file, overwrite_json_file
+from util.file_util import read_json_file, append_json_file
 import argparse
 import os
 
@@ -19,7 +19,7 @@ class ArgParser():
         
         # crawl command
         crawl = self.subparser.add_parser('crawl')
-        crawl.add_argument('json', type=lambda s:self.check_file_extension(["json"],s), default="json/spiders.json", nargs='?')
+        crawl.add_argument('json', type=lambda s:self.check_file_extension(["json"],s), default="json/secret.json", nargs='?')
 
         # create args dictionary
         args = vars(self.parser.parse_args())
@@ -79,6 +79,9 @@ class RequestMapper():
                 
         print("SENDING FORM DATA...", form_data)
         return form_data
+    
+    def get_start_urls(self, response:Response):
+        print()
     
     # given a scrapy Response object, convert to json response 
     def get_json_response(self, response:Response):
@@ -196,6 +199,4 @@ class SpiderController():
         
 if __name__ == "__main__":
     parser = ArgParser()
-    # controller = SpiderController()
-    # controller.start_spider_process(0)
     
