@@ -80,8 +80,8 @@ class RequestMapper():
         print("SENDING FORM DATA...", form_data)
         return form_data
     
-    def get_start_urls(self, response:Response):
-        print()
+   
+     
     
     # given a scrapy Response object, convert to json response 
     def get_json_response(self, response:Response):
@@ -122,6 +122,8 @@ class Spider():
     settings = ''
     custom_settings = ''
     json_file = ''
+    response = ''
+    request = ''
     
     def __init__(self, name=None, json_file=None, json_object=None):
         self.json_file = json_file
@@ -129,6 +131,8 @@ class Spider():
         self.custom_settings = self.get_custom_settings()
         self.index = self.settings["index"]
         self.name =  self.settings["name"]  if name is None else name
+        self.response = self.settings["response"]
+        self.request = self.settings["request"]
 
     def get_custom_settings(self):
         project_settings = get_project_settings()
@@ -142,7 +146,7 @@ class Spider():
         print("NAME:", self.name)
         print("SETTINGS:", self.settings)
         return ""
-   
+
 class SpiderController():
     spiders = []
     output_spiders = []
@@ -170,6 +174,11 @@ class SpiderController():
         if spider_index != 0:
             previous_spider = self.output_spiders[spider_index-1]
             return previous_spider
+        else:
+            return None
+        
+    def get_spider(self, spider_index):
+        return self.output_spiders[spider_index]
 
     def update_spider(self, spider_settings, spider_index):
         spider = self.spiders[spider_index]

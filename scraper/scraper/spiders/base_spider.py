@@ -4,7 +4,6 @@ from scrapy.http import FormRequest, Response, Request
 import wget
 from pathvalidate import is_valid_filename
 from scraper.main import RequestMapper
-import json
 
 class BaseSpider(scrapy.Spider):
     name = "base"
@@ -15,6 +14,8 @@ class BaseSpider(scrapy.Spider):
     
     # spider json objects
     previous_spider = None
+    previous_response_urls = []
+    previous_response = None
     json_settings = []
     
     # inputs
@@ -32,8 +33,8 @@ class BaseSpider(scrapy.Spider):
     request = {}
     response = {}
     
+    
     # response
-    previous_response_urls = []
     response_urls = []
     response_url_xpaths = []
 
@@ -46,33 +47,31 @@ class BaseSpider(scrapy.Spider):
         self.controller = SpiderController()
         self.mapper = RequestMapper()
         self.previous_spider:Spider
- 
-        if(self.index != 0):
-            self.previous_spider = self.controller.get_previous_spider(self.index)
-            self.previous_response_urls =  self.previous_spider.settings['response_urls']
         
+        # get previous spider, if it exists
+        self.previous_spider = self.controller.get_previous_spider(self.index)
+ 
         super(BaseSpider, self).__init__(*args, **kwargs)    
 
     # override start_requests
     def start_requests(self):
-    
-        if len(self.start_urls) == 0:
+
+        # links that were previously found from response (response links)
+        if self.previous_spider:
+            self.previous_response_urls = self.previous_spider.settings["response_urls"]
+            self.previous_response = self.previous_spider.response
+            # print("RESPONSE",self.previous_spider.response, "\n", self.previous_response_urls)
+        
+        if len(self.start_urls) == 0 and self.index == 0:
             error = "No start urls defined."
             print(error)
             raise AttributeError(error)
-            
-        # generate start_urls from xpaths
-        print("START_URLS", self.start_urls)
-        
         
         # regular urls
         for url in self.start_urls:
             self.request = Request(url, dont_filter=True)
             yield self.request
-
         
-        # links
-        # links that were previously found from response (response links)
         
         
             
@@ -89,6 +88,7 @@ class BaseSpider(scrapy.Spider):
             self.download_links.extend(response.xpath(d).getall()) 
             
         for xpath in self.response_url_xpaths:
+            print("XPATH",xpath)
             self.response_urls.append(response.xpath(xpath).getall())
  
     def parse(self, response):
