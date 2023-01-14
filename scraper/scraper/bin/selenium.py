@@ -8,6 +8,8 @@ class SeleniumHandler():
             
 class SeleniumEvent():
     type = 0
+    # event types
+    # driver event or element event
     
     def __init__(self, event):
         pass

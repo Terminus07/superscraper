@@ -6,8 +6,8 @@ Command line interface environment for scraping anything from the web. Super scr
 
 ```
 COMMANDS:
-spider [-h] {base,selenium} - Create spiders.json file that can be used with the crawl command
-crawl [-h] [spider.json] - Run spiders.json file to extract or automate tasks on the web
+spider [-h] {base,selenium} - Create spiders.json file
+crawl [-h] [spider.json] - Run spiders using a spiders.json file
 history - View command history
 settings - Shell settings
 help - Shell manual
