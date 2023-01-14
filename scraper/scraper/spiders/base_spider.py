@@ -33,7 +33,6 @@ class BaseSpider(scrapy.Spider):
     request = {}
     response = {}
     
-    
     # response
     response_urls = []
     response_url_xpaths = []
@@ -56,12 +55,11 @@ class BaseSpider(scrapy.Spider):
     # override start_requests
     def start_requests(self):
 
-        # links that were previously found from response (response links)
+        # check if previous spider exists to generate response links
         if self.previous_spider:
             self.previous_response_urls = self.previous_spider.settings["response_urls"]
             self.previous_response = self.previous_spider.response
-            # print("RESPONSE",self.previous_spider.response, "\n", self.previous_response_urls)
-        
+
         if len(self.start_urls) == 0 and self.index == 0:
             error = "No start urls defined."
             print(error)
@@ -72,8 +70,13 @@ class BaseSpider(scrapy.Spider):
             self.request = Request(url, dont_filter=True)
             yield self.request
         
-        
-        
+        # response urls (urls generated from previous spiders)
+        for url in self.previous_response_urls:
+            # get response object from json
+            print(self.previous_response_urls)
+            response = self.mapper.get_response(self.previous_response)
+            self.request = self.mapper.get_request_from_json_response(url,response)
+            yield self.request
             
     def extract_data(self, response:Response):
         # extract text
@@ -88,14 +91,13 @@ class BaseSpider(scrapy.Spider):
             self.download_links.extend(response.xpath(d).getall()) 
             
         for xpath in self.response_url_xpaths:
-            print("XPATH",xpath)
-            self.response_urls.append(response.xpath(xpath).getall())
+            self.response_urls.extend(response.xpath(xpath).getall())
+
  
-    def parse(self, response):
-        response:Response
+    def parse(self, response:Response):
+               
         self.response = self.mapper.get_json_response(response)        
         self.request = self.mapper.get_json_request(self.request)
-
         self.extract_data(response)
                         
         for link in self.download_links:
@@ -110,13 +112,15 @@ class BaseSpider(scrapy.Spider):
         # generate form data
         if len(self.form_data) > 0:
             self.form_data = self.mapper.get_form_data(self.form_data, response)
-            yield FormRequest.from_response(response, formdata=self.form_data, 
+            self.request = FormRequest.from_response(response, formdata=self.form_data, 
                                             callback=self.form_data_response)
+            yield self.request
     
-    def form_data_response(self, response):
-        response:Response
+    def form_data_response(self, response:Response):
+        # print(response.url)
+        self.extract_data(response)
+        self.request = self.mapper.get_json_request(self.request)
         self.response = self.mapper.get_json_response(response)        
-
 
     def closed(self, reason):
         # update json settings

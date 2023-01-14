@@ -80,9 +80,6 @@ class RequestMapper():
         print("SENDING FORM DATA...", form_data)
         return form_data
     
-   
-     
-    
     # given a scrapy Response object, convert to json response 
     def get_json_response(self, response:Response):
         
@@ -97,23 +94,26 @@ class RequestMapper():
         }
         return response
     
-    def get_response(self, json):
-        response = Response(url=json["url"], 
-                        status=json["status"], 
-                        headers=json["headers"],
-                        protocol=json["protocol"],
-                        ip_address=json["ip_address"]
-                        )
-        print(response.headers)
-        return response
-    
     def get_request(self, json):
         request = Request(url=json['url'], 
                           headers=json['headers']
                           )
     
-    def get_request_from_response(self, response:Response):
-        req = Request(url=response.url)
+    
+    def get_response(self, json):
+        response = Response(url=json["url"], 
+                        status=json["status"], 
+                        headers=json["headers"],
+                        protocol=json["protocol"],
+                        ip_address=json["ip_address"],
+                        certificate= json["certificate"]
+                        )
+        return response
+    
+
+    def get_request_from_json_response(self, url,response:Response):
+        req = Request(url=url, 
+                      meta=response.meta, dont_filter=True)
         return req
     
 class Spider():
@@ -158,9 +158,7 @@ class SpiderController():
         self.output_spiders = self.get_spiders("json/output.json")
 
     def get_spiders(self, json_file=None):
-        # read spiders.json file
-        spiders = []
-        
+        spiders = []        
         # change to spiders.json
         settings = read_json_file("json/secret.json") if json_file is None else read_json_file(json_file)
         
