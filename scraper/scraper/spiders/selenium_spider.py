@@ -29,7 +29,7 @@ class SeleniumSpider(scrapy.Spider):
         self.index = kwargs['index']
 
         # get spider controller
-        from scraper.main import SpiderController
+        from scraper.bin.spider import SpiderController
         from scraper.bin.selenium import SeleniumHandler
         self.controller = SpiderController()
         self.handler = SeleniumHandler()

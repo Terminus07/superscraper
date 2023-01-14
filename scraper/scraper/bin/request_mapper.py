@@ -1,4 +1,5 @@
 from scrapy.http import Response, Request
+
 class RequestMapper():    
     def __init__(self) -> None:
         pass

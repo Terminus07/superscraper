@@ -41,8 +41,8 @@ class BaseSpider(scrapy.Spider):
         self.index = kwargs['index']
 
         # get spider controller
-        from scraper.main import Spider, SpiderController
-        from scraper.bin.requests import RequestMapper
+        from scraper.bin.spider import Spider, SpiderController
+        from scraper.bin.request_mapper import RequestMapper
        
         self.controller = SpiderController()
         self.mapper = RequestMapper()
