@@ -6,7 +6,6 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver import ChromeOptions, Chrome
 from webdriver_manager.chrome import ChromeDriverManager
 
-import sys
 import scrapy
 import os
 import signal
@@ -30,7 +29,8 @@ class SeleniumSpider(scrapy.Spider):
         self.index = kwargs['index']
 
         # get spider controller
-        from scraper.main import SpiderController, SeleniumHandler
+        from scraper.main import SpiderController
+        from scraper.bin.selenium import SeleniumHandler
         self.controller = SpiderController()
         self.handler = SeleniumHandler()
         self.previous_spider = self.controller.get_previous_spider(self.index)

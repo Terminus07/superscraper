@@ -3,7 +3,6 @@ import os, signal
 from scrapy.http import FormRequest, Response, Request
 import wget
 from pathvalidate import is_valid_filename
-from scraper.main import RequestMapper
 
 class BaseSpider(scrapy.Spider):
     name = "base"
@@ -42,10 +41,14 @@ class BaseSpider(scrapy.Spider):
         self.index = kwargs['index']
 
         # get spider controller
-        from scraper.main import SpiderController, Spider
+        from scraper.main import Spider, SpiderController
+        from scraper.bin.requests import RequestMapper
+       
         self.controller = SpiderController()
         self.mapper = RequestMapper()
         self.previous_spider:Spider
+        
+        print("he")
         
         # get previous spider, if it exists
         self.previous_spider = self.controller.get_previous_spider(self.index)
