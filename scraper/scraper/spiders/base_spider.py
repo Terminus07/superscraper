@@ -56,7 +56,7 @@ class BaseSpider(scrapy.Spider):
     def start_requests(self):
 
         # check if previous spider exists to generate response links
-        if self.previous_spider:
+        if self.previous_spider and self.previous_spider.name == "base":
             self.previous_response_urls = self.previous_spider.settings["response_urls"]
             self.previous_response = self.previous_spider.response
 
@@ -79,7 +79,7 @@ class BaseSpider(scrapy.Spider):
             yield self.request
             
     def extract_data(self, response:Response):
-        # extract text
+        # extract text        
         for xpath in self.xpaths:
             self.output_xpaths.append(response.xpath(xpath).getall())
             
@@ -95,7 +95,7 @@ class BaseSpider(scrapy.Spider):
 
  
     def parse(self, response:Response):
-               
+       
         self.response = self.mapper.get_json_response(response)        
         self.request = self.mapper.get_json_request(self.request)
         self.extract_data(response)
@@ -124,6 +124,8 @@ class BaseSpider(scrapy.Spider):
 
     def closed(self, reason):
         # update json settings
+        print("INDEX", self.index)
+        
         self.json_settings["output_xpaths"] = self.output_xpaths
         self.json_settings["output_selectors"] = self.output_selectors
         self.json_settings["index"] = self.index

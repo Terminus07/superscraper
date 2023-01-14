@@ -8,42 +8,59 @@ from webdriver_manager.chrome import ChromeDriverManager
 
 import sys
 import scrapy
+import os
+import signal
 
 class SeleniumSpider(scrapy.Spider):
     name = "selenium"
     
     driver_type = 0
+    json_settings = []
+    index = 0
+    request = {}
+    response = {}
     
+    options = []
+    driver = None
+    handler = None
+    events = []
     
     def __init__(self, *args, **kwargs):
         self.json_settings = kwargs
-        
-        # get spider controller
-        from scraper.main import SpiderController
-        self.controller = SpiderController()
+        self.index = kwargs['index']
 
+        # get spider controller
+        from scraper.main import SpiderController, SeleniumHandler
+        self.controller = SpiderController()
+        self.handler = SeleniumHandler()
+        self.previous_spider = self.controller.get_previous_spider(self.index)
+        
         super(SeleniumSpider, self).__init__(*args, **kwargs)
         
     def start_requests(self):
         return super().start_requests()
     
-    def parse(self, response, **kwargs):
+    def parse(self, response):
         # initialize driver
         s = Service(ChromeDriverManager().install())
-        options = ChromeOptions()
-        options.add_experimental_option("detach", True)
-        driver = webdriver.Chrome(service=s, options=options)
-        driver.get("https://google.com/")
-        driver.quit()
-
-# find elements
-# username = driver.find_element(By.NAME, "_user")
-# password = driver.find_element(By.NAME, "_pass")
-# dropdown = Select(driver.find_element(By.NAME, "_host"))
-# element = driver.find_element(By.ID, "passwd-id")
-# element = driver.find_element(By.NAME, "passwd")
-# element = driver.find_element(By.XPATH, "//input[@id='passwd-id']")
-# element = driver.find_element(By.CSS_SELECTOR, "input#passwd-id")
-
-# events
-# element.send_keys()
+        self.options = ChromeOptions()
+        self.options.add_experimental_option("detach", True)
+        self.driver = webdriver.Chrome(service=s, options=self.options)
+        self.driver.get("https://google.com/")
+        
+        self.handler.handle_events(self.events)
+        
+    def closed(self, reason):
+        self.json_settings["index"] = self.index
+        self.json_settings["request"] =  self.request
+        self.json_settings["response"] = self.response
+        
+        self.controller.update_spider(self.json_settings, self.index)
+        
+        # start next spider process       
+        if(self.index != len(self.controller.spiders) - 1):
+            self.driver.quit()
+            self.controller.start_spider_process(self.index +1)
+        else:
+            print(reason)
+            os.kill(os.getpid(), signal.SIGINT)
