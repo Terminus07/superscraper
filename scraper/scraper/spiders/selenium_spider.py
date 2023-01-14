@@ -9,8 +9,11 @@ from webdriver_manager.chrome import ChromeDriverManager
 import sys
 import scrapy
 
-class SeleniumSpider():
+class SeleniumSpider(scrapy.Spider):
     name = "selenium"
+    
+    driver_type = 0
+    
     
     def __init__(self, *args, **kwargs):
         self.json_settings = kwargs
@@ -21,13 +24,17 @@ class SeleniumSpider():
 
         super(SeleniumSpider, self).__init__(*args, **kwargs)
         
+    def start_requests(self):
+        return super().start_requests()
     
-# initialize driver
-# s = Service(ChromeDriverManager().install())
-# opts = ChromeOptions()
-# opts.add_experimental_option("detach", True)
-# driver = webdriver.Chrome(service=s, options=opts)
-# driver.get("https://google.com/")
+    def parse(self, response, **kwargs):
+        # initialize driver
+        s = Service(ChromeDriverManager().install())
+        options = ChromeOptions()
+        options.add_experimental_option("detach", True)
+        driver = webdriver.Chrome(service=s, options=options)
+        driver.get("https://google.com/")
+        driver.quit()
 
 # find elements
 # username = driver.find_element(By.NAME, "_user")

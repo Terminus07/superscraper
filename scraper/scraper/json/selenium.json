@@ -8,5 +8,10 @@
     ],
     "selectors": [],
     "xpath_selectors": [],
-    "driver_type": 0
+    "driver_type": 0,
+    "request": {},
+    "response": {},
+    "custom_settings": {
+        "LOG_ENABLED": false
+    }
 }

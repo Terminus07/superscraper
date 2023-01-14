@@ -82,7 +82,7 @@ class RequestMapper():
     
     # given a scrapy Response object, convert to json response 
     def get_json_response(self, response:Response):
-        
+
         response =  {
         "url": response.url,
         "status": response.status,
@@ -201,7 +201,10 @@ class SpiderController():
         return process
     
     def start_spider_process(self, spider_index):
-        process = self.get_spider_process(self.spiders[spider_index])
+        spider = self.spiders[spider_index]
+        spider:Spider
+        print("NAME",spider.name)
+        process = self.get_spider_process(spider)
         process.start(stop_after_crawl=False)
         
 if __name__ == "__main__":
