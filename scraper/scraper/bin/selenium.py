@@ -6,24 +6,41 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver import ChromeOptions, Chrome
 
 class SeleniumHandler():
-    driver_type = None
     driver = None
-    
-    def __init__(self, driver_type) -> None:
-        self.driver_type = driver_type
-    
-    def get_driver(self, index):
-        print("INDEX", index)
+    driver_types = {
+        0: "Chrome",
+        1: "Edge",
+        2: "Firefox",
+        3: "Safari"
+    }
+    events = []
+  
+    def __init__(self, events) -> None:
+        self.driver = self.get_driver()
+        self.events = events
         
-
-    def handle_events(self, events):
-        for event in events:
+    def get_driver(self):
+        return self.driver_types.get(0)
+   
+    def handle_events(self):
+        for index,event in enumerate(self.events):
+            event = SeleniumEvent(index, self.driver, event['function'])
             print(event)
-            
+
 class SeleniumEvent():
     type = 0
     function = ''
     driver = None
+    index = 0
     
-    def __init__(self, driver_type, event_json):
-        pass
+    def __init__(self, index:int, driver,function:str):
+        self.function = function
+        self.driver =  driver
+        self.index = index
+        
+    def __str__(self):
+        print("EVENT")
+        print("INDEX: ", self.index)
+        print("FUNCTION:", self.function)
+        print("DRIVER:", self.driver)
+        return ""

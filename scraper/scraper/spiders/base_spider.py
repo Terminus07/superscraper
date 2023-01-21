@@ -47,9 +47,7 @@ class BaseSpider(scrapy.Spider):
         self.controller = SpiderController()
         self.mapper = RequestMapper()
         self.previous_spider:Spider
-        
-        print("he")
-        
+
         # get previous spider, if it exists
         self.previous_spider = self.controller.get_previous_spider(self.index)
  

@@ -33,7 +33,7 @@ class SeleniumSpider(scrapy.Spider):
         from scraper.bin.spider import SpiderController
         from scraper.bin.selenium import SeleniumHandler
         self.controller = SpiderController()
-        self.handler = SeleniumHandler(self.driver_type)
+        # self.handler = SeleniumHandler(self.driver_type)
         self.previous_spider = self.controller.get_previous_spider(self.index)
         
         super(SeleniumSpider, self).__init__(*args, **kwargs)
@@ -48,8 +48,7 @@ class SeleniumSpider(scrapy.Spider):
         self.options.add_experimental_option("detach", True)
         self.driver = webdriver.Chrome(service=s, options=self.options)
         self.driver.get(self.start_urls[0])
-        
-        self.handler.handle_events(self.events)
+
         
     def closed(self, reason):
         self.json_settings["index"] = self.index

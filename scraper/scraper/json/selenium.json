@@ -7,15 +7,13 @@
     "events": [
         {
             "type": 0,
+            "function": 0,
             "elements": [
                 {
                     "xpath": "//title/text()",
                     "name": "username"
                 }
             ]
-        },
-        {
-            "type": 1
         }
     ],
     "request": {},
