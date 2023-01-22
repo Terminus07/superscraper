@@ -4,5 +4,5 @@ from bin.selenium import SeleniumHandler, SeleniumEvent
 
 selenium_json =  read_json_file("json/selenium.json")
 
-handler = SeleniumHandler(selenium_json['events'])
+handler = SeleniumHandler(selenium_json)
 handler.handle_events()
