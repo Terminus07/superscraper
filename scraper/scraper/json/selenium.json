@@ -4,7 +4,8 @@
         "https://quotes.toscrape.com/page/1/"
     ],
     "driver_settings": {
-        "driver_type": 0
+        "driver_type": "Edge",
+        "options": {}
     },
     "events": [
         {
