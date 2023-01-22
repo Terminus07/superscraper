@@ -3,7 +3,9 @@
     "start_urls": [
         "https://quotes.toscrape.com/page/1/"
     ],
-    "driver_type": 1,
+    "driver_settings": {
+        "driver_type": 0
+    },
     "events": [
         {
             "type": 0,
