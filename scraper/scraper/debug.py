@@ -11,22 +11,9 @@ from selenium import webdriver
 #         2: "FirefoxOptions",
 #         3: "IeOptions"
 # }
+ 
 
+selenium_json =  read_json_file("json/selenium.json")
 
-
-opts = {"name":"detach",
-        "value": True}
-
-options = call_func(webdriver, "ChromeOptions")
-
-call_func(options, "add_experimental_option", opts)
-
-options:ChromeOptions
-print(options.experimental_options)
-
-# print(get_by_key_or_value(driver_options, 0))
-
-# selenium_json =  read_json_file("json/selenium.json")
-
-# handler = SeleniumHandler(selenium_json)
-# handler.get_events()
+handler = SeleniumHandler(selenium_json)
+handler.get_events()

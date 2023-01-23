@@ -4,9 +4,12 @@
         "https://quotes.toscrape.com/page/1/"
     ],
     "driver_settings": {
-        "driver_type": "Edge",
+        "driver_type": "Chrome",
         "options": {
-            "experimental": true
+            "experimental": {
+                "name": "detach",
+                "value": true
+            }
         }
     },
     "events": [

@@ -6,6 +6,8 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.options import BaseOptions, ArgOptions
 from selenium.webdriver import ChromeOptions, FirefoxOptions, EdgeOptions, IeOptions
 from util.dict_util import get_by_key_or_value
+from util.func_util import call_func
+
 
 driver:webdriver.Remote = None
 
@@ -66,23 +68,23 @@ class SeleniumDriver():
     }
 
     driver_instance = None
-    start_urls = []
-    options = []
-    settings = []
+    options = None
     
+    start_urls = []
+    settings = []
     
     def __init__(self, settings, start_urls) -> None:
        self.start_urls = start_urls
        self.settings = settings
        self.driver_type = self.get_driver_type()
+       self.options = self.get_options(self.settings['options'])
        self.driver_instance =  self.get_driver_instance()
-       self.options = self.get_options()
-  
+    
     def get_driver_instance(self):
         global driver
         if driver is None:
-           start = getattr(webdriver, self.driver_types.get(self.driver_type))
-           driver = start()
+           opts_dict = {"options" : self.options}
+           driver = call_func(webdriver, self.driver_types.get(self.driver_type), opts_dict)
            driver.get(self.start_urls[0])
         return driver
     
@@ -90,11 +92,12 @@ class SeleniumDriver():
         d = self.settings["driver_type"]
         return d if type(d) is int else get_by_key_or_value(self.driver_types, d)
 
-    def get_options(self):
+    def get_options(self, args):
         type = self.driver_options.get(self.driver_type)
-        opts = getattr(webdriver, type)
-        options = opts()
-        return options
+        opts =  call_func(webdriver, type)
+        if 'experimental' in args:
+            call_func(opts, "add_experimental_option", args['experimental'])
+        return opts
                 
     def __str__(self):
         print("DRIVER")
