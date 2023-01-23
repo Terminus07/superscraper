@@ -3,11 +3,9 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.common.options import BaseOptions, ArgOptions
 from selenium.webdriver import ChromeOptions, FirefoxOptions, EdgeOptions, IeOptions
 from util.dict_util import get_by_key_or_value
 from util.func_util import call_func
-
 
 driver:webdriver.Remote = None
 
@@ -26,6 +24,11 @@ class SeleniumHandler():
         for index,event in enumerate(self.events):
             event = SeleniumEvent(index, event['function'])
             self.events[index] = event        
+    
+    def stop_driver(self):
+        global driver
+        if driver:
+            driver.quit()
     
 class SeleniumEvent():
     type = 0  

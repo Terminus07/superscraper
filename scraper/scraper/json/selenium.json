@@ -9,7 +9,8 @@
             "experimental": {
                 "name": "detach",
                 "value": true
-            }
+            },
+            "arguments": {}
         }
     },
     "events": [
