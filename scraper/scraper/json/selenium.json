@@ -5,7 +5,9 @@
     ],
     "driver_settings": {
         "driver_type": "Edge",
-        "options": {}
+        "options": {
+            "experimental": true
+        }
     },
     "events": [
         {

@@ -3,7 +3,8 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service
-from selenium.webdriver import ChromeOptions, FirefoxOptions, EdgeOptions, IeOptions, Chrome
+from selenium.webdriver.common.options import BaseOptions, ArgOptions
+from selenium.webdriver import ChromeOptions, FirefoxOptions, EdgeOptions, IeOptions
 from util.dict_util import get_by_key_or_value
 
 driver:webdriver.Remote = None
@@ -63,7 +64,7 @@ class SeleniumDriver():
         2: "FirefoxOptions",
         3: "IeOptions"
     }
-    
+
     driver_instance = None
     start_urls = []
     options = []
@@ -88,12 +89,13 @@ class SeleniumDriver():
     def get_driver_type(self):
         d = self.settings["driver_type"]
         return d if type(d) is int else get_by_key_or_value(self.driver_types, d)
-        
 
     def get_options(self):
-        options = self.driver_options.get(self.driver_type) 
-        print(options)
-        
+        type = self.driver_options.get(self.driver_type)
+        opts = getattr(webdriver, type)
+        options = opts()
+        return options
+                
     def __str__(self):
         print("DRIVER")
         print("TYPE: ", self.driver_type)

@@ -3,7 +3,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service
-from selenium.webdriver import ChromeOptions, Chrome
+from selenium.webdriver import ChromeOptions, FirefoxOptions, Chrome
 from webdriver_manager.chrome import ChromeDriverManager
 
 import scrapy
