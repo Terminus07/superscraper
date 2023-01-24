@@ -16,14 +16,12 @@
     "events": [
         {
             "target": "driver",
-            "function": 0,
-            "args": {},
+            "function": "find_element",
+            "args": {
+                "by": "xpath",
+                "value": "//title"
+            },
             "output": "red"
-        },
-        {
-            "target": "red",
-            "function": 0,
-            "args": {}
         }
     ],
     "request": {},

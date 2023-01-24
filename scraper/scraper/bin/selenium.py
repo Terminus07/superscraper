@@ -33,7 +33,8 @@ class SeleniumHandler():
     def handle_events(self):
         for event in self.events:
             event:SeleniumEvent
-  
+            event.handle_event()
+
     def stop_driver(self):
         global driver
         if driver:
@@ -57,8 +58,8 @@ class SeleniumEvent():
         
     def handle_event(self):
         self.target = self.get_target()
-        self.function = call_func()
-
+        self.output = call_func(self.target, self.function, self.args)
+        
     def get_target(self):
         if 'driver' == self.target:
             return driver
