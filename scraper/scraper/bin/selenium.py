@@ -58,15 +58,29 @@ class SeleniumEvent():
         
     def handle_event(self):
         self.target = self.get_target()
-        self.output = call_func(self.target, self.function, self.args)
-        
+        output_value = call_func(self.target, self.function, self.args)
+        print(output_value)
+        if self.output:
+            # store previous outputs
+            output = SeleniumOutput(name=self.output, index=self.index,value=output_value)
+            driver_outputs.append(output)
+
     def get_target(self):
         if 'driver' == self.target:
             return driver
         else:
             # update to include outputs
-            pass
-            
+            try:
+                for output in driver_outputs:
+                    output:SeleniumOutput
+                    if output.name == self.target:
+                        print(output.name)
+                        return output.value
+                    else:
+                        raise Exception("Invalid output name")
+            except Exception as e:
+                print(e)
+                
     def __str__(self):
         print("EVENT")
         print("INDEX: ", self.index)
@@ -128,3 +142,15 @@ class SeleniumDriver():
         print("TYPE: ", self.driver_type)
         print("DRIVER:", self.driver_instance)
         return ""
+
+class SeleniumOutput():
+    name:str = ''
+    index = 0
+    value = ''
+    
+    def __init__(self, name, index, value) -> None:
+        self.name = name
+        self.index = index
+        self.value = value
+        
+   

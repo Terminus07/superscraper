@@ -21,7 +21,14 @@
                 "by": "xpath",
                 "value": "//title"
             },
-            "output": "red"
+            "output": "title"
+        },
+        {
+            "target": "title",
+            "function": "get_property",
+            "args": {
+                "name": "text"
+            }
         }
     ],
     "request": {},
