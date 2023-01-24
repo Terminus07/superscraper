@@ -12,7 +12,7 @@ driver_outputs = []
 
 class SeleniumHandler():
     events = []
-    seleniumDriver = None
+    selenium_driver = None
     
     # events
     previous_event = None
@@ -69,18 +69,14 @@ class SeleniumEvent():
         if 'driver' == self.target:
             return driver
         else:
-            # update to include outputs
             try:
                 for output in driver_outputs:
                     output:SeleniumOutput
                     if output.name == self.target:
-                        print(output.name)
                         return output.value
-                    else:
-                        raise Exception("Invalid output name")
             except Exception as e:
                 print(e)
-                
+
     def __str__(self):
         print("EVENT")
         print("INDEX: ", self.index)
@@ -153,4 +149,8 @@ class SeleniumOutput():
         self.index = index
         self.value = value
         
-   
+    def __str__(self):
+        print("OUTPUT")
+        print("NAME: ", self.name)
+        print("VALUE:", self.value)
+        return ""

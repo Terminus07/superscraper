@@ -29,6 +29,12 @@
             "args": {
                 "name": "text"
             }
+        },
+        {
+            "target": "driver",
+            "function": "switch_to",
+            "args": {},
+            "output": "switch"
         }
     ],
     "request": {},

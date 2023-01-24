@@ -4,7 +4,7 @@ def call_func(module, func_name, args:dict={}):
         if callable(function):
             return function(**args)
         else:
-            return None
+            return function
     except AttributeError as e:
         print(e)
-        return None
+    return None
