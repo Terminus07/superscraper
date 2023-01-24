@@ -15,26 +15,35 @@
     },
     "events": [
         {
-            "target": "driver",
             "function": "find_element",
             "args": {
-                "by": "xpath",
-                "value": "//title"
+                "by": "name",
+                "value": "_user"
             },
-            "output": "title"
+            "output": "username"
         },
         {
-            "target": "title",
-            "function": "get_property",
+            "function": "find_element",
             "args": {
-                "name": "text"
-            }
+                "by": "name",
+                "value": "_pass"
+            },
+            "output": "password"
         },
         {
-            "target": "driver",
-            "function": "switch_to",
-            "args": {},
-            "output": "switch"
+            "target": "username",
+            "function": "send_keys",
+            "args": "name"
+        },
+        {
+            "target": "password",
+            "function": "send_keys",
+            "args": "red"
+        },
+        {
+            "target": "password",
+            "function": "send_keys",
+            "args": "\ue007"
         }
     ],
     "request": {},

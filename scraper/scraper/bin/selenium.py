@@ -4,6 +4,7 @@ from selenium.webdriver.support.ui import Select
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver import ChromeOptions, FirefoxOptions, EdgeOptions, IeOptions
+
 from util.dict_util import get_by_key_or_value
 from util.func_util import call_func
 
@@ -13,10 +14,6 @@ driver_outputs = []
 class SeleniumHandler():
     events = []
     selenium_driver = None
-    
-    # events
-    previous_event = None
-    next_event = None
     
     def __init__(self, selenium_json) -> None:
         global driver
@@ -51,7 +48,7 @@ class SeleniumEvent():
     def __init__(self, index:int,json:dict):
         self.json = json
         self.function = json['function']
-        self.target = json['target']
+        self.target = json['target'] if 'target' in json else 'driver'
         self.output = json['output'] if 'output' in json else None
         self.args = json['args']
         self.index = index
@@ -118,6 +115,7 @@ class SeleniumDriver():
         global driver
         if driver is None:
            opts_dict = {"options" : self.options}
+           # calls e.g. webdriver.ChromeOptions() and passes options as dict
            driver = call_func(webdriver, self.driver_types.get(self.driver_type), opts_dict)
            driver.get(self.start_urls[0])
         return driver
@@ -126,11 +124,11 @@ class SeleniumDriver():
         d = self.settings["driver_type"]
         return d if type(d) is int else get_by_key_or_value(self.driver_types, d)
 
-    def get_options(self, args):
+    def get_options(self, driver_options):
         type = self.driver_options.get(self.driver_type)
-        opts =  call_func(webdriver, type)
-        if 'experimental' in args:
-            call_func(opts, "add_experimental_option", args['experimental'])
+        opts =  call_func(webdriver, type, {})
+        if 'experimental' in driver_options:
+            call_func(opts, "add_experimental_option", driver_options['experimental'])
         return opts
                 
     def __str__(self):

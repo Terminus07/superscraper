@@ -3,7 +3,7 @@ from bin.selenium import SeleniumHandler, SeleniumEvent, driver_outputs, Seleniu
 from util.dict_util import get_by_key_or_value
 from selenium.webdriver import ChromeOptions, FirefoxOptions, EdgeOptions, IeOptions
 from selenium import webdriver
-
+from selenium.webdriver.common.keys import Keys
 # driver_options = {
 #         0: "ChromeOptions",
 #         1: "EdgeOptions",
@@ -18,7 +18,8 @@ from selenium import webdriver
 
 selenium_json =  read_json_file("json/selenium.json")
 handler = SeleniumHandler(selenium_json)
-
+# element = handler.selenium_driver.driver_instance.find_element("gsc-i-id2")
+# element.send_keys(Keys.Re)
 handler.handle_events()
 for d in driver_outputs:
     d:SeleniumOutput
