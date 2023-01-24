@@ -15,14 +15,15 @@
     },
     "events": [
         {
-            "type": 0,
+            "target": "driver",
             "function": 0,
-            "elements": [
-                {
-                    "xpath": "//title/text()",
-                    "name": "username"
-                }
-            ]
+            "args": {},
+            "output": "red"
+        },
+        {
+            "target": "red",
+            "function": 0,
+            "args": {}
         }
     ],
     "request": {},

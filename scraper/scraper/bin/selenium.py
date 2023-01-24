@@ -8,44 +8,64 @@ from util.dict_util import get_by_key_or_value
 from util.func_util import call_func
 
 driver:webdriver.Remote = None
+driver_outputs = []
 
 class SeleniumHandler():
     events = []
     seleniumDriver = None
+    
+    # events
     previous_event = None
     next_event = None
     
     def __init__(self, selenium_json) -> None:
         global driver
         self.selenium_driver = SeleniumDriver(selenium_json['driver_settings'], selenium_json['start_urls'])
-        self.events = selenium_json["events"]
+        self.events = self.get_events(selenium_json["events"])
             
-    def get_events(self):
-        for index,event in enumerate(self.events):
-            event = SeleniumEvent(index, event['function'])
-            self.events[index] = event        
+    def get_events(self, events):
+        event_items = []
+        for index,event in enumerate(events):
+            event = SeleniumEvent(index, event)
+            event_items.append(event)
+        return event_items        
     
+    def handle_events(self):
+        for event in self.events:
+            event:SeleniumEvent
+  
     def stop_driver(self):
         global driver
         if driver:
             driver.quit()
     
 class SeleniumEvent():
-    type = 0  
     function = ''
     index = 0
-    event_types = {
-        0 : "driver",
-        1: "object"
-    }
+    json = {}
+    target = None
+    output = None
+    args = {}
     
-    def __init__(self, index:int,function:str):
-        self.function = function
+    def __init__(self, index:int,json:dict):
+        self.json = json
+        self.function = json['function']
+        self.target = json['target']
+        self.output = json['output'] if 'output' in json else None
+        self.args = json['args']
         self.index = index
-     
+        
     def handle_event(self):
-        print(self.function)
-    
+        self.target = self.get_target()
+        self.function = call_func()
+
+    def get_target(self):
+        if 'driver' == self.target:
+            return driver
+        else:
+            # update to include outputs
+            pass
+            
     def __str__(self):
         print("EVENT")
         print("INDEX: ", self.index)

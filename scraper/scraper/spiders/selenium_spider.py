@@ -51,7 +51,7 @@ class SeleniumSpider(scrapy.Spider):
         self.json_settings["response"] = self.response
         
         self.controller.update_spider(self.json_settings, self.index)
-                
+
         # start next spider process       
         if(self.index != len(self.controller.spiders) - 1):
             self.controller.start_spider_process(self.index +1)

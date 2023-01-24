@@ -17,6 +17,6 @@ from selenium import webdriver
 # capabilities
 
 selenium_json =  read_json_file("json/selenium.json")
-
 handler = SeleniumHandler(selenium_json)
-handler.get_events()
+
+handler.handle_events()
