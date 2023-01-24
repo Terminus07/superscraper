@@ -16,10 +16,11 @@ from selenium.webdriver.common.keys import Keys
 # executable path
 # capabilities
 
-selenium_json =  read_json_file("json/selenium.json")
-handler = SeleniumHandler(selenium_json)
 # element = handler.selenium_driver.driver_instance.find_element("gsc-i-id2")
 # element.send_keys(Keys.Re)
+selenium_json =  read_json_file("json/selenium.json")
+handler = SeleniumHandler(selenium_json)
+
 handler.handle_events()
 for d in driver_outputs:
     d:SeleniumOutput

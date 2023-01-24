@@ -47,16 +47,16 @@ class SeleniumEvent():
     
     def __init__(self, index:int,json:dict):
         self.json = json
-        self.function = json['function']
-        self.target = json['target'] if 'target' in json else 'driver'
-        self.output = json['output'] if 'output' in json else None
-        self.args = json['args']
+        self.function = json.get('function', None)
+        self.target = json.get('target', 'driver')
+        self.output = json.get('output', None)
+        self.args = json.get('args',None)
         self.index = index
         
     def handle_event(self):
         self.target = self.get_target()
         output_value = call_func(self.target, self.function, self.args)
-        print(output_value)
+    
         if self.output:
             # store previous outputs
             output = SeleniumOutput(name=self.output, index=self.index,value=output_value)
