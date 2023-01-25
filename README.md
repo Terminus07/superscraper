@@ -15,7 +15,7 @@ clear - Clears terminal
 exit - Exit
 ```
 
-#### Sample spiders.json file
+#### spiders.json file
 
 ```
 [
