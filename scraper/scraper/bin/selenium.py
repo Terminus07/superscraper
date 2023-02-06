@@ -32,6 +32,12 @@ class SeleniumHandler():
             event:SeleniumEvent
             event.handle_event()
 
+    def start_driver(self):
+        global driver
+        if driver is None:
+            print("DRIVER STARTED")
+            driver = self.selenium_driver.get_driver_instance()
+
     def stop_driver(self):
         global driver
         if driver:
@@ -63,7 +69,7 @@ class SeleniumEvent():
             driver_outputs.append(output)
 
     def get_target(self):
-        if 'driver' == self.target:
+        if 'driver' == self.target: # default value is driver
             return driver
         else:
             try:
@@ -98,9 +104,7 @@ class SeleniumDriver():
         3: "IeOptions"
     }
 
-    driver_instance = None
     options = None
-    
     start_urls = []
     settings = []
     
@@ -109,12 +113,11 @@ class SeleniumDriver():
        self.settings = settings
        self.driver_type = self.get_driver_type()
        self.options = self.get_options(self.settings['options'])
-       self.driver_instance =  self.get_driver_instance()
     
     def get_driver_instance(self):
         global driver
         if driver is None:
-           opts_dict = {"options" : self.options}
+           opts_dict = {"options" : self.options} 
            # calls e.g. webdriver.ChromeOptions() and passes options as dict
            driver = call_func(webdriver, self.driver_types.get(self.driver_type), opts_dict)
            driver.get(self.start_urls[0])
@@ -134,7 +137,7 @@ class SeleniumDriver():
     def __str__(self):
         print("DRIVER")
         print("TYPE: ", self.driver_type)
-        print("DRIVER:", self.driver_instance)
+        print("DRIVER:", driver)
         return ""
 
 class SeleniumOutput():

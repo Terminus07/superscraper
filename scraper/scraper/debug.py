@@ -4,24 +4,22 @@ from util.dict_util import get_by_key_or_value
 from selenium.webdriver import ChromeOptions, FirefoxOptions, EdgeOptions, IeOptions
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
-# driver_options = {
-#         0: "ChromeOptions",
-#         1: "EdgeOptions",
-#         2: "FirefoxOptions",
-#         3: "IeOptions"
-# }
+
 
 # add argument
 # experimental option
 # executable path
 # capabilities
 
-# element = handler.selenium_driver.driver_instance.find_element("gsc-i-id2")
-# element.send_keys(Keys.Re)
+# EVENT TYPES
+# 1) Base event
+# - driver_type : int or str Optional -> "Chrome"]
+# - function 
+# - args (dict or list of values) 
+# - SeleniumOutput (name, index, value)
+
+# 2) Base event (default)
+# 
+
 selenium_json =  read_json_file("json/selenium.json")
 handler = SeleniumHandler(selenium_json)
-
-handler.handle_events()
-for d in driver_outputs:
-    d:SeleniumOutput
-    print(d)
