@@ -3,7 +3,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service
-from selenium.webdriver import ChromeOptions, FirefoxOptions, EdgeOptions, IeOptions
+from selenium.webdriver import  DesiredCapabilities, ChromeOptions, FirefoxOptions, EdgeOptions, IeOptions
 
 from util.dict_util import get_by_key_or_value
 from util.func_util import call_func
@@ -11,37 +11,101 @@ from util.func_util import call_func
 driver:webdriver.Remote = None
 driver_outputs = []
 
-class SeleniumHandler():
-    events = []
-    selenium_driver = None
+class SeleniumDriver():
+    json = {}
     
-    def __init__(self, selenium_json) -> None:
+    driver_type = 0 # always integer
+    
+    driver_types = {
+        0: "Chrome",
+        1: "Edge",
+        2: "Firefox",
+        3: "Safari"
+    }
+    
+    driver_capabilities = {
+        0: DesiredCapabilities.CHROME,
+        1: DesiredCapabilities.EDGE,
+        2: DesiredCapabilities.FIREFOX,
+        3: DesiredCapabilities.SAFARI
+    }
+    
+    driver_options = {
+        0: "ChromeOptions",
+        1: "EdgeOptions",
+        2: "FirefoxOptions",
+        3: "IeOptions"
+    }
+    events = []
+    options = None
+    capabilities = None
+    start_urls = []
+    driver_settings = []
+    
+    def __init__(self, json) -> None:
+       self.json = json
+       self.start_urls = json.get('start_urls', [])
+       self.driver_settings = json.get('driver_settings', {})
+       self.events = self.get_events()
+       self.driver_type = self.get_driver_type()
+       self.options = self.get_options()
+       self.capabilities = self.get_capabilities()
+ 
+    def get_driver_instance(self):
         global driver
-        self.selenium_driver = SeleniumDriver(selenium_json['driver_settings'], selenium_json['start_urls'])
-        self.events = self.get_events(selenium_json["events"])
-            
-    def get_events(self, events):
-        event_items = []
+        if driver is None:
+           opts_dict = {"options" : self.options} 
+           # calls e.g. webdriver.ChromeOptions() and passes options as dict
+           driver = call_func(webdriver, self.driver_types.get(self.driver_type), opts_dict)
+           driver.get(self.start_urls[0])
+        return driver
+    
+    def get_driver_type(self):
+        d = self.driver_settings["driver_type"]
+        return d if type(d) is int else get_by_key_or_value(self.driver_types, d)
+
+    def get_options(self):
+        driver_options = self.driver_settings['options']
+        type = self.driver_options.get(self.driver_type)
+        opts =  call_func(webdriver, type, {})
+        if 'experimental' in driver_options:
+            call_func(opts, "add_experimental_option", driver_options['experimental'])
+        return opts
+    
+    def get_capabilities(self):
+        capabilities = self.driver_settings.get('capabilities', {})
+        capabilities_type = self.driver_capabilities.get(self.driver_type)
+        capabilities.update(capabilities_type)
+        return capabilities
+  
+    def get_events(self):
+        events = self.json.get('events',[])
         for index,event in enumerate(events):
             event = SeleniumEvent(index, event)
-            event_items.append(event)
-        return event_items        
+            self.events.append(event)
+        return self.events
     
-    def handle_events(self):
-        for event in self.events:
-            event:SeleniumEvent
-            event.handle_event()
-
     def start_driver(self):
         global driver
         if driver is None:
             print("DRIVER STARTED")
-            driver = self.selenium_driver.get_driver_instance()
+            driver = self.get_driver_instance()
 
     def stop_driver(self):
         global driver
         if driver:
             driver.quit()
+    
+    def handle_events(self):
+        for event in self.events:
+            event:SeleniumEvent
+            event.handle_event()
+                 
+    def __str__(self):
+        print("DRIVER")
+        print("TYPE: ", self.driver_type)
+        print("DRIVER:", driver)
+        return ""
     
 class SeleniumEvent():
     function = ''
@@ -84,59 +148,6 @@ class SeleniumEvent():
         print("EVENT")
         print("INDEX: ", self.index)
         print("FUNCTION:", self.function)
-        print("DRIVER:", driver)
-        return ""
-
-class SeleniumDriver():
-    driver_type = 0 # always integer
-    
-    driver_types = {
-        0: "Chrome",
-        1: "Edge",
-        2: "Firefox",
-        3: "Safari"
-    }
-    
-    driver_options = {
-        0: "ChromeOptions",
-        1: "EdgeOptions",
-        2: "FirefoxOptions",
-        3: "IeOptions"
-    }
-
-    options = None
-    start_urls = []
-    settings = []
-    
-    def __init__(self, settings, start_urls) -> None:
-       self.start_urls = start_urls
-       self.settings = settings
-       self.driver_type = self.get_driver_type()
-       self.options = self.get_options(self.settings['options'])
-    
-    def get_driver_instance(self):
-        global driver
-        if driver is None:
-           opts_dict = {"options" : self.options} 
-           # calls e.g. webdriver.ChromeOptions() and passes options as dict
-           driver = call_func(webdriver, self.driver_types.get(self.driver_type), opts_dict)
-           driver.get(self.start_urls[0])
-        return driver
-    
-    def get_driver_type(self):
-        d = self.settings["driver_type"]
-        return d if type(d) is int else get_by_key_or_value(self.driver_types, d)
-
-    def get_options(self, driver_options):
-        type = self.driver_options.get(self.driver_type)
-        opts =  call_func(webdriver, type, {})
-        if 'experimental' in driver_options:
-            call_func(opts, "add_experimental_option", driver_options['experimental'])
-        return opts
-                
-    def __str__(self):
-        print("DRIVER")
-        print("TYPE: ", self.driver_type)
         print("DRIVER:", driver)
         return ""
 

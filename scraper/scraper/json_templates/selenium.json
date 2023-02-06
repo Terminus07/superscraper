@@ -11,6 +11,10 @@
                 "value": true
             },
             "arguments": {}
+        },
+        "capabilities": {
+            "platform": "WINDOWS",
+            "version": "10"
         }
     },
     "events": [

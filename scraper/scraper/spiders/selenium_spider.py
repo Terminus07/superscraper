@@ -42,8 +42,7 @@ class SeleniumSpider(scrapy.Spider):
     
     def parse(self, response):
         # initialize handler
-        from scraper.bin.selenium import SeleniumHandler
-        self.handler = SeleniumHandler(self.json_settings)
+        pass
         
     def closed(self, reason):
         self.json_settings["index"] = self.index
