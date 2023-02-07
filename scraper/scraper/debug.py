@@ -7,7 +7,7 @@ from selenium.webdriver.common.keys import Keys
 from json_templates.secret.const import WEBSITE
 
 from selenium.webdriver.support.ui import Select
-
+from util.func_util import create_object
 # add argument
 # experimental option
 # executable path
@@ -38,8 +38,9 @@ from selenium.webdriver.support.ui import Select
 # - args: dict or list
 # - output: SeleniumOutput
 
-selenium_json =  read_json_file("json_templates/selenium.json")
+selenium_json =  read_json_file("json_templates/secret/selenium.json")
 selenium_json['start_urls'] = [WEBSITE]
 
 driver = SeleniumDriver(selenium_json)
-# driver.start_driver()
+driver.start_driver()
+driver.handle_events()

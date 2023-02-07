@@ -6,7 +6,7 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver import  DesiredCapabilities, ChromeOptions, FirefoxOptions, EdgeOptions, IeOptions
 
 from util.dict_util import get_by_key_or_value
-from util.func_util import call_func
+from util.func_util import call_func, create_object
 
 driver:webdriver.Remote = None
 driver_outputs = []
@@ -104,13 +104,17 @@ class SeleniumDriver():
     def stop_driver(self):
         global driver
         if driver:
+            print("DRIVER STOPPED")
             driver.quit()
     
     def handle_events(self):
         for event in self.events:
             event:SeleniumEvent
-            event.handle_event()
-    
+            if event.type == 0:
+                event.handle_base_event()
+            else:
+                event.handle_action_event()
+             
                  
     def __str__(self):
         print("DRIVER")
@@ -141,42 +145,49 @@ class SeleniumEvent():
         self.target = json.get('target', 'driver')
         self.output = json.get('output', None)
         self.args = json.get('args',None)
-        self.object_type = self.get_object_type()
-        self.object_input = self.get_object_type()
+        self.object_type = json.get('object_type', None)
+        self.object_input = json.get('object_input', None)
+         
         self.index = index
-        
-    def handle_event(self):
+ 
+    def handle_base_event(self):
         self.target = self.get_target()
         output_value = call_func(self.target, self.function, self.args)
-    
+
         if self.output:
             # store previous outputs
             output = SeleniumOutput(name=self.output, index=self.index,value=output_value)
             driver_outputs.append(output)
-
+    
+    def handle_action_event(self):
+      
+        self.object_input = self.get_output_value(self.object_input, True)
+        
+        # check if input variable was given
+        if self.object_input:
+            object_instance = create_object(globals(), self.object_type, self.object_input.value)
+            object_output = SeleniumOutput(name=self.output, index=self.index, value=object_instance)
+            driver_outputs.append(object_output)
+        
+        
     def get_target(self):
         if 'driver' == self.target: # default value is driver
             return driver
         else:
-            self.get_output_value(self.target)
-    
-    def get_output_value(self, target):
+            target = self.json.get('target')
+            return self.get_output_value(target)
+            
+   
+    def get_output_value(self, target, return_object=False):
         try:
             for output in driver_outputs:
                 output:SeleniumOutput
                 if output.name == target:
-                    return output.value
+                        return output.value if not return_object else output
         except Exception as e:
             print(e)            
     
-    def get_object_type(self):
-        if self.type == 1:
-            pass
     
-    def get_object_input(self):
-        return self.get_output_value(self.json.get('object_input', None))
-        
-
     def __str__(self):
         print("EVENT")
         print("TYPE:", self.event_types.get(self.type))
