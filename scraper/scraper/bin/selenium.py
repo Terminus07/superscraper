@@ -164,10 +164,11 @@ class SeleniumEvent():
         self.object_input = self.get_output_value(self.object_input, True)
         
         # check if input variable was given
-        if self.object_input:
-            object_instance = create_object(globals(), self.object_type, self.object_input.value)
-            object_output = SeleniumOutput(name=self.output, index=self.index, value=object_instance)
-            driver_outputs.append(object_output)
+        args = self.object_input.value if self.object_input else self.args
+        
+        object_instance = create_object(globals(), self.object_type, args)
+        object_output = SeleniumOutput(name=self.output, index=self.index, value=object_instance)
+        driver_outputs.append(object_output)
         
         
     def get_target(self):
