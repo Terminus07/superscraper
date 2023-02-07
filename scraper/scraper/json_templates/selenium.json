@@ -9,7 +9,7 @@
             "experimental_options": [
                 {
                     "name": "detach",
-                    "value": true
+                    "value": false
                 }
             ],
             "arguments": [

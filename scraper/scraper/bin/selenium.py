@@ -1,4 +1,4 @@
-from selenium import webdriver
+from seleniumwire import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.common.by import By
@@ -114,7 +114,9 @@ class SeleniumDriver():
                 event.handle_base_event()
             else:
                 event.handle_action_event()
-             
+            global driver
+            print(driver.requests)
+            
                  
     def __str__(self):
         print("DRIVER")
