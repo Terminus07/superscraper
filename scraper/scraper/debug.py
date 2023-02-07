@@ -19,7 +19,7 @@ from selenium.webdriver.support.ui import Select
     # driver_type: int or str
     # options:
     # capabilities:
-    
+    # arguments
     
 # EVENT TYPES
 
@@ -34,7 +34,8 @@ from selenium.webdriver.support.ui import Select
     
 # 2) Action event (pass in parameters to an object)
 # - object_type: str
-# - object_input: str (variable previously stored as an output)
+# - object_input: Optional[str] (variable previously stored as an output)
+# - args: dict or list
 # - output: SeleniumOutput
 
 selenium_json =  read_json_file("json_templates/selenium.json")
@@ -42,4 +43,3 @@ selenium_json['start_urls'] = [WEBSITE]
 
 driver = SeleniumDriver(selenium_json)
 # driver.start_driver()
-# driver.handle_events()

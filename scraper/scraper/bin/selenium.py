@@ -54,8 +54,9 @@ class SeleniumDriver():
     def get_driver_instance(self):
         global driver
         if driver is None:
-           opts_dict = {"options" : self.options} 
-           # calls e.g. webdriver.ChromeOptions() and passes options as dict
+           opts_dict = {"options" : self.options, "desired_capabilities": self.capabilities} 
+        
+           # equivalent to webdriver.Chrome() and passes arguments as dict
            driver = call_func(webdriver, self.driver_types.get(self.driver_type), opts_dict)
            driver.get(self.start_urls[0])
         return driver
@@ -68,8 +69,17 @@ class SeleniumDriver():
         driver_options = self.driver_settings['options']
         type = self.driver_options.get(self.driver_type)
         opts =  call_func(webdriver, type, {})
-        if 'experimental' in driver_options:
-            call_func(opts, "add_experimental_option", driver_options['experimental'])
+        
+        # generate experimental_options
+        experimental_options = driver_options.get('experimental_options', [])
+        for opt in experimental_options:
+            call_func(opts, "add_experimental_option", opt)
+        
+        # generate arguments
+        arguments  = driver_options.get('arguments', [])
+        for arg in arguments:
+            call_func(opts, "add_argument", arg)
+  
         return opts
     
     def get_capabilities(self):
@@ -100,6 +110,7 @@ class SeleniumDriver():
         for event in self.events:
             event:SeleniumEvent
             event.handle_event()
+    
                  
     def __str__(self):
         print("DRIVER")
@@ -114,13 +125,24 @@ class SeleniumEvent():
     target = None
     output = None
     args = {}
+    type = 0
+    object_type = None
+    object_input = None
+    
+    event_types ={
+        0: "Base",
+        1: "Action"
+    }
     
     def __init__(self, index:int,json:dict):
         self.json = json
+        self.type = 1 if 'object_type' in self.json else 0 
         self.function = json.get('function', None)
         self.target = json.get('target', 'driver')
         self.output = json.get('output', None)
         self.args = json.get('args',None)
+        self.object_type = self.get_object_type()
+        self.object_input = self.get_object_type()
         self.index = index
         
     def handle_event(self):
@@ -136,19 +158,36 @@ class SeleniumEvent():
         if 'driver' == self.target: # default value is driver
             return driver
         else:
-            try:
-                for output in driver_outputs:
-                    output:SeleniumOutput
-                    if output.name == self.target:
-                        return output.value
-            except Exception as e:
-                print(e)
+            self.get_output_value(self.target)
+    
+    def get_output_value(self, target):
+        try:
+            for output in driver_outputs:
+                output:SeleniumOutput
+                if output.name == target:
+                    return output.value
+        except Exception as e:
+            print(e)            
+    
+    def get_object_type(self):
+        if self.type == 1:
+            pass
+    
+    def get_object_input(self):
+        return self.get_output_value(self.json.get('object_input', None))
+        
 
     def __str__(self):
         print("EVENT")
+        print("TYPE:", self.event_types.get(self.type))
         print("INDEX: ", self.index)
         print("FUNCTION:", self.function)
+        print("TARGET:", self.target)
+        print("OUTPUT:", self.output)
         print("DRIVER:", driver)
+        print("OBJECT_INPUT:", self.object_input)
+        print("OBJECT_TYPE:", self.object_type)
+       
         return ""
 
 class SeleniumOutput():

@@ -6,11 +6,16 @@
     "driver_settings": {
         "driver_type": "Chrome",
         "options": {
-            "experimental": {
-                "name": "detach",
-                "value": true
-            },
-            "arguments": {}
+            "experimental_options": [
+                {
+                    "name": "detach",
+                    "value": true
+                }
+            ],
+            "arguments": [
+                "--headless",
+                "--no-sandbox"
+            ]
         },
         "capabilities": {
             "platform": "WINDOWS",
@@ -48,6 +53,17 @@
             "target": "password",
             "function": "send_keys",
             "args": "\ue007"
+        },
+        {
+            "object_type": "Select",
+            "object_input": "password",
+            "args": {},
+            "output": "select"
+        },
+        {
+            "target": "select",
+            "function": "select_by_index",
+            "args": "1"
         }
     ],
     "request": {},
