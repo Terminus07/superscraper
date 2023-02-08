@@ -40,16 +40,15 @@ class ArgParser():
             controller.start_spider_process(0)
             
         elif command == "spider":
-            # generate spider.json file
-            types= args['type']
+            types = args['type']
+            #  spiders.json is default directory for the file
             dir = args['directory']
+            dir = SPIDERS_DIRECTORY if dir is None else dir
+            overwrite_json_file(dir, [])
             for type in types:
                 # create json file of each type {base, selenium}
                 data_dir = DIRECTORY + "/" + type + ".json"
                 data = read_json_file(data_dir)
-                
-                #  spiders.json is default directory for the file
-                dir = SPIDERS_DIRECTORY if dir is None else dir
                 append_json_file(dir, data)
         
     def check_file_extension(self,choices,fname):
