@@ -1,8 +1,8 @@
 import argparse
 import os
 from bin.spider import SpiderController
-from util.file_util import read_json_file, append_json_file
-from util.constants import DIRECTORY, SPIDERS_DIRECTORY
+from util.file_util import read_json_file, append_json_file,overwrite_json_file
+from util.constants import DIRECTORY, SPIDERS_DIRECTORY, OUTPUT_DIRECTORY
 
 class ArgParser():
     parser = None
@@ -31,10 +31,11 @@ class ArgParser():
             self.create_command(cmd, args)
 
     def create_command(self, command, args:dict):
-        print(args, command)
         if command == "crawl":
             # check if passed spiders.json file exists
             file = args['json']
+            # reset output.json
+            overwrite_json_file(OUTPUT_DIRECTORY, [])
             controller = SpiderController(file)
             controller.start_spider_process(0)
             

@@ -5,6 +5,7 @@ import wget
 from pathvalidate import is_valid_filename
 from scraper.bin.spider import Spider, SpiderController
 from scraper.bin.request_mapper import RequestMapper
+from scraper.bin.data_extractor import DataExtractor
 
 class BaseSpider(scrapy.Spider):
     name = "base"
@@ -72,40 +73,25 @@ class BaseSpider(scrapy.Spider):
         # response urls (urls generated from previous spiders)
         for url in self.previous_response_urls:
             # get response object from json
-            print(self.previous_response_urls)
             response = self.mapper.get_response(self.previous_response)
             self.request = self.mapper.get_request_from_json_response(url,response)
             yield self.request
             
     def extract_data(self, response:Response):
-        # extract text        
-        for xpath in self.xpaths:
-            self.output_xpaths.append(response.xpath(xpath).getall())
-            
-        for selector in self.selectors:
-            self.output_selectors.append(response.css(selector).getall())
-            
+        extractor = DataExtractor(response)
+        
+        # extract text 
+        self.output_xpaths = extractor.extract_from_xpaths(self.xpaths)       
+        self.output_selectors = extractor.extract_from_selectors(self.selectors)
+                    
         # download link xpaths
-        for d in self.download_link_xpaths:
-            self.download_links.extend(response.xpath(d).getall()) 
-            
-        for xpath in self.response_url_xpaths:
-            self.response_urls.extend(response.xpath(xpath).getall())
-
+        self.download_links = extractor.extract_from_xpaths(self.download_link_xpaths)
+        DataExtractor.download_from_links(self.download_links)
  
     def parse(self, response:Response):
         self.response = self.mapper.get_json_response(response)        
         self.request = self.mapper.get_json_request(self.request)
         self.extract_data(response)
-                        
-        for link in self.download_links:
-            f = link.split("/")[-1]
-            file =  f if is_valid_filename(f) else None
-
-            try:
-                wget.download(link, out=file)
-            except Exception as e:
-                print(e)
  
         # generate form data
         if len(self.form_data) > 0:
@@ -122,13 +108,13 @@ class BaseSpider(scrapy.Spider):
 
     def closed(self, reason):
         # update json settings
-        # self.json_settings["output_xpaths"] = self.output_xpaths
-        # self.json_settings["output_selectors"] = self.output_selectors
-        # self.json_settings["index"] = self.index
-        # self.json_settings["request"] =  self.request
-        # self.json_settings["response"] = self.response
-        # self.json_settings["response_urls"] = self.response_urls
-        # self.controller.update_spider(self.json_settings, self.index)
+        self.json_settings["output_xpaths"] = self.output_xpaths
+        self.json_settings["output_selectors"] = self.output_selectors
+        self.json_settings["index"] = self.index
+        self.json_settings["request"] =  self.request
+        self.json_settings["response"] = self.response
+        self.json_settings["response_urls"] = self.response_urls
+        self.controller.update_spider(self.json_settings, self.index)
 
         # start next spider process       
         if(self.index != len(self.controller.spiders) - 1):
