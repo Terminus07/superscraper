@@ -91,37 +91,8 @@ exit - Exit
 
 #### selenium.json template
 
-#### spiders.json template
-
-```
-[
-    {
-        "name": "base",
-        "start_urls": [
-            "https://quotes.toscrape.com/page/1/"
-        ],
-        "xpaths": [
-            "//title/text()"
-        ],
-        "selectors": [
-            "h2::text"
-        ],
-        "xpath_selectors": [],
-        "form_data": {},
-        "custom_settings": {
-            "LOG_ENABLED": false
-        },
-        "links": [],
-        "download_links": [],
-        "download_link_xpaths": [],
-        "output_xpaths": [],
-        "output_selectors": [],
-        "request": {},
-        "response": {},
-        "response_urls": [],
-        "response_url_xpaths": []
-    },
-    {
+````
+  {
         "name": "selenium",
         "start_urls": [
             "https://quotes.toscrape.com/page/1/"
@@ -177,7 +148,96 @@ exit - Exit
             "LOG_ENABLED": false
         }
     }
+    ```
+#### spiders.json template
+
+````
+
+[
+{
+"name": "base",
+"start_urls": [
+"https://quotes.toscrape.com/page/1/"
+],
+"xpaths": [
+"//title/text()"
+],
+"selectors": [
+"h2::text"
+],
+"xpath_selectors": [],
+"form_data": {},
+"custom_settings": {
+"LOG_ENABLED": false
+},
+"links": [],
+"download_links": [],
+"download_link_xpaths": [],
+"output_xpaths": [],
+"output_selectors": [],
+"request": {},
+"response": {},
+"response_urls": [],
+"response_url_xpaths": []
+},
+{
+"name": "selenium",
+"start_urls": [
+"https://quotes.toscrape.com/page/1/"
+],
+"driver_settings": {
+"driver_type": "Chrome",
+"options": {
+"experimental_options": [
+{
+"name": "detach",
+"value": true
+}
+],
+"arguments": []
+},
+"capabilities": {
+"platform": "WINDOWS",
+"version": "10"
+}
+},
+"events": [
+{
+"function": "find_element",
+"args": {
+"by": "name",
+"value": "_user"
+},
+"output": "username"
+},
+{
+"target": "username",
+"function": "send_keys",
+"args": "username"
+},
+{
+"object_type": "Select",
+"object_input": "select",
+"args": {},
+"output": "select_target"
+},
+{
+"target": "select_target",
+"function": "select_by_index",
+"args": "1"
+},
+{
+"target": "password",
+"function": "send_keys",
+"args": "\ue007"
+}
+],
+"custom_settings": {
+"LOG_ENABLED": false
+}
+}
 ]
+
 ```
 
 ## Prerequisites
@@ -186,3 +246,4 @@ Make sure you have installed all of the following prerequisites on your developm
 
 - Python 3 - [Download & Install Python 3](https://docs.python-guide.org/starting/install3/linux/)
 - Git - [Download & Install Git](https://git-scm.com/downloads)
+```
