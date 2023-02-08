@@ -3,6 +3,8 @@ import os, signal
 from scrapy.http import FormRequest, Response, Request
 import wget
 from pathvalidate import is_valid_filename
+from scraper.bin.spider import Spider, SpiderController
+from scraper.bin.request_mapper import RequestMapper
 
 class BaseSpider(scrapy.Spider):
     name = "base"
@@ -41,9 +43,6 @@ class BaseSpider(scrapy.Spider):
         self.index = kwargs['index']
 
         # get spider controller
-        from scraper.bin.spider import Spider, SpiderController
-        from scraper.bin.request_mapper import RequestMapper
-       
         self.controller = SpiderController()
         self.mapper = RequestMapper()
         self.previous_spider:Spider
@@ -55,9 +54,8 @@ class BaseSpider(scrapy.Spider):
 
     # override start_requests
     def start_requests(self):
-
-        # check if previous spider exists to generate response links
-        if self.previous_spider and self.previous_spider.name == "base":
+        # generate response links
+        if self.previous_spider:
             self.previous_response_urls = self.previous_spider.settings["response_urls"]
             self.previous_response = self.previous_spider.response
 
@@ -96,7 +94,6 @@ class BaseSpider(scrapy.Spider):
 
  
     def parse(self, response:Response):
-       
         self.response = self.mapper.get_json_response(response)        
         self.request = self.mapper.get_json_request(self.request)
         self.extract_data(response)
@@ -125,16 +122,13 @@ class BaseSpider(scrapy.Spider):
 
     def closed(self, reason):
         # update json settings
-        print("INDEX", self.index)
-        
-        self.json_settings["output_xpaths"] = self.output_xpaths
-        self.json_settings["output_selectors"] = self.output_selectors
-        self.json_settings["index"] = self.index
-        self.json_settings["request"] =  self.request
-        self.json_settings["response"] = self.response
-        self.json_settings["response_urls"] = self.response_urls
-        
-        self.controller.update_spider(self.json_settings, self.index)
+        # self.json_settings["output_xpaths"] = self.output_xpaths
+        # self.json_settings["output_selectors"] = self.output_selectors
+        # self.json_settings["index"] = self.index
+        # self.json_settings["request"] =  self.request
+        # self.json_settings["response"] = self.response
+        # self.json_settings["response_urls"] = self.response_urls
+        # self.controller.update_spider(self.json_settings, self.index)
 
         # start next spider process       
         if(self.index != len(self.controller.spiders) - 1):

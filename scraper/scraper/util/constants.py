@@ -1,4 +1,4 @@
-DIRECTORY = "json_templates"
+DIRECTORY = "json_templates/secret"
 BASE_DIRECTORY = DIRECTORY + "/base.json"
 OUTPUT_DIRECTORY = DIRECTORY + "/output.json"
 SELENIUM_DIRECTORY = DIRECTORY + "/selenium.json"

@@ -1,10 +1,5 @@
 from seleniumwire import webdriver
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.support.ui import Select
-from selenium.webdriver.common.by import By
-from selenium.webdriver.chrome.service import Service
-from selenium.webdriver import  DesiredCapabilities, ChromeOptions, FirefoxOptions, EdgeOptions, IeOptions
-
+from selenium.webdriver import  DesiredCapabilities
 from util.dict_util import get_by_key_or_value
 from util.func_util import call_func, create_object
 
@@ -135,7 +130,7 @@ class SeleniumEvent():
     object_type = None
     object_input = None
     
-    event_types ={
+    event_types = {
         0: "Base",
         1: "Action"
     }
@@ -149,7 +144,6 @@ class SeleniumEvent():
         self.args = json.get('args',None)
         self.object_type = json.get('object_type', None)
         self.object_input = json.get('object_input', None)
-         
         self.index = index
  
     def handle_base_event(self):

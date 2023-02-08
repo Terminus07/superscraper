@@ -45,7 +45,7 @@ class SpiderController():
 
     def get_spiders(self, json_file=None):
         spiders = []        
-        # change to spiders.json
+        # get custom spiders.json settings if file was given
         settings = read_json_file(SPIDERS_DIRECTORY) if json_file is None else read_json_file(json_file)
         
         for index,s in enumerate(settings):
@@ -89,6 +89,6 @@ class SpiderController():
     def start_spider_process(self, spider_index):
         spider = self.spiders[spider_index]
         spider:Spider
-        print("NAME",spider.name)
+        print(spider)
         process = self.get_spider_process(spider)
         process.start(stop_after_crawl=False)

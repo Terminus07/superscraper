@@ -46,4 +46,4 @@ from main import ArgParser
 # driver.start_driver()
 # driver.handle_events()
 
-# argparser = ArgParser()
+argparser = ArgParser()
