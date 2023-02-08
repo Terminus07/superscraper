@@ -5,10 +5,10 @@ from selenium.webdriver import  DesiredCapabilities, ChromeOptions, FirefoxOptio
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from json_templates.secret.const import WEBSITE
-
 from selenium.webdriver.support.ui import Select
 from util.func_util import create_object
-
+from util.constants import DIRECTORY, OUTPUT_DIRECTORY
+from main import ArgParser
 
 # add argument
 # experimental option
@@ -40,9 +40,10 @@ from util.func_util import create_object
 # - args: dict or list
 # - output: SeleniumOutput
 
-selenium_json =  read_json_file("json_templates/secret/selenium.json")
-selenium_json['start_urls'] = [WEBSITE]
+# selenium_json =  read_json_file("{0}/selenium.json".format(DIRECTORY))
+# selenium_json['start_urls'] = [WEBSITE]
+# driver = SeleniumDriver(selenium_json)
+# driver.start_driver()
+# driver.handle_events()
 
-driver = SeleniumDriver(selenium_json)
-driver.start_driver()
-driver.handle_events()
+# argparser = ArgParser()

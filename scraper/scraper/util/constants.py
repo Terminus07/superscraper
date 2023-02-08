@@ -1,0 +1,5 @@
+DIRECTORY = "json_templates"
+BASE_DIRECTORY = DIRECTORY + "/base.json"
+OUTPUT_DIRECTORY = DIRECTORY + "/output.json"
+SELENIUM_DIRECTORY = DIRECTORY + "/selenium.json"
+SPIDERS_DIRECTORY = DIRECTORY + "/spiders.json"

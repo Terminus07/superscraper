@@ -1,7 +1,7 @@
 from scrapy.utils.project import get_project_settings
 from util.file_util import read_json_file, append_json_file
 from scrapy.crawler import CrawlerProcess
-
+from util.constants import OUTPUT_DIRECTORY, SPIDERS_DIRECTORY
 class Spider():
     index = 0
     name = ''
@@ -41,12 +41,12 @@ class SpiderController():
     def __init__(self, json_file=None):
         self.json_file = json_file
         self.spiders = self.get_spiders(self.json_file)
-        self.output_spiders = self.get_spiders("json/output.json")
+        self.output_spiders = self.get_spiders(OUTPUT_DIRECTORY)
 
     def get_spiders(self, json_file=None):
         spiders = []        
         # change to spiders.json
-        settings = read_json_file("json/secret.json") if json_file is None else read_json_file(json_file)
+        settings = read_json_file(SPIDERS_DIRECTORY) if json_file is None else read_json_file(json_file)
         
         for index,s in enumerate(settings):
             s['index'] = index
@@ -72,7 +72,7 @@ class SpiderController():
         
         # create output.json
         try:
-            append_json_file("json/output.json", spider.settings)
+            append_json_file(OUTPUT_DIRECTORY, spider.settings)
         except Exception as e:
             print(e)
             

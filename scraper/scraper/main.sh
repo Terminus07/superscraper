@@ -42,7 +42,7 @@ main_menu(){
     case $OPTION in
         "spider "*) execute_script "main.py spider"
         ;;
-        "crawl "*) execute_script "main.py crawl"
+        "crawl"*) execute_script "main.py crawl"
         ;;
         clear) clear
         ;;

@@ -2,6 +2,7 @@ import argparse
 import os
 from bin.spider import SpiderController
 from util.file_util import read_json_file, append_json_file
+from util.constants import DIRECTORY, SPIDERS_DIRECTORY
 
 class ArgParser():
     parser = None
@@ -17,7 +18,7 @@ class ArgParser():
         
         # crawl command
         crawl = self.subparser.add_parser('crawl')
-        crawl.add_argument('json', type=lambda s:self.check_file_extension(["json"],s), default="json/secret.json", nargs='?')
+        crawl.add_argument('json', type=lambda s:self.check_file_extension(["json"],s), default=SPIDERS_DIRECTORY, nargs='?')
 
         # create args dictionary
         args = vars(self.parser.parse_args())
@@ -43,10 +44,11 @@ class ArgParser():
             dir = args['directory']
             for type in types:
                 # create json file of each type {base, selenium}
-                data = read_json_file("json/"+type+".json")
+                data_dir = DIRECTORY + "/" + type + ".json"
+                data = read_json_file(data_dir)
                 
                 #  spiders.json is default directory for the file
-                dir = "json/spiders.json" if dir is None else dir
+                dir = SPIDERS_DIRECTORY if dir is None else dir
                 append_json_file(dir, data)
         
     def check_file_extension(self,choices,fname):
