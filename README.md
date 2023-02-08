@@ -91,7 +91,7 @@ exit - Exit
 
 #### selenium.json template
 
-````
+```
   {
         "name": "selenium",
         "start_urls": [
@@ -148,10 +148,13 @@ exit - Exit
             "LOG_ENABLED": false
         }
     }
-    ```
+
+
+```
+
 #### spiders.json template
 
-````
+```
 
 [
 {
@@ -246,4 +249,3 @@ Make sure you have installed all of the following prerequisites on your developm
 
 - Python 3 - [Download & Install Python 3](https://docs.python-guide.org/starting/install3/linux/)
 - Git - [Download & Install Git](https://git-scm.com/downloads)
-```
