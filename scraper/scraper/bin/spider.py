@@ -2,6 +2,7 @@ from scrapy.utils.project import get_project_settings
 from util.file_util import read_json_file, append_json_file
 from scrapy.crawler import CrawlerProcess
 from util.constants import OUTPUT_DIRECTORY, SPIDERS_DIRECTORY
+
 class Spider():
     index = 0
     name = ''
@@ -17,8 +18,8 @@ class Spider():
         self.custom_settings = self.get_custom_settings()
         self.index = self.settings["index"]
         self.name =  self.settings["name"]  if name is None else name
-        self.response = self.settings["response"]
-        self.request = self.settings["request"]
+        self.response = self.settings.get("response", None)
+        self.request = self.settings.get("request", None)
 
     def get_custom_settings(self):
         project_settings = get_project_settings()

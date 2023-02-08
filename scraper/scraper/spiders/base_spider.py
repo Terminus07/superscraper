@@ -56,7 +56,7 @@ class BaseSpider(scrapy.Spider):
     # override start_requests
     def start_requests(self):
         # generate response links
-        if self.previous_spider:
+        if self.previous_spider and self.name != "selenium":
             self.previous_response_urls = self.previous_spider.settings["response_urls"]
             self.previous_response = self.previous_spider.response
 
@@ -89,8 +89,9 @@ class BaseSpider(scrapy.Spider):
         DataExtractor.download_from_links(self.download_links)
  
     def parse(self, response:Response):
-        self.response = self.mapper.get_json_response(response)        
-        self.request = self.mapper.get_json_request(self.request)
+        if self.name != "selenium":
+            self.response = self.mapper.get_json_response(response)        
+            self.request = self.mapper.get_json_request(self.request)
         self.extract_data(response)
  
         # generate form data

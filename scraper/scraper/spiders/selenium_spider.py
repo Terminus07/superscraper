@@ -3,7 +3,6 @@ from scraper.bin.selenium import SeleniumDriver
 
 class SeleniumSpider(BaseSpider):
     name = "selenium"
-    driver_type = 0
     json_settings = []
     index = 0
     options = []
