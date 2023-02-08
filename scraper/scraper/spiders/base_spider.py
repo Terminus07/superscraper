@@ -6,6 +6,7 @@ from pathvalidate import is_valid_filename
 from scraper.bin.spider import Spider, SpiderController
 from scraper.bin.request_mapper import RequestMapper
 from scraper.bin.data_extractor import DataExtractor
+from util.dict_util import update_dict
 
 class BaseSpider(scrapy.Spider):
     name = "base"
@@ -21,7 +22,7 @@ class BaseSpider(scrapy.Spider):
     json_settings = []
     
     # inputs
-    index = None
+    index = 0
     xpaths = []
     selectors = []
     xpath_selectors = []
@@ -41,8 +42,7 @@ class BaseSpider(scrapy.Spider):
 
     def __init__(self, *args, **kwargs):
         self.json_settings = kwargs
-        self.index = kwargs['index']
-
+    
         # get spider controller
         self.controller = SpiderController()
         self.mapper = RequestMapper()
@@ -107,13 +107,8 @@ class BaseSpider(scrapy.Spider):
         self.response = self.mapper.get_json_response(response)        
 
     def closed(self, reason):
-        # update json settings
-        self.json_settings["output_xpaths"] = self.output_xpaths
-        self.json_settings["output_selectors"] = self.output_selectors
-        self.json_settings["index"] = self.index
-        self.json_settings["request"] =  self.request
-        self.json_settings["response"] = self.response
-        self.json_settings["response_urls"] = self.response_urls
+        # update json setting
+        update_dict(vars(self), self.json_settings)
         self.controller.update_spider(self.json_settings, self.index)
 
         # start next spider process       
