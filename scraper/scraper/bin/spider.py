@@ -62,8 +62,9 @@ class SpiderController():
             return previous_spider
     
     def get_next_spider(self, spider_index):
-        if spider_index != len(self.output_spiders) -1:
-            return self.output_spiders[spider_index +1]
+        if spider_index != len(self.spiders) - 1:
+            print(len(self.spiders) - 1)
+            return self.spiders[spider_index +1]
          
     def get_spider(self, spider_index):
         return self.output_spiders[spider_index]

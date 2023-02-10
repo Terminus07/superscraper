@@ -48,7 +48,7 @@ class BaseSpider(scrapy.Spider):
 
         # get previous and next spiders, if they exist
         self.previous_spider = self.controller.get_previous_spider(self.index)
-        # self.next_spider = self.controller.get_next_spider(self.index)
+        self.next_spider = self.controller.get_next_spider(self.index)
         
         super(BaseSpider, self).__init__(*args, **kwargs)    
 

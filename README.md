@@ -4,6 +4,13 @@ Command line interface environment for scraping anything from the web. SuperScra
 
 ## Installation
 
+### Prerequisites
+
+Make sure you have installed all of the following prerequisites on your development machine:
+
+- Python 3 - [Download & Install Python 3](https://docs.python-guide.org/starting/install3/linux/)
+- Git - [Download & Install Git](https://git-scm.com/downloads)
+
 ### Step 1: Clone Github repository
 
 `git clone https://github.com/Terminus07/superscraper.git`
@@ -268,10 +275,3 @@ exit - Exit
 ]
 
 ```
-
-## Prerequisites
-
-Make sure you have installed all of the following prerequisites on your development machine:
-
-- Python 3 - [Download & Install Python 3](https://docs.python-guide.org/starting/install3/linux/)
-- Git - [Download & Install Git](https://git-scm.com/downloads)
