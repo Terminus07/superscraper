@@ -10,11 +10,6 @@ from util.func_util import create_object
 from util.constants import DIRECTORY, OUTPUT_DIRECTORY
 from main import ArgParser
 
-# add argument
-# experimental option
-# executable path
-# capabilities
-
 # DRIVER
 # - start urls: List[str]
 # - driver_settings: dict
