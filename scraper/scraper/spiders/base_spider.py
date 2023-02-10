@@ -1,8 +1,6 @@
 import scrapy
 import os, signal
 from scrapy.http import FormRequest, Response, Request
-import wget
-from pathvalidate import is_valid_filename
 from scraper.bin.spider import Spider, SpiderController
 from scraper.bin.request_mapper import RequestMapper
 from scraper.bin.data_extractor import DataExtractor
@@ -55,27 +53,17 @@ class BaseSpider(scrapy.Spider):
 
     # override start_requests
     def start_requests(self):
-        # generate response links
-        if self.previous_spider and self.name != "selenium":
-            self.previous_response_urls = self.previous_spider.settings["response_urls"]
-            self.previous_response = self.previous_spider.response
-
+        
+        # if no start_urls are defined
         if len(self.start_urls) == 0 and self.index == 0:
             error = "No start urls defined."
             print(error)
             raise AttributeError(error)
         
-        # regular urls
-        for url in self.start_urls:
-            self.request = Request(url, dont_filter=True)
-            yield self.request
+        for index,url in enumerate(self.start_urls):
+            self.request = Request(url,  dont_filter=True)
+            yield self.request  
         
-        # response urls (urls generated from previous spiders)
-        for url in self.previous_response_urls:
-            # get response object from json
-            response = self.mapper.get_response(self.previous_response)
-            self.request = self.mapper.get_request_from_json_response(url,response)
-            yield self.request
             
     def extract_data(self, response:Response):
         extractor = DataExtractor(response)
@@ -89,6 +77,11 @@ class BaseSpider(scrapy.Spider):
         DataExtractor.download_from_links(self.download_links)
  
     def parse(self, response:Response):
+        cookies = response.headers.to_unicode_dict()
+        # cookie = response.headers.getlist('Set-Cookie')[0].decode("utf-8").split(";")[0].split("=")
+        
+        print("COOKIES",cookies.get('set-cookie'))
+        
         if self.name != "selenium":
             self.response = self.mapper.get_json_response(response)        
             self.request = self.mapper.get_json_request(self.request)
@@ -102,7 +95,8 @@ class BaseSpider(scrapy.Spider):
             yield self.request
     
     def form_data_response(self, response:Response):
-        # print(response.url)
+        print("FORM")
+        print(response)
         self.extract_data(response)
         self.request = self.mapper.get_json_request(self.request)
         self.response = self.mapper.get_json_response(response)        

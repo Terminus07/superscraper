@@ -46,4 +46,12 @@ from main import ArgParser
 # driver.start_driver()
 # driver.handle_events()
 
+# CHAIN SPIDERS
+# BaseSpider
+# if form data exists, perform login request
+# extract login response headers
+# use response headers for next request
+
+# SeleniumSpider
+
 argparser = ArgParser()

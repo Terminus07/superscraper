@@ -36,25 +36,3 @@ class RequestMapper():
         "certificate": str(response.certificate)
         }
         return response
-    
-    def get_request(self, json):
-        request = Request(url=json['url'], 
-                          headers=json['headers']
-                          )
-    
-    
-    def get_response(self, json):
-        response = Response(url=json["url"], 
-                        status=json["status"], 
-                        headers=json["headers"],
-                        protocol=json["protocol"],
-                        ip_address=json["ip_address"],
-                        certificate= json["certificate"]
-                        )
-        return response
-    
-
-    def get_request_from_json_response(self, url,response:Response):
-        req = Request(url=url, 
-                      meta=response.meta, dont_filter=True)
-        return req
