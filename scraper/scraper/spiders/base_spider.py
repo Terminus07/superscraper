@@ -27,17 +27,18 @@ class BaseSpider(scrapy.Spider):
     form_data = {}
     download_links = []
     download_link_xpaths = []
+    request_params = []
     
     # outputs
     output_xpaths = []
     output_selectors = []
-    request = {}
+    requests = []
+    responses = []
+    requests = []
     response = {}
-    
-    # response
-    response_urls = []
-    response_url_xpaths = []
+    request = {}
 
+    
     def __init__(self, *args, **kwargs):
         self.json_settings = kwargs
     
@@ -60,8 +61,8 @@ class BaseSpider(scrapy.Spider):
             print(error)
             raise AttributeError(error)
         
-        for index,url in enumerate(self.start_urls):
-            self.request = Request(url,  dont_filter=True)
+        for url in self.start_urls:
+            self.request = Request(url, dont_filter=True)
             yield self.request  
         
             
@@ -77,14 +78,10 @@ class BaseSpider(scrapy.Spider):
         DataExtractor.download_from_links(self.download_links)
  
     def parse(self, response:Response):
-        cookies = response.headers.to_unicode_dict()
-        # cookie = response.headers.getlist('Set-Cookie')[0].decode("utf-8").split(";")[0].split("=")
-        
+        cookies = response.headers.to_unicode_dict() 
         print("COOKIES",cookies.get('set-cookie'))
-        
-        if self.name != "selenium":
-            self.response = self.mapper.get_json_response(response)        
-            self.request = self.mapper.get_json_request(self.request)
+        self.response = self.mapper.get_json_response(response)        
+        self.request = self.mapper.get_json_request(self.request)
         self.extract_data(response)
  
         # generate form data
@@ -95,8 +92,6 @@ class BaseSpider(scrapy.Spider):
             yield self.request
     
     def form_data_response(self, response:Response):
-        print("FORM")
-        print(response)
         self.extract_data(response)
         self.request = self.mapper.get_json_request(self.request)
         self.response = self.mapper.get_json_response(response)        
