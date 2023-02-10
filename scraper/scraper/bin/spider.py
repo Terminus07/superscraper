@@ -11,8 +11,7 @@ class Spider():
     json_file = ''
     responses = []
     requests = []
-    
-    
+
     def __init__(self, name=None, json_file=None, json_object=None):
         self.json_file = json_file
         self.settings  = json_object if json_file is None else read_json_file(self.json_file)
@@ -61,9 +60,11 @@ class SpiderController():
         if spider_index != 0:
             previous_spider = self.output_spiders[spider_index-1]
             return previous_spider
-        else:
-            return None
-        
+    
+    def get_next_spider(self, spider_index):
+        if spider_index != len(self.output_spiders) -1:
+            return self.output_spiders[spider_index +1]
+         
     def get_spider(self, spider_index):
         return self.output_spiders[spider_index]
 

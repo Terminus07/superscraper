@@ -47,21 +47,20 @@ from main import ArgParser
 # driver.handle_events()
 
 # CHAIN SPIDERS
-# BaseSpider
+
 # 1) Generate start urls
 #  - If spider index is 0 -> get base urls
 #  - else -> extract urls (determine follow links)
-# 2) Check request parameters (headers, cookies) (Must be an array equal to length of start urls)
+# 2) Check request parameters
 # 2) Perform request
 # 3) Check if form data
 # 4) Perform form data request
 # 5) Save cookie to request/response object
+# 6) Start next spider
 
-# if form data exists, perform login request
-# extract login response headers
+# if form data exists, perform form request
+# extract form response headers
 # use response headers for next request
-
-# SeleniumSpider
 
 ArgParser.spider({'type': ['base']})
 ArgParser.crawl({})
