@@ -2,7 +2,7 @@ import scrapy
 import os, signal
 from scrapy.http import FormRequest, Response, Request
 from scraper.bin.spider import Spider, SpiderController
-from scraper.bin.requests import get_form_data, get_json_request, get_request_parameters, get_json_response
+from scraper.bin.requests import get_form_data,get_requests, get_json_request,  get_json_response
 from scraper.bin.data_extractor import DataExtractor
 from util.dict_util import update_dict
 
@@ -27,7 +27,6 @@ class BaseSpider(scrapy.Spider):
     form_data = {}
     download_links = []
     download_link_xpaths = []
-    request_params = []
     
     # outputs
     output_xpaths = []
@@ -60,9 +59,14 @@ class BaseSpider(scrapy.Spider):
             error = "No start urls defined."
             raise AttributeError(error)
         
-        for url in self.start_urls:
-            self.request = Request(url, dont_filter=True)
-            yield self.request  
+        requests = get_requests(self.start_urls)
+        for request in requests:
+            self.request = request
+            yield self.request
+        
+        # for url in self.start_urls:
+        #     self.request = Request(url, dont_filter=True)
+        #     yield self.request  
         
             
     def extract_data(self, response:Response):

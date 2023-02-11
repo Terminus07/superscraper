@@ -94,6 +94,6 @@ class SpiderController():
     def start_spider_process(self, spider_index):
         spider = self.spiders[spider_index]
         spider:Spider
-        print(spider)
+        # print(spider)
         process = self.get_spider_process(spider)
         process.start(stop_after_crawl=False)

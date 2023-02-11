@@ -1,4 +1,5 @@
 from scrapy.http import Response, Request
+import validators
 import lxml.etree
 
 def get_json_request(request:Request):
@@ -15,22 +16,41 @@ def get_json_request(request:Request):
 def get_form_data(form_data:dict, response:Response):
     for key,val in form_data.items():
         val:str
-        try:
-            lxml.etree.XPath(val)
-            form_data[key] = response.xpath(val).get()
-        except Exception as e:
-            print(e)
+        form_data[key] = validate_xpath(val, response)
 
     print("SENDING FORM DATA...", form_data)
     return form_data
 
-def get_request_parameters(params:dict):
-    # for each start url, a request is performed
-    # if params is a dict, apply for all
-    # if it's a list map request parameters for each
-    
-    
-    print(params)
+def get_requests(start_urls):
+    requests = []
+    # check if urls is dict
+    for url in start_urls:
+        if type(url) is dict:
+            headers = url.get('headers', None)
+            cookies = url.get('cookies', None)
+            url = url.get('url', '')
+            print(cookies)
+            print(headers)
+            print(url)
+            request = Request(headers=headers, cookies=cookies, url=url, dont_filter=True)
+        else:
+            request = Request(url=url, dont_filter=True)
+        requests.append(request)
+    return requests
+
+def validate_xpath(value, response:Response) -> None:
+    try:
+        print("VAL", value)
+        lxml.etree.XPath(value)
+        return response.xpath(value).get() if response.xpath(value).get() else value
+    except Exception as e:
+        print(e)
+    return value
+
+def extract_links(values, response:Response = None):
+    for idx, value in enumerate(values):
+        values[idx] = value if validators.url(value) else validate_xpath(value, response)
+    return values
 
 def get_json_response(response:Response):
 
