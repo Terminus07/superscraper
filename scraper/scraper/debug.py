@@ -47,19 +47,13 @@ from bin.data_extractor import extract_links
 # 1) Generate start urls
 #  - If spider index is 0 -> get base urls
 #  - else -> if base url is not defined use previous one
-# 2) Check request parameters
-#  - If params in request
-#   
 # 2) Perform request
+# - Request should inherit params from previous response/request (spider_index, type) 
 # 3) Check if form data
 # 4) Perform form data request
 # 5) Save cookie to request/response object
 # 6) Start next spider
 
-# if form data exists, perform form request
-# extract form response headers
-# use response headers for next request
-
-ArgParser.spider({'type': ['base']})
+# ArgParser.spider({'type': ['base', 'base']})
 ArgParser.crawl({})
 

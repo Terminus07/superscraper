@@ -9,6 +9,7 @@ from util.dict_util import update_dict
 class BaseSpider(scrapy.Spider):
     name = "base"
     
+    start_urls = []
     # spider controller
     controller = ''
         
@@ -39,7 +40,8 @@ class BaseSpider(scrapy.Spider):
     
     def __init__(self, *args, **kwargs):
         self.json_settings = kwargs
-    
+        self.index = self.json_settings.get('index',0)
+        
         # get spider controller
         self.controller = SpiderController()
         self.previous_spider:Spider
@@ -54,16 +56,14 @@ class BaseSpider(scrapy.Spider):
     # override start_requests
     def start_requests(self):
         
+        if self.previous_spider:
+            self.start_urls.extend(self.previous_spider.follow_links)
+        
         # if no start_urls are defined
         if len(self.start_urls) == 0:
-            if self.index == 0:
-                error = "No start urls defined."
-                raise AttributeError(error)
-            else:
-                # extract follow links from previous spider
-                self.start_urls = self.previous_spider.follow_links
-                print("FL", self.start_urls)
-    
+            error = "No start urls defined."
+            raise AttributeError(error)
+            
         requests = get_requests(self.start_urls)
         for request in requests:
             self.request = request
@@ -110,7 +110,7 @@ class BaseSpider(scrapy.Spider):
         # update json settings
         update_dict(vars(self), self.json_settings)
         self.controller.update_spider(self.json_settings, self.index)
-        
+               
         # start next spider process    
         if(self.index != len(self.controller.spiders) - 1):
             self.controller.start_spider_process(self.index +1)

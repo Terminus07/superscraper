@@ -38,3 +38,9 @@ def get_json_response(response:Response):
     "certificate": str(response.certificate)
     }
     return response
+
+# class ScrapyRequest():
+#     start_urls = []
+    
+#     def __init__(self) -> None:
+#         pass
