@@ -9,7 +9,7 @@ from selenium.webdriver.support.ui import Select
 from util.func_util import create_object
 from util.constants import DIRECTORY, OUTPUT_DIRECTORY
 from main import ArgParser
-from bin.requests import extract_links
+from bin.data_extractor import extract_links
 
 # DRIVER
 # - start urls: List[str]

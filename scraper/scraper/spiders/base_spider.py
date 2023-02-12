@@ -1,9 +1,9 @@
 import scrapy
 import os, signal
-from scrapy.http import FormRequest, Response, Request
+from scrapy.http import FormRequest, Response
 from scraper.bin.spider import Spider, SpiderController
-from scraper.bin.requests import get_form_data,get_requests, get_json_request,  get_json_response
-from scraper.bin.data_extractor import DataExtractor
+from scraper.bin.requests import get_requests, get_json_request,  get_json_response
+from scraper.bin.data_extractor import DataExtractor, download_from_links, get_form_data, extract_links
 from util.dict_util import update_dict
 
 class BaseSpider(scrapy.Spider):
@@ -26,15 +26,13 @@ class BaseSpider(scrapy.Spider):
     xpath_selectors = []
     form_data = {}
     download_links = []
-    download_link_xpaths = []
     follow_links = []
-    
+         
     # outputs
     output_xpaths = []
     output_selectors = []
     requests = []
     responses = []
-    requests = []
     response = {}
     request = {}
 
@@ -65,24 +63,25 @@ class BaseSpider(scrapy.Spider):
         for request in requests:
             self.request = request
             yield self.request
-        
+        # for url in self.start_urls:
+        #     yield scrapy.Request(url)
             
-    def parse(self, response:Response):
-        # set cookies
+    def parse(self, response):
         self.extract_data(response)
- 
+        
         # generate form data
         if len(self.form_data) > 0:
             self.form_data = get_form_data(self.form_data, response)
+            print(self.form_data)
             self.request = FormRequest.from_response(response, formdata=self.form_data, 
-                                            callback=self.form_data_response)
+                                            callback=self.logged_in)
 
-            yield self.request
-    
-    def form_data_response(self, response:Response):
+            return self.request
+     
+    def logged_in(self, response):
         self.extract_data(response)
-        self.request = get_json_request(self.request)
-        self.response = get_json_response(response)     
+        print(response.xpath('//*[@id="action-menu-toggle-0"]/span/span[1]'))
+
 
     def extract_data(self, response:Response):  
         # append to request and response arrays
@@ -99,14 +98,12 @@ class BaseSpider(scrapy.Spider):
         self.output_xpaths = extractor.extract_from_xpaths(self.xpaths)       
         self.output_selectors = extractor.extract_from_selectors(self.selectors)
                     
-        # download link xpaths
-        self.download_links = extractor.extract_from_xpaths(self.download_link_xpaths)
-        DataExtractor.download_from_links(self.download_links)
+        # generate download links
+        # self.download_links = extract_links(self.download_links, response)
+        # download_from_links(self.download_links)
 
         # extract follow links
-        # self.follow_links = 
         
- 
     
     def closed(self, reason):
         # update json setting
