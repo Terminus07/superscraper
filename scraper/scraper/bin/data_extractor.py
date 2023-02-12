@@ -5,20 +5,16 @@ import requests
 import validators
 import lxml.etree
 
-class DataExtractor():
-    response = None
+ 
     
-    def __init__(self, response:Response) -> None:
-        self.response = response
-    
-    def extract_from_xpaths(self, xpaths) -> None:
-        return [self.response.xpath(xpath).getall() for xpath in xpaths]
+def extract_from_xpaths(xpaths, response:Response) -> None:
+    return [response.xpath(xpath).getall() for xpath in xpaths]
 
-    def extract_from_selectors(self, selectors) -> None:
-        return [self.response.css(selector).getall() for selector in selectors]
-    
-    def download_videos(self):
-        print("video")
+def extract_from_selectors(selectors, response:Response) -> None:
+    return [response.css(selector).getall() for selector in selectors]
+
+def download_videos():
+    print("video")
 
     
 def download_from_links(links):
@@ -51,4 +47,15 @@ def validate_xpath(value, response:Response) -> None:
 def extract_links(values, response:Response = None):
     for idx, value in enumerate(values):
         values[idx] = value if validators.url(value) else validate_xpath(value, response)
-    return values
+    
+    return flatten(values)
+
+def flatten(iterable):
+    arr = []
+    for i in iterable:
+        if isinstance(i, list):
+            arr.extend(i)
+        else:
+            arr.append(i)
+    return arr
+    

@@ -16,7 +16,7 @@ def get_requests(start_urls):
     requests = []
     # check if urls is dict
     for url in start_urls:
-        if type(url) is dict:
+        if isinstance(url, dict):
             headers = url.get('headers', None)
             cookies = url.get('cookies', None)
             url = url.get('url', '')

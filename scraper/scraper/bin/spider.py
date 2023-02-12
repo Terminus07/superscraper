@@ -11,16 +11,18 @@ class Spider():
     json_file = ''
     responses = []
     requests = []
+    follow_links = []
 
     def __init__(self, name=None, json_file=None, json_object=None):
         self.json_file = json_file
         self.settings  = json_object if json_file is None else read_json_file(self.json_file)
         self.custom_settings = self.get_custom_settings()
-        self.index = self.settings["index"]
+        self.index = self.settings.get("index",0)
         self.name =  self.settings["name"]  if name is None else name
         self.responses = self.settings.get("responses", [])
         self.requests = self.settings.get("requests", [])
-
+        self.follow_links = self.settings.get("follow_links", [])
+        
     def get_custom_settings(self):
         project_settings = get_project_settings()
         custom_settings  = self.settings['custom_settings']

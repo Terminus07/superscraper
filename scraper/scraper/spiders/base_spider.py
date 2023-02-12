@@ -3,7 +3,7 @@ import os, signal
 from scrapy.http import FormRequest, Response
 from scraper.bin.spider import Spider, SpiderController
 from scraper.bin.requests import get_requests, get_json_request,  get_json_response
-from scraper.bin.data_extractor import DataExtractor, download_from_links, get_form_data, extract_links
+from scraper.bin.data_extractor import *
 from util.dict_util import update_dict
 
 class BaseSpider(scrapy.Spider):
@@ -55,16 +55,20 @@ class BaseSpider(scrapy.Spider):
     def start_requests(self):
         
         # if no start_urls are defined
-        if len(self.start_urls) == 0 and self.index == 0:
-            error = "No start urls defined."
-            raise AttributeError(error)
-        
+        if len(self.start_urls) == 0:
+            if self.index == 0:
+                error = "No start urls defined."
+                raise AttributeError(error)
+            else:
+                # extract follow links from previous spider
+                self.start_urls = self.previous_spider.follow_links
+                print("FL", self.start_urls)
+    
         requests = get_requests(self.start_urls)
         for request in requests:
             self.request = request
             yield self.request
-        # for url in self.start_urls:
-        #     yield scrapy.Request(url)
+        
             
     def parse(self, response):
         self.extract_data(response)
@@ -72,7 +76,6 @@ class BaseSpider(scrapy.Spider):
         # generate form data
         if len(self.form_data) > 0:
             self.form_data = get_form_data(self.form_data, response)
-            print(self.form_data)
             self.request = FormRequest.from_response(response, formdata=self.form_data, 
                                             callback=self.logged_in)
 
@@ -80,7 +83,7 @@ class BaseSpider(scrapy.Spider):
      
     def logged_in(self, response):
         self.extract_data(response)
-        print(response.xpath('//*[@id="action-menu-toggle-0"]/span/span[1]'))
+        # print(response.xpath('//*[@id="action-menu-toggle-0"]/span/span[1]'))
 
 
     def extract_data(self, response:Response):  
@@ -91,26 +94,24 @@ class BaseSpider(scrapy.Spider):
         self.responses.append(self.response)
         self.requests.append(self.request)
         
-        # define extractor
-        extractor = DataExtractor(response)
-        
         # extract text 
-        self.output_xpaths = extractor.extract_from_xpaths(self.xpaths)       
-        self.output_selectors = extractor.extract_from_selectors(self.selectors)
+        self.output_xpaths = extract_from_xpaths(self.xpaths, response)       
+        self.output_selectors = extract_from_selectors(self.selectors, response)
                     
         # generate download links
-        # self.download_links = extract_links(self.download_links, response)
-        # download_from_links(self.download_links)
+        self.download_links = extract_links(self.download_links, response)
 
         # extract follow links
+        self.follow_links = extract_links(self.follow_links, response)
         
-    
+  
     def closed(self, reason):
-        # update json setting
+        
+        # update json settings
         update_dict(vars(self), self.json_settings)
         self.controller.update_spider(self.json_settings, self.index)
-
-        # start next spider process       
+        
+        # start next spider process    
         if(self.index != len(self.controller.spiders) - 1):
             self.controller.start_spider_process(self.index +1)
         else:

@@ -46,8 +46,10 @@ from bin.data_extractor import extract_links
 
 # 1) Generate start urls
 #  - If spider index is 0 -> get base urls
-#  - else -> extract urls (determine follow links)
+#  - else -> if base url is not defined use previous one
 # 2) Check request parameters
+#  - If params in request
+#   
 # 2) Perform request
 # 3) Check if form data
 # 4) Perform form data request
