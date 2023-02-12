@@ -65,8 +65,10 @@ class BaseSpider(scrapy.Spider):
             error = "No start urls defined."
             raise AttributeError(error)
             
-        requests = get_requests(self.start_urls, self.request_params)
+        requests = get_requests(self.start_urls, self.request_params, self.controller, self.index)
         for request in requests:
+            # if self.index == 1:
+            #     print("cooki",request.cookies)
             self.request = request
             yield self.request
         

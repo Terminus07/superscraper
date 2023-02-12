@@ -1,5 +1,5 @@
 from scrapy.http import Response, Request
-
+from scraper.bin.spider import SpiderController, Spider
 
 def get_json_request(request:Request):
     request = {
@@ -12,7 +12,7 @@ def get_json_request(request:Request):
         
     return request
 
-def get_requests(start_urls, request_params:dict):
+def get_requests(start_urls, request_params:dict, controller:SpiderController, index):
     requests = []
     for url in start_urls:
         if not isinstance(url, dict):
@@ -22,7 +22,16 @@ def get_requests(start_urls, request_params:dict):
         cookies = url.get('cookies', None)
         url = url.get('url', '')
         if(len(request_params) > 0):
-            print(request_params)
+            # TODO: Find a way to implement session cookies here
+            index = request_params.get('spider_index', 0)
+            spider = controller.get_spider(0)
+            spider:Spider
+            header_req = spider.requests[1].get("headers")
+            h = spider.responses[0].get("headers")
+            c = h.get('set-cookie').split(';')[0]
+
+            print("NEW HEADERS", header_req)
+            
         request = Request(headers=headers, cookies=cookies, url=url, dont_filter=True) 
         requests.append(request)
     return requests
