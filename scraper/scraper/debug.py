@@ -56,4 +56,3 @@ from bin.data_extractor import extract_links
 
 # ArgParser.spider({'type': ['base', 'base']})
 ArgParser.crawl({})
-

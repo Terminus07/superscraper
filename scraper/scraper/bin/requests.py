@@ -12,23 +12,26 @@ def get_json_request(request:Request):
         
     return request
 
-def get_requests(start_urls):
+def get_requests(start_urls, request_params:dict):
     requests = []
-    # check if urls is dict
     for url in start_urls:
-        if isinstance(url, dict):
-            headers = url.get('headers', None)
-            cookies = url.get('cookies', None)
-            url = url.get('url', '')
-            request = Request(headers=headers, cookies=cookies, url=url, dont_filter=True)
-        else:
-            request = Request(url=url, dont_filter=True)
+        if not isinstance(url, dict):
+            url = {"url": url}
+            
+        headers = url.get('headers', None)
+        cookies = url.get('cookies', None)
+        url = url.get('url', '')
+        if(len(request_params) > 0):
+            print(request_params)
+        request = Request(headers=headers, cookies=cookies, url=url, dont_filter=True) 
         requests.append(request)
     return requests
 
+
+
 def get_json_response(response:Response):
 
-    response =  {
+    return {
     "url": response.url,
     "status": response.status,
     "headers": response.headers.to_unicode_dict(),
@@ -37,10 +40,4 @@ def get_json_response(response:Response):
     "flags": response.flags,
     "certificate": str(response.certificate)
     }
-    return response
-
-# class ScrapyRequest():
-#     start_urls = []
     
-#     def __init__(self) -> None:
-#         pass

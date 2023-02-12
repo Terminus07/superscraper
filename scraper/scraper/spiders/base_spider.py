@@ -9,7 +9,7 @@ from util.dict_util import update_dict
 class BaseSpider(scrapy.Spider):
     name = "base"
     
-    start_urls = []
+  
     # spider controller
     controller = ''
         
@@ -23,11 +23,13 @@ class BaseSpider(scrapy.Spider):
     # inputs
     index = 0
     xpaths = []
+    start_urls = []
     selectors = []
     xpath_selectors = []
     form_data = {}
     download_links = []
     follow_links = []
+    request_params = {}
          
     # outputs
     output_xpaths = []
@@ -36,7 +38,6 @@ class BaseSpider(scrapy.Spider):
     responses = []
     response = {}
     request = {}
-
     
     def __init__(self, *args, **kwargs):
         self.json_settings = kwargs
@@ -64,7 +65,7 @@ class BaseSpider(scrapy.Spider):
             error = "No start urls defined."
             raise AttributeError(error)
             
-        requests = get_requests(self.start_urls)
+        requests = get_requests(self.start_urls, self.request_params)
         for request in requests:
             self.request = request
             yield self.request
