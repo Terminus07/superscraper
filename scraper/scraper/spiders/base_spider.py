@@ -27,6 +27,7 @@ class BaseSpider(scrapy.Spider):
     form_data = {}
     download_links = []
     download_link_xpaths = []
+    follow_links = []
     
     # outputs
     output_xpaths = []
@@ -44,7 +45,8 @@ class BaseSpider(scrapy.Spider):
         # get spider controller
         self.controller = SpiderController()
         self.previous_spider:Spider
-
+        self.next_spider:Spider
+        
         # get previous and next spiders, if they exist
         self.previous_spider = self.controller.get_previous_spider(self.index)
         self.next_spider = self.controller.get_next_spider(self.index)
@@ -64,13 +66,25 @@ class BaseSpider(scrapy.Spider):
             self.request = request
             yield self.request
         
-        # for url in self.start_urls:
-        #     self.request = Request(url, dont_filter=True)
-        #     yield self.request  
-        
             
-    def extract_data(self, response:Response):
-        
+    def parse(self, response:Response):
+        # set cookies
+        self.extract_data(response)
+ 
+        # generate form data
+        if len(self.form_data) > 0:
+            self.form_data = get_form_data(self.form_data, response)
+            self.request = FormRequest.from_response(response, formdata=self.form_data, 
+                                            callback=self.form_data_response)
+
+            yield self.request
+    
+    def form_data_response(self, response:Response):
+        self.extract_data(response)
+        self.request = get_json_request(self.request)
+        self.response = get_json_response(response)     
+
+    def extract_data(self, response:Response):  
         # append to request and response arrays
         self.response = get_json_response(response)        
         self.request = get_json_request(response.request)
@@ -88,26 +102,12 @@ class BaseSpider(scrapy.Spider):
         # download link xpaths
         self.download_links = extractor.extract_from_xpaths(self.download_link_xpaths)
         DataExtractor.download_from_links(self.download_links)
- 
-    def parse(self, response:Response):
-        # cookies = response.headers.to_unicode_dict() 
-        # print("COOKIES",cookies.get('set-cookie'))
-        
-        # set cookies
-        self.extract_data(response)
- 
-        # generate form data
-        if len(self.form_data) > 0:
-            self.form_data = get_form_data(self.form_data, response)
-            self.request = FormRequest.from_response(response, formdata=self.form_data, 
-                                            callback=self.form_data_response)
-            yield self.request
-    
-    def form_data_response(self, response:Response):
-        self.extract_data(response)
-        self.request = get_json_request(self.request)
-        self.response = get_json_response(response)        
 
+        # extract follow links
+        # self.follow_links = 
+        
+ 
+    
     def closed(self, reason):
         # update json setting
         update_dict(vars(self), self.json_settings)
