@@ -2,7 +2,7 @@ from seleniumwire import webdriver
 from selenium.webdriver import  DesiredCapabilities
 from util.dict_util import get_by_key_or_value
 from util.func_util import call_func, create_object
-
+from selenium.webdriver.support.ui import Select
 driver:webdriver.Remote = None
 driver_outputs = []
 
@@ -49,8 +49,10 @@ class SeleniumDriver():
     def get_driver_instance(self):
         global driver
         if driver is None:
-           opts_dict = {"options" : self.options, "desired_capabilities": self.capabilities} 
-        
+           opts_dict = {"options" : self.options}
+           if self.driver_type == 0: # add desired capabilities for chrome
+               opts_dict.update({"desired_capabilities": self.capabilities})
+                
            # equivalent to webdriver.Chrome() and passes arguments as dict
            driver = call_func(webdriver, self.driver_types.get(self.driver_type), opts_dict)
            driver.get(self.start_urls[0])
@@ -110,7 +112,7 @@ class SeleniumDriver():
             else:
                 event.handle_action_event()
             global driver
-            print(driver.requests)
+            # print(driver.requests)
             
                  
     def __str__(self):

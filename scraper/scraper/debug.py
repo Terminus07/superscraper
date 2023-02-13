@@ -4,10 +4,8 @@ from util.dict_util import get_by_key_or_value
 from selenium.webdriver import  DesiredCapabilities, ChromeOptions, FirefoxOptions, EdgeOptions, IeOptions
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
-from json_templates.secret.const import WEBSITE
 from selenium.webdriver.support.ui import Select
-from util.func_util import create_object
-from util.constants import DIRECTORY, OUTPUT_DIRECTORY
+from util.constants import DIRECTORY, SELENIUM_DIRECTORY
 from main import ArgParser
 from bin.data_extractor import extract_links
 
@@ -36,11 +34,6 @@ from bin.data_extractor import extract_links
 # - args: dict or list
 # - output: SeleniumOutput
 
-# selenium_json =  read_json_file("{0}/selenium.json".format(DIRECTORY))
-# selenium_json['start_urls'] = [WEBSITE]
-# driver = SeleniumDriver(selenium_json)
-# driver.start_driver()
-# driver.handle_events()
 
 # CHAIN SPIDERS
 
@@ -54,5 +47,10 @@ from bin.data_extractor import extract_links
 # 5) Save cookie to request/response object
 # 6) Start next spider
 
-# ArgParser.spider({'type': ['base', 'base']})
+ArgParser.spider({'type': ['base', 'base', 'selenium']})
 ArgParser.crawl({})
+
+# selenium_json =  read_json_file(SELENIUM_DIRECTORY)
+# driver = SeleniumDriver(selenium_json)
+# driver.start_driver()
+# driver.handle_events()

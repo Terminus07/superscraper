@@ -2,16 +2,15 @@ import scrapy
 import os, signal
 from scrapy.http import FormRequest, Response
 from scraper.bin.spider import Spider, SpiderController
-from scraper.bin.requests import get_requests, get_json_request,  get_json_response
+from scraper.bin.scrapy_requests import get_requests, get_json_request,  get_json_response
 from scraper.bin.data_extractor import *
 from util.dict_util import update_dict
 
 class BaseSpider(scrapy.Spider):
     name = "base"
     
-  
     # spider controller
-    controller = ''
+    controller = None
         
     # spider json objects
     previous_spider = None

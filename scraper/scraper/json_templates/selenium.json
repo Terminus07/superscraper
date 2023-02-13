@@ -40,6 +40,17 @@
             "output": "password"
         },
         {
+            "object_type": "Select",
+            "object_input": "select",
+            "args": {},
+            "output": "select_target"
+        },
+        {
+            "target": "select_target",
+            "function": "select_by_index",
+            "args": "1"
+        },
+        {
             "target": "username",
             "function": "send_keys",
             "args": "name"
@@ -48,11 +59,6 @@
             "target": "password",
             "function": "send_keys",
             "args": "red"
-        },
-        {
-            "target": "password",
-            "function": "send_keys",
-            "args": "\ue007"
         },
         {
             "object_type": "Select",
@@ -64,6 +70,11 @@
             "target": "select",
             "function": "select_by_index",
             "args": "1"
+        },
+        {
+            "target": "password",
+            "function": "send_keys",
+            "args": "\ue007"
         }
     ],
     "request": {},
