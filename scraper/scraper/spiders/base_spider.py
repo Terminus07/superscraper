@@ -67,7 +67,7 @@ class BaseSpider(scrapy.Spider):
         requests = get_requests(self.start_urls, self.request_params, self.controller, self.index)
         for request in requests:
             # if self.index == 1:
-            #     print("cooki",request.cookies)
+            #     print("cookie",request.cookies)
             self.request = request
             yield self.request
         
@@ -105,7 +105,7 @@ class BaseSpider(scrapy.Spider):
 
         # extract follow links
         self.follow_links = extract_links(self.follow_links, response)
-        
+    
   
     def closed(self, reason):
         

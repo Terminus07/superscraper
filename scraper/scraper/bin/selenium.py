@@ -3,6 +3,7 @@ from selenium.webdriver import  DesiredCapabilities
 from util.dict_util import get_by_key_or_value
 from util.func_util import call_func, create_object
 from selenium.webdriver.support.ui import Select
+from bin.selenium_requests import *
 driver:webdriver.Remote = None
 driver_outputs = []
 
@@ -36,6 +37,8 @@ class SeleniumDriver():
     capabilities = None
     start_urls = []
     driver_settings = []
+    requests = []
+    responses = []
     
     def __init__(self, json) -> None:
        self.json = json
@@ -55,7 +58,7 @@ class SeleniumDriver():
                 
            # equivalent to webdriver.Chrome() and passes arguments as dict
            driver = call_func(webdriver, self.driver_types.get(self.driver_type), opts_dict)
-           driver.get(self.start_urls[0])
+  
         return driver
     
     def get_driver_type(self):
@@ -97,7 +100,8 @@ class SeleniumDriver():
         if driver is None:
             print("DRIVER STARTED")
             driver = self.get_driver_instance()
-
+            driver.get(self.start_urls[0])
+    
     def stop_driver(self):
         global driver
         if driver:
@@ -112,8 +116,10 @@ class SeleniumDriver():
             else:
                 event.handle_action_event()
             global driver
-            # print(driver.requests)
-            
+            for request in driver.requests:
+                self.requests.append(request)
+                self.responses.append(request.response)
+                
                  
     def __str__(self):
         print("DRIVER")

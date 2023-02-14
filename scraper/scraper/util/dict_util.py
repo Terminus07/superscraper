@@ -14,6 +14,3 @@ def update_dict(dict:dict, dict2:dict):
         if key in dict2:
             dict2[key] = value
     return dict2
-
-    
-    

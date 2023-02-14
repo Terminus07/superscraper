@@ -1,7 +1,7 @@
 {
     "name": "selenium",
     "start_urls": [
-        "https://quotes.toscrape.com/page/1/"
+        "http://quotes.toscrape.com/login"
     ],
     "driver_settings": {
         "driver_type": "Chrome",
@@ -9,7 +9,7 @@
             "experimental_options": [
                 {
                     "name": "detach",
-                    "value": false
+                    "value": true
                 }
             ],
             "arguments": [
@@ -40,6 +40,14 @@
             "output": "password"
         },
         {
+            "function": "find_element",
+            "args": {
+                "by": "name",
+                "value": "_host"
+            },
+            "output": "select"
+        },
+        {
             "object_type": "Select",
             "object_input": "select",
             "args": {},
@@ -53,23 +61,12 @@
         {
             "target": "username",
             "function": "send_keys",
-            "args": "name"
+            "args": "u"
         },
         {
             "target": "password",
             "function": "send_keys",
-            "args": "red"
-        },
-        {
-            "object_type": "Select",
-            "object_input": "password",
-            "args": {},
-            "output": "select"
-        },
-        {
-            "target": "select",
-            "function": "select_by_index",
-            "args": "1"
+            "args": "p"
         },
         {
             "target": "password",
@@ -77,8 +74,9 @@
             "args": "\ue007"
         }
     ],
-    "request": {},
-    "response": {},
+    "requests": [],
+    "responses": [],
+    "request_params": {},
     "custom_settings": {
         "LOG_ENABLED": false
     }

@@ -1,8 +1,7 @@
-import scrapy
-import os, signal
 from spiders.base_spider import BaseSpider
 from scraper.bin.selenium import SeleniumDriver
-from util.dict_util import update_dict
+from bin.selenium_requests import *
+
 
 class SeleniumSpider(BaseSpider):
     name = "selenium"
@@ -16,12 +15,13 @@ class SeleniumSpider(BaseSpider):
         super(SeleniumSpider, self).__init__(*args, **kwargs)
     
     def start_requests(self):
-        driver = SeleniumDriver(self.json_settings)
-        driver.start_driver()
-        driver.handle_events()
+        self.driver = SeleniumDriver(self.json_settings)
+        self.driver.start_driver()
+        self.driver.handle_events()
         self.close(self, 'finished')
 
-    
     def closed(self, reason):
-        print('HELLO')
+        self.requests = get_json_requests(self.driver.requests)
+        self.responses = get_json_responses(self.driver.responses)
+  
         return super().closed(reason)
