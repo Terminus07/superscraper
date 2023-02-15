@@ -118,4 +118,6 @@ class BaseSpider(scrapy.Spider):
             self.controller.start_spider_process(self.index +1)
         else:
             print(reason)
+            # open output.json
+            os.system("start code json_templates/secret/output.json")
             os.kill(os.getpid(), signal.SIGINT)

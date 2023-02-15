@@ -7,7 +7,9 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import Select
 from util.constants import DIRECTORY, SELENIUM_DIRECTORY
 from main import ArgParser
-from bin.data_extractor import extract_links
+from bin.data_extractor import *
+import requests
+
 
 # DRIVER
 # - start urls: List[str]
@@ -46,10 +48,11 @@ from bin.data_extractor import extract_links
 # 5) Save cookie to request/response object
 # 6) Start next spider
 
-ArgParser.spider({'type': ['selenium']})
+ArgParser.spider({'type': ['base']})
 ArgParser.crawl({})
 
 # selenium_json =  read_json_file(SELENIUM_DIRECTORY)
 # driver = SeleniumDriver(selenium_json)
 # driver.start_driver()
 # driver.handle_events()
+

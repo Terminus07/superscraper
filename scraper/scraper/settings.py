@@ -65,8 +65,10 @@ COOKIES_DEBUG = True
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-   'scraper.pipelines.CustomPipeline': 300,
+   'scraper.custom_pipelines.CustomImagePipeline': 1
 }
+
+FILES_STORE = ""
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://docs.scrapy.org/en/latest/topics/autothrottle.html

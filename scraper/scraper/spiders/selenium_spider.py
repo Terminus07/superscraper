@@ -2,7 +2,6 @@ from spiders.base_spider import BaseSpider
 from scraper.bin.selenium import SeleniumDriver
 from bin.selenium_requests import *
 
-
 class SeleniumSpider(BaseSpider):
     name = "selenium"
     json_settings = []

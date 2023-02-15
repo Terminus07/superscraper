@@ -1,23 +1,26 @@
-from scrapy.http import FormRequest, Response, Request
+from scrapy.http import Response
 from pathvalidate import is_valid_filename
 import wget
 import requests
 import validators
 import lxml.etree
 
- 
-    
 def extract_from_xpaths(xpaths, response:Response) -> None:
     return [response.xpath(xpath).getall() for xpath in xpaths]
 
 def extract_from_selectors(selectors, response:Response) -> None:
     return [response.css(selector).getall() for selector in selectors]
 
-def download_videos():
-    print("video")
+def download_videos(video_urls):
+    # extract video urls
+    for v in video_urls:
+        print(v)        
 
-    
 def download_from_links(links):
+    for link in links:
+        print(link)
+        
+def wget_download(links):
     for link in links:
         f = link.split("/")[-1]
         file =  f if is_valid_filename(f) else None
