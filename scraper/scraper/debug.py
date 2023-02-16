@@ -10,7 +10,6 @@ from main import ArgParser
 from bin.data_extractor import *
 import requests
 
-
 # DRIVER
 # - start urls: List[str]
 # - driver_settings: dict
@@ -48,11 +47,12 @@ import requests
 # 5) Save cookie to request/response object
 # 6) Start next spider
 
-ArgParser.spider({'type': ['base']})
-ArgParser.crawl({})
+# ArgParser.spider({'type': ['base']})
+# ArgParser.crawl({})
 
 # selenium_json =  read_json_file(SELENIUM_DIRECTORY)
 # driver = SeleniumDriver(selenium_json)
 # driver.start_driver()
 # driver.handle_events()
 
+download_videos(["https://manifest.prod.boltdns.net/manifest/v1/hls/v4/clear/3588749423001/93877a33-c8e2-4a01-9956-781e81872ef0/10s/master.m3u8?fastly_token=NjNlZTQ0MzVfZmNlNjFiN2M2NDA0NjUzYzg5M2EzZGFhMDE0M2UxMzU0ZTQ0ZjE3ZjI3ZjFhNzEyMjZmMTM1MjkyNTFhNzNkOQ=="])
