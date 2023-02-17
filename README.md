@@ -1,10 +1,8 @@
 # superscraper
 
-Superscraper is a web scraping tool that allows you to scrape data from the web in a programmer friendly format. It combines [Scrapy](https://docs.scrapy.org/en/latest/), [Selenium](https://selenium-python.readthedocs.io/) and [BeautifulSoup](https://www.crummy.com/software/BeautifulSoup/bs4/doc/) libraries together, to make web crawling as easy as executing a single command!
+Superscraper is a web scraping tool that allows you to extract data from the web in a programmer friendly format. It combines [Scrapy](https://docs.scrapy.org/en/latest/), [Selenium](https://selenium-python.readthedocs.io/) and [BeautifulSoup](https://www.crummy.com/software/BeautifulSoup/bs4/doc/) libraries together, to make web crawling as easy as executing a single command!
 
 ## Installation
-
-Superscraper can either be used as a CLI tool to execute commands manually, or as a module that can be imported in your personal projects.
 
 ### Step 1: Clone Github repository
 
@@ -35,6 +33,8 @@ Otherwise, you can run `main.sh` directly: </br>
     bash main.sh
 
 ## Usage
+
+It can either be used as a CLI tool to execute commands manually, or as a module that can be imported in your personal projects.
 
 ### Create a spiders.json file
 
