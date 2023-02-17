@@ -1,15 +1,8 @@
 # superscraper
 
-Command line interface environment for scraping anything from the web. SuperScraper combines [Scrapy](https://docs.scrapy.org/en/latest/), [Selenium](https://selenium-python.readthedocs.io/) and [BeautifulSoup](https://www.crummy.com/software/BeautifulSoup/bs4/doc/) libraries together, to make web crawling as easy as executing a single command!
+Superscraper is a multi-purpose web scraping tool that allows you to scrape data from the web in a programming friendly format. It combines [Scrapy](https://docs.scrapy.org/en/latest/), [Selenium](https://selenium-python.readthedocs.io/) and [BeautifulSoup](https://www.crummy.com/software/BeautifulSoup/bs4/doc/) libraries together, to make web crawling as easy as executing a single command!
 
 ## Installation
-
-### Prerequisites
-
-Make sure you have installed all of the following prerequisites on your development machine:
-
-- Python 3 - [Download & Install Python 3](https://docs.python-guide.org/starting/install3/linux/)
-- Git - [Download & Install Git](https://git-scm.com/downloads)
 
 ### Step 1: Clone Github repository
 
@@ -47,11 +40,11 @@ In order to scrape data from the web we need to create a `spiders.json` file, wh
 
 ### Modify your newly created spiders.json file
 
-Edit your `spiders.json` file to your liking.
+Edit your `spiders.json` file to your liking. You can read the documentation, for more information about the template structure.
 
 ### Run spiders
 
-Execute the crawl command. An `output.json` file will be created with extracted data.
+Execute the crawl command. An `output.json` file will be created with the extracted data.
 
 ## Commands
 
