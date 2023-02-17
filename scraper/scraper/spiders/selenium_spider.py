@@ -1,7 +1,6 @@
 from spiders.base_spider import BaseSpider
 from scraper.bin.selenium import SeleniumDriver
 from bin.selenium_requests import *
-from scrapy.http import Response
 from scrapy.selector import Selector
 from scraper.bin.data_extractor import *
 
@@ -12,6 +11,7 @@ class SeleniumSpider(BaseSpider):
     driver = None
     body = None
     response = None
+    save_requests = False
     
     def __init__(self, *args, **kwargs):
         self.json_settings = kwargs
@@ -25,9 +25,10 @@ class SeleniumSpider(BaseSpider):
         self.close(self, 'finished')
 
     def closed(self, reason):
-        self.requests = get_json_requests(self.driver.requests)
-        self.responses = get_json_responses(self.driver.responses)
-        
+        if self.save_requests:
+            self.requests = get_json_requests(self.driver.requests)
+            self.responses = get_json_responses(self.driver.responses)
+            
         # get driver response
         self.body = self.driver.get_html_response()
         self.response = Selector(text=self.body)

@@ -2,7 +2,7 @@ import scrapy
 import os, signal
 from scrapy.http import FormRequest, Response
 from scraper.bin.spider import Spider, SpiderController
-from scraper.bin.scrapy_requests import get_requests, get_json_request,  get_json_response
+from scraper.bin.scrapy_requests import *
 from scraper.bin.data_extractor import *
 from util.dict_util import update_dict
 
@@ -20,11 +20,11 @@ class BaseSpider(scrapy.Spider):
     json_settings = []
     
     # inputs
+    save_requests = False
     index = 0
     xpaths = []
     start_urls = []
     selectors = []
-    xpath_selectors = []
     form_data = {}
     download_links = []
     follow_links = []
@@ -66,8 +66,6 @@ class BaseSpider(scrapy.Spider):
             
         requests = get_requests(self.start_urls, self.request_params, self.controller, self.index)
         for request in requests:
-            # if self.index == 1:
-            #     print("cookie",request.cookies)
             self.request = request
             yield self.request
         
@@ -85,16 +83,16 @@ class BaseSpider(scrapy.Spider):
      
     def logged_in(self, response):
         self.extract_data(response)
-        # print(response.xpath('//*[@id="action-menu-toggle-0"]/span/span[1]'))
-
 
     def extract_data(self, response:Response):  
         # append to request and response arrays
-        self.response = get_json_response(response)        
-        self.request = get_json_request(response.request)
         
-        self.responses.append(self.response)
-        self.requests.append(self.request)
+        if self.save_requests:
+            self.response = get_json_response(response)        
+            self.request = get_json_request(response.request)
+            
+            self.responses.append(self.response)
+            self.requests.append(self.request)
         
         # extract text 
         self.output_xpaths = extract_from_xpaths(self.xpaths, response)       

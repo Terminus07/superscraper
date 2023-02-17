@@ -1,8 +1,8 @@
 from seleniumwire.request import Request, Response
-import json
 
 def get_json_requests(requests):
     arr = []
+    
     for r in requests:
         if isinstance(r, Request):
             arr.append(
@@ -13,8 +13,7 @@ def get_json_requests(requests):
                     "url": r.url,
                     "date": str(r.date)
                 }
-            )
-        
+            )        
     return arr
 
 def get_json_responses(responses):
