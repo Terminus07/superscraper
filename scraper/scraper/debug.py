@@ -47,12 +47,12 @@ import requests
 # 5) Save cookie to request/response object
 # 6) Start next spider
 
-# ArgParser.spider({'type': ['base']})
-# ArgParser.crawl({})
+ArgParser.spider({'type': ['selenium', 'selenium']})
+ArgParser.crawl({})
 
 # selenium_json =  read_json_file(SELENIUM_DIRECTORY)
 # driver = SeleniumDriver(selenium_json)
 # driver.start_driver()
 # driver.handle_events()
 
-download_videos(["https://manifest.prod.boltdns.net/manifest/v1/hls/v4/clear/3588749423001/a278511c-1765-42a0-bfbf-5f99718f5aa7/10s/master.m3u8?fastly_token=NjNlZjBlMjJfNTIxN2ZiNDViMjViN2RkZTM1ODU4OWNmZjc5NmQ5MWI1YzBmZjA5Y2I2YzIzMGJhZGI4MWI2NDA2NzBmNjU4Zg=="])
+# download_videos(["https://manifest.prod.boltdns.net/manifest/v1/hls/v4/clear/3588749423001/a278511c-1765-42a0-bfbf-5f99718f5aa7/10s/master.m3u8?fastly_token=NjNlZjBlMjJfNTIxN2ZiNDViMjViN2RkZTM1ODU4OWNmZjc5NmQ5MWI1YzBmZjA5Y2I2YzIzMGJhZGI4MWI2NDA2NzBmNjU4Zg=="])

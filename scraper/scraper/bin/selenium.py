@@ -100,7 +100,8 @@ class SeleniumDriver():
         if driver is None:
             print("DRIVER STARTED")
             driver = self.get_driver_instance()
-            driver.get(self.start_urls[0])
+            if len(self.start_urls) > 0:
+                driver.get(self.start_urls[0])
     
     def stop_driver(self):
         global driver
@@ -120,7 +121,11 @@ class SeleniumDriver():
                 self.requests.append(request)
                 self.responses.append(request.response)
                 
-                 
+    def get_html_response(self):
+        global driver
+        if driver:
+            return driver.page_source
+                      
     def __str__(self):
         print("DRIVER")
         print("TYPE: ", self.driver_type)

@@ -31,10 +31,10 @@ class M3U8Playlist():
     
 
 def extract_from_xpaths(xpaths, response:Response) -> None:
-    return [response.xpath(xpath).getall() for xpath in xpaths]
+    return flatten([response.xpath(xpath).getall() for xpath in xpaths])
 
 def extract_from_selectors(selectors, response:Response) -> None:
-    return [response.css(selector).getall() for selector in selectors]
+    return flatten([response.css(selector).getall() for selector in selectors])
 
 def download_videos(video_urls):
     # extract video urls

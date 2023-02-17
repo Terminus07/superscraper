@@ -119,5 +119,5 @@ class BaseSpider(scrapy.Spider):
         else:
             print(reason)
             # open output.json
-            os.system("start code json_templates/secret/output.json")
+            # os.system("start code json_templates/secret/output.json")
             os.kill(os.getpid(), signal.SIGINT)
