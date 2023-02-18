@@ -25,15 +25,15 @@ class SeleniumSpider(BaseSpider):
         self.close(self, 'finished')
 
     def closed(self, reason):
+       
+        self.body = self.driver.get_html_response()
+        self.response = Selector(text=self.body)  # get driver response in selector format
+        
+        # extract requests and responses
         if self.save_requests:
             self.requests = get_json_requests(self.driver.requests)
             self.responses = get_json_responses(self.driver.responses)
             
-        # get driver response
-        self.body = self.driver.get_html_response()
-        self.response = Selector(text=self.body)
-        self.output_xpaths = extract_from_xpaths(self.xpaths, self.response)
-        self.output_selectors = extract_from_selectors(self.selectors, self.response)
-        self.download_links = extract_links(self.download_links, self.response)
-
+        self.extract_data(self.response)
+        
         return super().closed(reason)

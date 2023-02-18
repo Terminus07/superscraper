@@ -4,6 +4,7 @@ from scrapy.http import FormRequest, Response
 from scraper.bin.spider import Spider, SpiderController
 from scraper.bin.scrapy_requests import *
 from scraper.bin.data_extractor import *
+from scrapy.selector import Selector
 from util.dict_util import update_dict
 
 class BaseSpider(scrapy.Spider):
@@ -26,7 +27,9 @@ class BaseSpider(scrapy.Spider):
     start_urls = []
     selectors = []
     form_data = {}
-    download_links = []
+    wget_links = []
+    image_links = []
+    video_links = []
     follow_links = []
     request_params = {}
          
@@ -71,6 +74,7 @@ class BaseSpider(scrapy.Spider):
         
             
     def parse(self, response):
+        self.extract_requests(response)
         self.extract_data(response)
         
         # generate form data
@@ -82,35 +86,41 @@ class BaseSpider(scrapy.Spider):
             return self.request
      
     def logged_in(self, response):
+        print("Logged in")
+        self.extract_requests(response)
         self.extract_data(response)
 
-    def extract_data(self, response:Response):  
-        # append to request and response arrays
-        
+    def extract_requests(self, response:Response):
+         # append to request and response arrays
         if self.save_requests:
             self.response = get_json_response(response)        
             self.request = get_json_request(response.request)
             
             self.responses.append(self.response)
             self.requests.append(self.request)
-        
+    
+    def extract_data(self, response):  
         # extract text 
         self.output_xpaths = extract_from_xpaths(self.xpaths, response)       
         self.output_selectors = extract_from_selectors(self.selectors, response)
                     
-        # generate download links
-        self.download_links = extract_links(self.download_links, response)
-
-        # extract follow links
+        # extract links
+        self.wget_links = extract_links(self.wget_links, response)
         self.follow_links = extract_links(self.follow_links, response)
-    
-  
+        self.image_links  = extract_links(self.image_links, response)
+        self.video_links = extract_links(self.video_links, response)
+        
+        # download stuff
+        wget_download(self.wget_links)
+        print("EXTRACTING DATA", self.image_links)
+        
+        
     def closed(self, reason):
         
         # update json settings
         update_dict(vars(self), self.json_settings)
         self.controller.update_spider(self.json_settings, self.index)
-               
+          
         # start next spider process    
         if(self.index != len(self.controller.spiders) - 1):
             self.controller.start_spider_process(self.index +1)

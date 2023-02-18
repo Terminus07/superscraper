@@ -29,11 +29,15 @@ class M3U8Playlist():
         self.stream_info = StreamInfo(playlist.get("stream_info", None))
         self.uri = playlist.get("uri", None)
     
+def download_images(image_urls):
+    for url in image_urls:
+        print(url)
 
-def extract_from_xpaths(xpaths, response:Response) -> None:
+
+def extract_from_xpaths(xpaths, response) -> None:
     return flatten([response.xpath(xpath).getall() for xpath in xpaths])
 
-def extract_from_selectors(selectors, response:Response) -> None:
+def extract_from_selectors(selectors, response) -> None:
     return flatten([response.css(selector).getall() for selector in selectors])
 
 def download_videos(video_urls):
