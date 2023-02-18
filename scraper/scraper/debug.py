@@ -47,7 +47,7 @@ import requests
 # 5) Save cookie to request/response object
 # 6) Start next spider
 
-ArgParser.spider({'type': ['base']})
+# ArgParser.spider({'type': ['base']})
 ArgParser.crawl({})
 
 # selenium_json =  read_json_file(SELENIUM_DIRECTORY)

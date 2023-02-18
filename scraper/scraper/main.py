@@ -1,7 +1,7 @@
 import argparse
 import os
 from bin.spider import SpiderController
-from util.file_util import read_json_file, append_json_file,overwrite_json_file
+from util.file_util import *
 from util.constants import DIRECTORY, SPIDERS_DIRECTORY, OUTPUT_DIRECTORY
 
 class ArgParser():
@@ -13,8 +13,9 @@ class ArgParser():
         
         # spider command
         spider = self.subparser.add_parser('spider')
-        spider.add_argument('type', choices=['base', 'selenium'], nargs='+')
-        spider.add_argument('-d', '--directory', type=lambda s:self.check_file_extension(["json"],s) )
+        choices = ['base', 'selenium']
+        spider.add_argument('type', type=lambda s:self.check_spider_type(s, choices), default='base', nargs='+')
+        spider.add_argument('-d', '--directory', type=lambda s:self.check_file_extension(["json"],s), default=SPIDERS_DIRECTORY )
         
         # crawl command
         crawl = self.subparser.add_parser('crawl')
@@ -55,17 +56,25 @@ class ArgParser():
    
         overwrite_json_file(dir, [])
         for type in types:
-            # create json file of each type {base, selenium}
-            data_dir = DIRECTORY + "/" + type + ".json"
+            # check if type ends with .json
+            ext = get_file_extension(type)
+            data_dir = type if ext == 'json' else DIRECTORY + "/" + type + ".json"            
             data = read_json_file(data_dir)
             append_json_file(dir, data)
     
     def check_file_extension(self,choices,fname):
-        ext = os.path.splitext(fname)[1][1:]
-        if ext not in choices or ext == '':
-            self.parser.error("Invalid file extension. File doesn't end with one of {}".format(choices))
+        ext = get_file_extension(fname)
+        if ext not in choices or ext == '': 
+            self.parser.error("Invalid file extension. File doesn't end with one of {}".format(choices))  
         return fname
-  
+    
+    def check_spider_type(self, fname, choices):
+        if fname in choices:
+            return str(fname)
+        else:
+            fname = self.check_file_extension(["json"], fname)
+        return fname
+            
 if __name__ == "__main__":
     parser = ArgParser()
     

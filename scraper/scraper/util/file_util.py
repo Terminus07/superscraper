@@ -1,4 +1,5 @@
 import json
+import os
 def read_json_file(json_file):
     try:
         with open(json_file, 'r') as file:
@@ -35,3 +36,6 @@ def append_json_file(json_file, data):
         # create json file and dump empty object
         create_json_file(json_file)
         append_json_file(json_file, data)
+        
+def get_file_extension(file):
+    return os.path.splitext(file)[1][1:]
