@@ -4,11 +4,17 @@ from util.dict_util import get_by_key_or_value
 from util.func_util import call_func, create_object
 from selenium.webdriver.support.ui import Select
 from bin.selenium_requests import *
+from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+
 driver:webdriver.Remote = None
 driver_outputs = []
+  
 
 class SeleniumDriver():
     json = {}
+    
+    delay = 0 # implicit delay before loading
     
     driver_type = 0 # always integer
     
@@ -44,6 +50,7 @@ class SeleniumDriver():
        self.json = json
        self.start_urls = json.get('start_urls', [])
        self.driver_settings = json.get('driver_settings', {})
+       self.delay = json.get('delay', 0)
        self.events = self.get_events()
        self.driver_type = self.get_driver_type()
        self.options = self.get_options()
@@ -58,7 +65,7 @@ class SeleniumDriver():
                 
            # equivalent to webdriver.Chrome() and passes arguments as dict
            driver = call_func(webdriver, self.driver_types.get(self.driver_type), opts_dict)
-  
+            
         return driver
     
     def get_driver_type(self):
@@ -102,6 +109,8 @@ class SeleniumDriver():
             driver = self.get_driver_instance()
   
     def load_urls(self):
+        if self.delay > 0: # add implicit wait
+            driver.implicitly_wait(self.delay)
         for url in self.start_urls:
             driver.get(url)
     
@@ -112,6 +121,7 @@ class SeleniumDriver():
             driver.quit()
     
     def handle_events(self):
+        print("handling")
         for event in self.events:
             event:SeleniumEvent
             event.handle_event()
@@ -202,13 +212,18 @@ class SeleniumEvent():
         driver_outputs.append(object_output)
     
     def handle_delay_event(self):
-        # implicit wait
-        print("delay")
-        if self.delay_input:
-            driver.implicitly_wait(self.delay)
-        # else:
-        #     driver.implicitly_wait(self.delay)
-    
+        # explicit wait
+        print(self)
+        wait = WebDriverWait(driver, self.delay)
+        function = self.delay_input.get('function')
+        args = self.delay_input.get('args')
+        try:
+            expected_condition = call_func(EC, function, tuple(args))
+            element = wait.until(expected_condition)
+        except Exception as e:
+            print(e)
+        print(element)
+
     
     def get_target(self):
         if 'driver' == self.target: # default value is driver
