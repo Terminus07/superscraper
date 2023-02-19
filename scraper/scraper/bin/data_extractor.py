@@ -48,6 +48,10 @@ def download_videos(video_urls):
     video_content_types = ['video/mp4', 'video/x-flv', 
                     'video/3gpp', 'video/ogg', 'video/webm']
     
+    image_content_types = ['image/apng', 'image/avif', 'image/gif', 
+                           'image/jpeg', 'image/svg+xml', 'image/png',
+                           'image/webp']
+    
     for url in video_urls:
        r = requests.get(url, stream=True)
        content_type = r.headers.get('Content-Type', None)
@@ -141,6 +145,31 @@ def extract_links(values, response:Response = None):
         values[idx] = value if validators.url(value) else validate_xpath(value, response)
     
     return flatten(values)
+
+def extract_items(item_fields:dict, response=None):
+   
+    items = []
+    keys = []
+    values = []
+    length = 0 # max length of list of lists that will be extracted
+    try:
+        for k,v in item_fields.items():
+            vals = validate_xpath(v, response)
+            if len(vals) > length and isinstance(vals, list):
+                length = len(vals)
+            values.append(vals)
+            keys.append(k)
+
+        for i in range(0, length): # the true length of items
+            d = {}
+            for j ,key in enumerate(keys):
+                value  = values[j][i] if len(values[j][i]) > 1 else ''
+                d[key] = value
+            items.append(d)
+    except Exception as e:
+        print(e)
+    print(items)
+    return items
 
 def flatten(iterable):
     arr = []

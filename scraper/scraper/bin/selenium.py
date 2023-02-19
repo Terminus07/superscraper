@@ -178,8 +178,7 @@ class SeleniumEvent():
         object_instance = create_object(globals(), self.object_type, args)
         object_output = SeleniumOutput(name=self.output, index=self.index, value=object_instance)
         driver_outputs.append(object_output)
-        
-        
+     
     def get_target(self):
         if 'driver' == self.target: # default value is driver
             return driver

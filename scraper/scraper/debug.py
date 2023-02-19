@@ -47,8 +47,14 @@ import requests
 # 5) Save cookie to request/response object
 # 6) Start next spider
 
-# ArgParser.spider({'type': ['base']})
+ArgParser.spider({'type': ['base']})
 ArgParser.crawl({})
+
+# item_fields = {
+#         "title": "/html/body/div[1]/div[2]/div[1]/div[1]",
+#         "text": "/html/body/div/div[1]/div[2]/p/a/text()"
+#     }
+# extract_items(item_fields)
 
 # selenium_json =  read_json_file(SELENIUM_DIRECTORY)
 # driver = SeleniumDriver(selenium_json)
