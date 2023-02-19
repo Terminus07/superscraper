@@ -6,7 +6,7 @@ import validators
 import lxml.etree
 import m3u8
 import os
-import shutil
+
 class StreamInfo():
     bandwidth = None
     codecs = None

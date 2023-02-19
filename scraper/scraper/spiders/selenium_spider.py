@@ -21,6 +21,7 @@ class SeleniumSpider(BaseSpider):
     def start_requests(self):
         self.driver = SeleniumDriver(self.json_settings)
         self.driver.start_driver()
+        self.driver.load_urls()
         self.driver.handle_events()
         self.close(self, 'finished')
 

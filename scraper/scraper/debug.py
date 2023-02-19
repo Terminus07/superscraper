@@ -5,7 +5,7 @@ from selenium.webdriver import  DesiredCapabilities, ChromeOptions, FirefoxOptio
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import Select
-from util.constants import DIRECTORY, SELENIUM_DIRECTORY
+from util.constants import *
 from main import ArgParser
 from bin.data_extractor import *
 import requests
@@ -20,7 +20,7 @@ import requests
     
 # EVENT TYPES
 
-# 1) Base event
+# 1) Target event
 # - target: str = 'driver'
 # - function: str
 # - args: dict or list
@@ -29,11 +29,18 @@ import requests
     # - index: int (indicates event index in list)
     # - value: str (function to run)
     
-# 2) Action event (pass in parameters to an object)
+# 2) Object event (pass in parameters to an object)
 # - object_type: str
 # - object_input: Optional[str] (variable previously stored as an output)
 # - args: dict or list
 # - output: SeleniumOutput
+
+# 3) Delay event (pass in parameters to an object)
+# - object_type: str
+# - object_input: Optional[str] (variable previously stored as an output)
+# - args: dict or list
+# - output: SeleniumOutput
+
 
 # CHAIN SPIDERS
 
@@ -47,16 +54,10 @@ import requests
 # 5) Save cookie to request/response object
 # 6) Start next spider
 
-ArgParser.spider({'type': ['base']})
+ArgParser.spider({'type': [AMAZON_DIRECTORY]})
 ArgParser.crawl({})
 
-# item_fields = {
-#         "title": "/html/body/div[1]/div[2]/div[1]/div[1]",
-#         "text": "/html/body/div/div[1]/div[2]/p/a/text()"
-#     }
-# extract_items(item_fields)
-
-# selenium_json =  read_json_file(SELENIUM_DIRECTORY)
+# selenium_json =  read_json_file(AMAZON_DIRECTORY)
 # driver = SeleniumDriver(selenium_json)
 # driver.start_driver()
 # driver.handle_events()

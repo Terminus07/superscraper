@@ -1,6 +1,6 @@
 # superscraper
 
-Superscraper is a web scraping tool that allows you to extract data from the web in a programmer friendly format. It combines [Scrapy](https://docs.scrapy.org/en/latest/), [Selenium](https://selenium-python.readthedocs.io/) and [BeautifulSoup](https://www.crummy.com/software/BeautifulSoup/bs4/doc/) libraries together, to make web crawling as easy as executing a single command!
+Superscraper is a web scraping tool that allows you to extract data from the web in a programmer friendly format. It combines [Scrapy](https://docs.scrapy.org/en/latest/) and [Selenium](https://selenium-python.readthedocs.io/) libraries together, to make web crawling as easy as executing a single command!
 
 ## Installation
 
