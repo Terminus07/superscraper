@@ -29,6 +29,7 @@ class BaseSpider(scrapy.Spider):
     selectors = []
     form_data = {}
     wget_links = []
+    image_links = []
     media_links = []
     follow_links = []
     request_params = {}
@@ -89,7 +90,7 @@ class BaseSpider(scrapy.Spider):
         
         # generate image links
         return {
-                'image_urls': self.media_links
+                'image_urls': self.image_links
         }
            
      
@@ -111,18 +112,21 @@ class BaseSpider(scrapy.Spider):
         # extract text 
         self.extracted_xpaths = extract_from_xpaths(self.xpaths, response)       
         self.extracted_selectors = extract_from_selectors(self.selectors, response)
-                    
+        self.extracted_items = extract_items(self.item_fields, response)
+       
+            
         # extract links
         self.wget_links = extract_links(self.wget_links, response)
         self.follow_links = extract_links(self.follow_links, response)
-        self.media_links  = extract_links(self.media_links, response)        
-        self.extracted_items = extract_items(self.item_fields, response)
-        
-        # download stuff
+        self.media_links  = extract_links(self.media_links, response) 
+        self.image_links = extract_links(self.image_links, response)    
+           
+        # get relative links 
         self.media_links = get_relative_links(self.media_links, response)
-        
-        # download_media(self.media_links, response)
-        # wget_download(self.wget_links)
+
+        # downloaders
+        download_media(self.media_links, response)
+        wget_download(self.wget_links)
        
         
     def closed(self, reason):

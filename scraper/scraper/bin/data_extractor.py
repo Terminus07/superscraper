@@ -6,7 +6,7 @@ import validators
 import lxml.etree
 import m3u8
 import os
-
+import shutil
 class StreamInfo():
     bandwidth = None
     codecs = None
@@ -40,7 +40,7 @@ def get_relative_links(urls, response):
     return [response.urljoin(url) for url in urls]
             
 
-def download_media(media_urls, response=None):
+def download_media(media_urls, response=None, file_path=None):
     # extract video urls
     m3u8_content_types = ['application/mpegurl', 'application/x-mpegurl',
                             'audio/mpegurl', 'audio/x-mpegurl']
@@ -54,9 +54,6 @@ def download_media(media_urls, response=None):
     
     for url in media_urls:
        # check if valid url
-    #    if not validators.url(url):
-    #        print("wtf",url)
-       
        try:
         r = requests.get(url, stream=True)
         content_type = r.headers.get('Content-Type', None)
@@ -78,7 +75,7 @@ def download_media(media_urls, response=None):
                     # connect segments together 
                     r = requests.get(segment['uri'])
                     filename = str(idx) +'.ts' 
-                    download_file(r, filename, content_length, 1024)
+                    save_file(r, filename, content_length, 1024)
                     
                     if idx == len(segments)-1:
                         copy_cmd+= filename
@@ -91,20 +88,23 @@ def download_media(media_urls, response=None):
             
         # regular video types         
         if content_type in video_content_types:
-            download_file(r, "file.mp4", content_length)
+            save_file(r, "file.mp4", content_length)
+        
+        if content_type in image_content_types:
+            save_file(r, "file.jpg", content_length)   
+        
        except Exception as e:
             print(e)
         
 
-def download_file(response, file_name, content_length=None, chunk_size=256):
+def save_file(response, file_name, content_length=None, chunk_size=256):
     dl = 0
     content_length = int(content_length)
     with open(file_name, "wb") as f:
         for chunk in response.iter_content(chunk_size=chunk_size):
             if content_length: # content length exists
-                dl += len(chunk)
-                done = int(50 * dl / content_length)
-                print(done, "/", content_length)
+                dl += len(chunk) 
+                print(dl, "/", content_length)
             f.write(chunk)
 
 def get_m3u8_playlist(response:Response,resolution=None):
@@ -121,6 +121,7 @@ def get_m3u8_playlist(response:Response,resolution=None):
     
       
 def wget_download(links):
+    print("download")
     for link in links:
         f = link.split("/")[-1]
         file =  f if is_valid_filename(f) else None
