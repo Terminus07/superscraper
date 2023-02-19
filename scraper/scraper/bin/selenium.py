@@ -9,13 +9,8 @@ from selenium.webdriver.support import expected_conditions as EC
 
 driver:webdriver.Remote = None
 driver_outputs = []
-  
 
-class SeleniumDriver():
-    json = {}
-    
-    delay = 0 # implicit delay before loading
-    
+class DriverSettings():
     driver_type = 0 # always integer
     
     driver_types = {
@@ -38,35 +33,17 @@ class SeleniumDriver():
         2: "FirefoxOptions",
         3: "IeOptions"
     }
-    events = []
-    options = None
-    capabilities = None
-    start_urls = []
-    driver_settings = []
-    requests = []
-    responses = []
+    options = {}
+    capabilities = {}
+    driver_settings = {}
+    executable_path = None
     
-    def __init__(self, json) -> None:
-       self.json = json
-       self.start_urls = json.get('start_urls', [])
-       self.driver_settings = json.get('driver_settings', {})
-       self.delay = json.get('delay', 0)
-       self.events = self.get_events()
-       self.driver_type = self.get_driver_type()
-       self.options = self.get_options()
-       self.capabilities = self.get_capabilities()
- 
-    def get_driver_instance(self):
-        global driver
-        if driver is None:
-           opts_dict = {"options" : self.options}
-           if self.driver_type == 0: # add desired capabilities for chrome
-               opts_dict.update({"desired_capabilities": self.capabilities})
-                
-           # equivalent to webdriver.Chrome() and passes arguments as dict
-           driver = call_func(webdriver, self.driver_types.get(self.driver_type), opts_dict)
-            
-        return driver
+    def __init__(self, settings:dict) -> None:
+        self.driver_settings = settings
+        self.driver_type = self.get_driver_type()
+        self.executable_path = self.driver_settings.get("executable_path", "")
+        self.capabilities = self.get_capabilities()
+        self.options = self.get_options()
     
     def get_driver_type(self):
         d = self.driver_settings["driver_type"]
@@ -94,6 +71,36 @@ class SeleniumDriver():
         capabilities_type = self.driver_capabilities.get(self.driver_type)
         capabilities.update(capabilities_type)
         return capabilities
+    
+class SeleniumDriver():
+    json = {}
+    delay = 0 # implicit delay before loading
+    events = []
+    start_urls = []
+    requests = []
+    responses = []
+    driver_settings:DriverSettings = None
+    
+    def __init__(self, json) -> None:
+       self.json = json
+       self.start_urls = json.get('start_urls', [])
+       driver_settings = json.get('driver_settings', {})
+       self.driver_settings = DriverSettings(driver_settings)
+       self.delay = json.get('delay', 0)
+       self.events = self.get_events()
+       
+ 
+    def get_driver_instance(self):
+        global driver
+        if driver is None:
+           opts_dict = {"options" : self.driver_settings.options}
+           if self.driver_settings.driver_type == 0: # add desired capabilities for chrome
+               opts_dict.update({"desired_capabilities": self.driver_settings.capabilities})
+             
+           # equivalent to webdriver.Chrome() and passes arguments as dict
+           driver = call_func(webdriver, self.driver_settings.driver_types.get(self.driver_settings.driver_type), opts_dict)
+            
+        return driver
   
     def get_events(self):
         events = self.json.get('events',[])
@@ -121,7 +128,6 @@ class SeleniumDriver():
             driver.quit()
     
     def handle_events(self):
-        print("handling")
         for event in self.events:
             event:SeleniumEvent
             event.handle_event()
@@ -137,7 +143,7 @@ class SeleniumDriver():
                       
     def __str__(self):
         print("DRIVER")
-        print("TYPE: ", self.driver_type)
+        print("TYPE: ", self.driver_settings.driver_type)
         print("DRIVER:", driver)
         return ""
     
