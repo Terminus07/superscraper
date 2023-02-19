@@ -64,7 +64,7 @@ COOKIES_DEBUG = True
 
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
-ITEM_PIPELINES = {'scrapy.pipelines.images.ImagesPipeline': 1}
+ITEM_PIPELINES = {'scraper.custom_pipelines.CustomImagesPipeline': 1}
 
 
 # FILES_STORE = ""
