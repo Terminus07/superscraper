@@ -28,10 +28,6 @@ class M3U8Playlist():
     def __init__(self, playlist) -> None:
         self.stream_info = StreamInfo(playlist.get("stream_info", None))
         self.uri = playlist.get("uri", None)
-    
-def download_images(image_urls):
-    for url in image_urls:
-        print(url)
 
 
 def extract_from_xpaths(xpaths, response) -> None:
@@ -40,7 +36,11 @@ def extract_from_xpaths(xpaths, response) -> None:
 def extract_from_selectors(selectors, response) -> None:
     return flatten([response.css(selector).getall() for selector in selectors])
 
-def download_videos(video_urls):
+def get_relative_links(urls, response):
+    return [response.urljoin(url) for url in urls]
+            
+
+def download_media(media_urls, response=None):
     # extract video urls
     m3u8_content_types = ['application/mpegurl', 'application/x-mpegurl',
                             'audio/mpegurl', 'audio/x-mpegurl']
@@ -52,44 +52,51 @@ def download_videos(video_urls):
                            'image/jpeg', 'image/svg+xml', 'image/png',
                            'image/webp']
     
-    for url in video_urls:
-       r = requests.get(url, stream=True)
-       content_type = r.headers.get('Content-Type', None)
-       content_length = r.headers.get('content-length', None)
+    for url in media_urls:
+       # check if valid url
+    #    if not validators.url(url):
+    #        print("wtf",url)
        
-       if content_type:
-           content_type = content_type.lower()
-           print(content_type)
-           print(content_length)
-     
-       # m3u8 response types
-       if content_type in m3u8_content_types:
-            playlist = get_m3u8_playlist(r,url)
-            r = requests.get(playlist.uri)
-            segments = m3u8.loads(r.text).data.get('segments')
-            
-            copy_cmd = 'copy /b '
-            for idx,segment in enumerate(segments):
-                # connect segments together 
-                r = requests.get(segment['uri'])
-                filename = str(idx) +'.ts' 
-                save_file(r, filename, content_length, 1024)
-                
-                if idx == len(segments)-1:
-                    copy_cmd+= filename
-                    copy_cmd+= ' all.ts'
-                else:
-                    copy_cmd+= filename + '+'
-            print(copy_cmd)
-            ffmpeg_cmd = 'ffmpeg -i all.ts -bsf:a aac_adtstoasc -acodec copy -vcodec copy all.mp4'
-            # os.system(copy_cmd)
+       try:
+        r = requests.get(url, stream=True)
+        content_type = r.headers.get('Content-Type', None)
+        content_length = r.headers.get('content-length', None)
         
-       # regular video types         
-       if content_type in video_content_types:
-           save_file(r, "file.mp4", content_length)
+        if content_type:
+            content_type = content_type.lower()
+            print(content_type)
+            print(content_length)
+
+        # m3u8 response types
+        if content_type in m3u8_content_types:
+                playlist = get_m3u8_playlist(r,url)
+                r = requests.get(playlist.uri)
+                segments = m3u8.loads(r.text).data.get('segments')
+                
+                copy_cmd = 'copy /b '
+                for idx,segment in enumerate(segments):
+                    # connect segments together 
+                    r = requests.get(segment['uri'])
+                    filename = str(idx) +'.ts' 
+                    download_file(r, filename, content_length, 1024)
+                    
+                    if idx == len(segments)-1:
+                        copy_cmd+= filename
+                        copy_cmd+= ' all.ts'
+                    else:
+                        copy_cmd+= filename + '+'
+                print(copy_cmd)
+                ffmpeg_cmd = 'ffmpeg -i all.ts -bsf:a aac_adtstoasc -acodec copy -vcodec copy all.mp4'
+                # os.system(copy_cmd)
+            
+        # regular video types         
+        if content_type in video_content_types:
+            download_file(r, "file.mp4", content_length)
+       except Exception as e:
+            print(e)
         
 
-def save_file(response, file_name, content_length=None, chunk_size=256):
+def download_file(response, file_name, content_length=None, chunk_size=256):
     dl = 0
     content_length = int(content_length)
     with open(file_name, "wb") as f:

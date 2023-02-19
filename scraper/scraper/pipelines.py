@@ -6,7 +6,7 @@
 
 from itemadapter import ItemAdapter
 from scrapy.http import Request
-
+from scrapy.pipelines.images import ImagesPipeline
 
 class ScraperPipeline:
     def process_item(self, item, spider):

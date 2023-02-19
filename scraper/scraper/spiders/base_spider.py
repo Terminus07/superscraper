@@ -6,6 +6,7 @@ from scraper.bin.scrapy_requests import *
 from scraper.bin.data_extractor import *
 from scrapy.selector import Selector
 from util.dict_util import update_dict
+from scraper.items import ImageItem
 
 class BaseSpider(scrapy.Spider):
     name = "base"
@@ -45,7 +46,7 @@ class BaseSpider(scrapy.Spider):
     def __init__(self, *args, **kwargs):
         self.json_settings = kwargs
         self.index = self.json_settings.get('index',0)
-        
+         
         # get spider controller
         self.controller = SpiderController()
         self.previous_spider:Spider
@@ -54,7 +55,7 @@ class BaseSpider(scrapy.Spider):
         # get previous and next spiders, if they exist
         self.previous_spider = self.controller.get_previous_spider(self.index)
         self.next_spider = self.controller.get_next_spider(self.index)
-        
+    
         super(BaseSpider, self).__init__(*args, **kwargs)    
 
     # override start_requests
@@ -85,12 +86,18 @@ class BaseSpider(scrapy.Spider):
                                             callback=self.logged_in)
 
             return self.request
+        
+        # generate image links
+        return {
+                'image_urls': self.media_links
+        }
+           
      
     def logged_in(self, response):
         print("Logged in")
         self.extract_requests(response)
         self.extract_data(response)
-
+      
     def extract_requests(self, response:Response):
          # append to request and response arrays
         if self.save_requests:
@@ -112,9 +119,11 @@ class BaseSpider(scrapy.Spider):
         self.extracted_items = extract_items(self.item_fields, response)
         
         # download stuff
-        wget_download(self.wget_links)
+        self.media_links = get_relative_links(self.media_links, response)
         
-        
+        # download_media(self.media_links, response)
+        # wget_download(self.wget_links)
+       
         
     def closed(self, reason):
         

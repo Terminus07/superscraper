@@ -17,7 +17,7 @@ LOG_ENABLED = True
 USER_AGENT = 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/45.0.2454.85 Safari/537.36'
 
 # Obey robots.txt rules
-ROBOTSTXT_OBEY = True
+ROBOTSTXT_OBEY = False
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
 #CONCURRENT_REQUESTS = 32
@@ -64,11 +64,10 @@ COOKIES_DEBUG = True
 
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
-ITEM_PIPELINES = {
-   'scraper.custom_pipelines.CustomImagePipeline': 1
-}
+ITEM_PIPELINES = {'scrapy.pipelines.images.ImagesPipeline': 1}
 
-FILES_STORE = ""
+
+# FILES_STORE = ""
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://docs.scrapy.org/en/latest/topics/autothrottle.html

@@ -28,7 +28,7 @@ class Spider():
         custom_settings  = self.settings['custom_settings']
         for key in dict(custom_settings):
             project_settings[key] = custom_settings[key]
-         
+
         return project_settings
     
     def __str__(self):

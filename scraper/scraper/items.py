@@ -5,7 +5,5 @@
 
 import scrapy
 
-class FileItem(scrapy.Item):
-    name = scrapy.Field()
-    path = scrapy.Field()
-    link = scrapy.Field()
+class ImageItem(scrapy.Item):
+    pass
