@@ -5,5 +5,6 @@ SELENIUM_DIRECTORY = DIRECTORY + "/selenium.json"
 SPIDERS_DIRECTORY = DIRECTORY + "/spiders.json"
 
 AMAZON_DIRECTORY = DIRECTORY + '/selenium/amazon.json'
+GOOGLE_DIRECTORY = DIRECTORY + '/selenium/google.json'
 FRED_DIRECTORY = DIRECTORY + '/selenium/fred.json'
 MAIL_DIRECTORY = DIRECTORY + '/selenium/webmail.json'

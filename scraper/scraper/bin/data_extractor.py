@@ -6,6 +6,8 @@ import validators
 import lxml.etree
 import m3u8
 import os
+import mimetypes
+import re
 
 class StreamInfo():
     bandwidth = None
@@ -40,7 +42,7 @@ def get_relative_links(urls, response):
     return [response.urljoin(url) for url in urls]
             
 
-def download_media(media_urls, response=None, file_path=None):
+def download_media(media_urls, file_name=None):
     # extract video urls
     m3u8_content_types = ['application/mpegurl', 'application/x-mpegurl',
                             'audio/mpegurl', 'audio/x-mpegurl']
@@ -58,13 +60,12 @@ def download_media(media_urls, response=None, file_path=None):
         r = requests.get(url, stream=True)
         content_type = r.headers.get('Content-Type', None)
         content_length = r.headers.get('content-length', None)
-        
+        content_disposition = r.headers.get('content-disposition', None)
+ 
         if content_type:
             content_type = content_type.lower()
-            print(content_type)
-            print(content_length)
 
-        # m3u8 response types
+        # m3u8 response content types
         if content_type in m3u8_content_types:
                 playlist = get_m3u8_playlist(r,url)
                 r = requests.get(playlist.uri)
@@ -85,14 +86,15 @@ def download_media(media_urls, response=None, file_path=None):
                 print(copy_cmd)
                 ffmpeg_cmd = 'ffmpeg -i all.ts -bsf:a aac_adtstoasc -acodec copy -vcodec copy all.mp4'
                 # os.system(copy_cmd)
+        else:
+            # if any other file type    
+            extension = mimetypes.guess_extension(content_type)
+            if not file_name:
+                file_name = re.findall("filename=(.+)", content_disposition)[0]
             
-        # regular video types         
-        if content_type in video_content_types:
-            save_file(r, "file.mp4", content_length)
-        
-        if content_type in image_content_types:
-            save_file(r, "file.jpg", content_length)   
-        
+            file_name = file_name + '.'+ extension
+            save_file(r, file_name, content_length)   
+        # QS5gu sy4vM
        except Exception as e:
             print(e)
         
@@ -118,10 +120,8 @@ def get_m3u8_playlist(response:Response,resolution=None):
             return p
     print(len(playlists))
     return playlists[0]
-    
-      
+
 def wget_download(links):
-    print("download")
     for link in links:
         f = link.split("/")[-1]
         file =  f if is_valid_filename(f) else None

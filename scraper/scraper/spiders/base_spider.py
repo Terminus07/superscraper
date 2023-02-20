@@ -113,8 +113,7 @@ class BaseSpider(scrapy.Spider):
         self.extracted_xpaths = extract_from_xpaths(self.xpaths, response)       
         self.extracted_selectors = extract_from_selectors(self.selectors, response)
         self.extracted_items = extract_items(self.item_fields, response)
-       
-            
+  
         # extract links
         self.wget_links = extract_links(self.wget_links, response)
         self.follow_links = extract_links(self.follow_links, response)
@@ -125,7 +124,7 @@ class BaseSpider(scrapy.Spider):
         self.media_links = get_relative_links(self.media_links, response)
 
         # downloaders
-        download_media(self.media_links, response)
+        download_media(self.media_links)
         wget_download(self.wget_links)
        
         

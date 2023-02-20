@@ -36,12 +36,10 @@ class DriverSettings():
     options = {}
     capabilities = {}
     driver_settings = {}
-    executable_path = None
     
     def __init__(self, settings:dict) -> None:
         self.driver_settings = settings
         self.driver_type = self.get_driver_type()
-        self.executable_path = self.driver_settings.get("executable_path", "")
         self.capabilities = self.get_capabilities()
         self.options = self.get_options()
     
@@ -52,8 +50,8 @@ class DriverSettings():
     def get_options(self):
         driver_options = self.driver_settings['options']
         type = self.driver_options.get(self.driver_type)
-        opts =  call_func(webdriver, type, {})
-        
+        opts =  call_func(webdriver, type, {}) # webdriver.ChromeOptions
+
         # generate experimental_options
         experimental_options = driver_options.get('experimental_options', [])
         for opt in experimental_options:
@@ -63,7 +61,7 @@ class DriverSettings():
         arguments  = driver_options.get('arguments', [])
         for arg in arguments:
             call_func(opts, "add_argument", arg)
-  
+            
         return opts
     
     def get_capabilities(self):
@@ -71,6 +69,15 @@ class DriverSettings():
         capabilities_type = self.driver_capabilities.get(self.driver_type)
         capabilities.update(capabilities_type)
         return capabilities
+    
+    def get_options_dict(self):
+        capabilities_key = "desired_capabilities" if self.driver_type == 0 else None
+        opts_dict = {"options": self.options}
+        if capabilities_key:
+            opts_dict.update({"desired_capabilities": self.capabilities})
+
+        return opts_dict
+  
     
 class SeleniumDriver():
     json = {}
@@ -89,19 +96,16 @@ class SeleniumDriver():
        self.delay = json.get('delay', 0)
        self.events = self.get_events()
        
- 
     def get_driver_instance(self):
         global driver
         if driver is None:
-           opts_dict = {"options" : self.driver_settings.options}
-           if self.driver_settings.driver_type == 0: # add desired capabilities for chrome
-               opts_dict.update({"desired_capabilities": self.driver_settings.capabilities})
-             
+            opts_dict = self.driver_settings.get_options_dict()
+            print(opts_dict)
            # equivalent to webdriver.Chrome() and passes arguments as dict
-           driver = call_func(webdriver, self.driver_settings.driver_types.get(self.driver_settings.driver_type), opts_dict)
+            driver = call_func(webdriver, self.driver_settings.driver_types.get(self.driver_settings.driver_type), opts_dict)
             
         return driver
-  
+    
     def get_events(self):
         events = self.json.get('events',[])
         for index,event in enumerate(events):
