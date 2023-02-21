@@ -134,11 +134,21 @@ class BaseSpider(scrapy.Spider):
         self.image_store_urls = extract_links(self.image_store_urls, response, self.current_url)
         
         # downloaders
-        file_path =  self.custom_settings.get("FILES_STORE",None)
+        file_path = self.get_file_path()
         self.image_urls, self.video_urls, self.m3u8_urls, self.segment_urls = download_media(self.media_urls, file_path)
         wget_download(self.wget_urls)
-        
-        
+    
+    def get_file_path(self):
+        cwd = os.getcwd()
+        try:
+            file_path =  self.custom_settings.get("FILES_STORE", cwd)
+  
+            if not os.path.exists(file_path): # if file path does not exist, create it
+                os.makedirs(file_path)
+            return file_path
+        except Exception as e:
+            print(e)
+            return cwd
     def closed(self, reason):
         
         # update json settings

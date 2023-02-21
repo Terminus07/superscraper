@@ -15,6 +15,14 @@ import requests
 # r = ['upload.wikimedia.org/wikipedia/commons/thumb/8/85/Tour_Eiffel_Wikimedia_Commons_%28cropped%29.jpg/250px-Tour_Eiffel_Wikimedia_Commons_%28cropped%29.jpg']
 # print(get_relative_link(base, r))
 
+# p = {
+#     "titles": [["red", "green", "blue","red"], ["red","red"], ["rega"]],
+#     "s": [["re"], ["rega"], ["red", "green", "blue"]],
+#     "sas": [["re"], ["rega"], ["red", "green", "blue"]]
+# }
+
+# print(os.path.join('images', 'red.js'))
+
 
 ArgParser.spider({'type': [TEST_DIRECTORY2]})
 ArgParser.crawl({})

@@ -32,7 +32,7 @@ class M3U8Playlist():
         self.uri = playlist.get("uri", None)
      
 
-def download_media(media_urls, file_path=None):
+def download_media(media_urls, file_path=''):
     # extract video urls
     m3u8_content_types = ['application/mpegurl', 'application/x-mpegurl',
                             'audio/mpegurl', 'audio/x-mpegurl']
@@ -50,8 +50,8 @@ def download_media(media_urls, file_path=None):
     image_urls = []
     m3u8_urls = []
     segment_urls = []
-    
-    
+    file_name = None
+    original_path = file_path
     
     for i,url in enumerate(media_urls):
     
@@ -64,7 +64,7 @@ def download_media(media_urls, file_path=None):
 
             base_extension = ''
             extension = ''
-            file_path = ''
+            file_name = ''
             
             # convert content_type to lowercase
             if content_type:
@@ -93,15 +93,17 @@ def download_media(media_urls, file_path=None):
                 extension = base_extension
 
             # get file path name
-            if not file_path:
-                if content_disposition:
-                    file_path = re.findall("filename=(.+)", content_disposition)[0]
-                else:
-                    file_path = str(i)
-            file_path = file_path + extension
-            
+            if content_disposition:
+                file_name = re.findall("filename=(.+)", content_disposition)[0]
+            else:
+                file_name = str(i)
+                
+            t = file_name + extension
+            file_path = os.path.join(original_path, t)
+            file_path = '/'.join(file_path.split('\\'))
+          
             save_file(r, file_path, content_length)
-            print("INDEX",i, content_type, extension)
+           
             
         except Exception as e:
                 print(e)
