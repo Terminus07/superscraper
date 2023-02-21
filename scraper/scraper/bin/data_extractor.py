@@ -202,30 +202,41 @@ def extract_from_selectors(selectors, response) -> None:
     return flatten([response.css(selector).getall() for selector in selectors])
 
 
-def extract_items(item_fields:dict, response=None):
+def extract_items(dictionary:dict, response=None):
    
-    items = []
     keys = []
-    values = []
-    length = 0 # max length of list of lists that will be extracted
+    max_length = 0
     try:
-        for k,v in item_fields.items():
-            vals = validate_xpath(v, response)
-            if len(vals) > length and isinstance(vals, list):
-                length = len(vals)
-            values.append(vals)
-            keys.append(k)
+        for key,d_value in dictionary.items():
+            keys.append(key)
+            d_value = validate_xpath(d_value, response)
+            print(d_value)
+            for value in d_value:
+                if not isinstance(value, list):
+                    value = [value]
+                    dictionary[key] = value
 
-        for i in range(0, length): # the true length of items
-            d = {}
-            for j ,key in enumerate(keys):
-                value  = values[j][i] if len(values[j][i]) > 1 else ''
-                d[key] = value
-            items.append(d)
+            if max_length < len(d_value) and isinstance(d_value, list):
+                max_length = len(d_value)
+                print(max_length)
+            
+        for key in dictionary.keys():
+            val = dictionary[key]
+            print(val)
+            if len(val) < max_length: # add none types
+                diff = max_length - len(val)
+                iterable = [None for i in range(0, diff)]
+                val[len(val):] = iterable
+                dictionary[key] = val
+        
+        print("DIC",dictionary)
     except Exception as e:
-        print(e)
-    print(items)
-    return items
+        import sys
+        exc_type, exc_obj, exc_tb = sys.exc_info()
+        fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+        print(exc_type, fname, exc_tb.tb_lineno, exc_obj)
+    
+    return dictionary
 
 def flatten(iterable):
     arr = []
