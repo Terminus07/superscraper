@@ -1,0 +1,10 @@
+[project]
+name = "superscraper"
+version = "0.0.1"
+description = "A web scraping tool that allows you to extract any data from the web in a programmer friendly format."
+authors = [
+    {name = "Terminus07"}
+]
+license = {text = "MIT License"}
+readme = "README.md"
+requires-python = ">=3.6"
