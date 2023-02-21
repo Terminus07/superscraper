@@ -30,17 +30,7 @@ class M3U8Playlist():
     def __init__(self, playlist) -> None:
         self.stream_info = StreamInfo(playlist.get("stream_info", None))
         self.uri = playlist.get("uri", None)
-
-
-def extract_from_xpaths(xpaths, response) -> None:
-    return flatten([response.xpath(xpath).getall() for xpath in xpaths])
-
-def extract_from_selectors(selectors, response) -> None:
-    return flatten([response.css(selector).getall() for selector in selectors])
-
-def get_relative_links(urls, response):
-    return [response.urljoin(url) for url in urls]
-            
+     
 
 def download_media(media_urls, file_name=None):
     # extract video urls
@@ -54,6 +44,11 @@ def download_media(media_urls, file_name=None):
                            'image/jpeg', 'image/svg+xml', 'image/png',
                            'image/webp']
     
+    video_urls = []
+    image_urls = []
+    m3u8_urls = []
+    
+    
     for url in media_urls:
        # check if valid url
        try:
@@ -65,39 +60,47 @@ def download_media(media_urls, file_name=None):
         if content_type:
             content_type = content_type.lower()
 
+        if content_type in video_content_types:
+            video_urls.append(url)
+        
+        if content_type in image_content_types:
+            image_urls.append(url)
+            
         # m3u8 response content types
         if content_type in m3u8_content_types:
-                playlist = get_m3u8_playlist(r,url)
-                r = requests.get(playlist.uri)
-                segments = m3u8.loads(r.text).data.get('segments')
-                
-                copy_cmd = 'copy /b '
-                for idx,segment in enumerate(segments):
-                    # connect segments together 
-                    r = requests.get(segment['uri'])
-                    filename = str(idx) +'.ts' 
-                    save_file(r, filename, content_length, 1024)
-                    
-                    if idx == len(segments)-1:
-                        copy_cmd+= filename
-                        copy_cmd+= ' all.ts'
-                    else:
-                        copy_cmd+= filename + '+'
-                print(copy_cmd)
-                ffmpeg_cmd = 'ffmpeg -i all.ts -bsf:a aac_adtstoasc -acodec copy -vcodec copy all.mp4'
-                # os.system(copy_cmd)
-        else:
-            # if any other file type    
-            extension = mimetypes.guess_extension(content_type)
-            if not file_name:
-                file_name = re.findall("filename=(.+)", content_disposition)[0]
+            m3u8_urls.append(url)
+            playlist = get_m3u8_playlist(r,url)
+            r = requests.get(playlist.uri)
+            segments = m3u8.loads(r.text).data.get('segments')
             
-            file_name = file_name + '.'+ extension
-            save_file(r, file_name, content_length)   
-        # QS5gu sy4vM
+            copy_cmd = 'copy /b '
+            for idx,segment in enumerate(segments):
+                # connect segments together 
+                r = requests.get(segment['uri'])
+                filename = str(idx) +'.ts' 
+                save_file(r, filename, content_length, 1024)
+                
+                if idx == len(segments)-1:
+                    copy_cmd+= filename
+                    copy_cmd+= ' all.ts'
+                else:
+                    copy_cmd+= filename + '+'
+            print(copy_cmd)
+            ffmpeg_cmd = 'ffmpeg -i all.ts -bsf:a aac_adtstoasc -acodec copy -vcodec copy all.mp4'
+            # os.system(copy_cmd)  
+        extension = mimetypes.guess_extension(content_type)
+    
+        if not file_name:
+            if content_disposition:
+                file_name = re.findall("filename=(.+)", content_disposition)[0]
+            else:
+                file_name = "file"
+        file_name = file_name + extension
+        save_file(r, file_name, content_length)   
+        
        except Exception as e:
             print(e)
-        
+    return image_urls, video_urls, m3u8_urls
 
 def save_file(response, file_name, content_length=None, chunk_size=256):
     dl = 0
@@ -109,7 +112,7 @@ def save_file(response, file_name, content_length=None, chunk_size=256):
                 print(dl, "/", content_length)
             f.write(chunk)
 
-def get_m3u8_playlist(response:Response,resolution=None):
+def get_m3u8_playlist(response,resolution=None):
     playlists = []
     m3u8_object = m3u8.loads(response.text)
  
@@ -131,7 +134,7 @@ def wget_download(links):
         except Exception as e:
             print(e)
 
-def get_form_data(form_data:dict, response:Response):
+def get_form_data(form_data:dict, response):
     for key,val in form_data.items():
         val:str
         form_data[key] = validate_xpath(val, response)
@@ -140,19 +143,44 @@ def get_form_data(form_data:dict, response:Response):
     return form_data
 
            
-def validate_xpath(value, response:Response) -> None:
+def validate_xpath(value, response) -> None:
     try:
         lxml.etree.XPath(value)
         return response.xpath(value).getall() if response.xpath(value).get() else value
     except Exception as e:
         print(e)
-    return value
+        return value
 
-def extract_links(values, response:Response = None):
-    for idx, value in enumerate(values):
-        values[idx] = value if validators.url(value) else validate_xpath(value, response)
+def get_relative_link(base_url, link):
+    if link[0:2] == '//':
+        return link.replace('//','https://',1)
     
+    relative_link = base_url + link
+    return relative_link if validators.url(relative_link) else link
+
+def extract_links(values, response = None, current_url = None):
+    for idx, value in enumerate(values):
+        if not validators.url(value):
+            xpaths = validate_xpath(value, response)
+            if xpaths != value:
+                # if the xpath was not generated, extract relative links
+                rel = []
+                for xpath in xpaths:
+                    rel.append(get_relative_link(current_url, xpath)) # if relative link was not generated, extract original value
+                xpaths = rel
+
+            value = xpaths
+    
+        values[idx] = value
+
     return flatten(values)
+
+def extract_from_xpaths(xpaths, response) -> None:
+    return flatten([response.xpath(xpath).getall() for xpath in xpaths])
+
+def extract_from_selectors(selectors, response) -> None:
+    return flatten([response.css(selector).getall() for selector in selectors])
+
 
 def extract_items(item_fields:dict, response=None):
    

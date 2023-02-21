@@ -144,7 +144,12 @@ class SeleniumDriver():
         global driver
         if driver:
             return driver.page_source
-                      
+    
+    def get_current_url(self):
+        global driver
+        if driver:
+            return driver.current_url
+    
     def __str__(self):
         print("DRIVER")
         print("TYPE: ", self.driver_settings.driver_type)

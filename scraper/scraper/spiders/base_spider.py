@@ -22,19 +22,27 @@ class BaseSpider(scrapy.Spider):
     json_settings = []
     
     # inputs
+    start_urls = []
+    current_url = None
     save_requests = False
     index = 0
     xpaths = []
-    start_urls = []
     selectors = []
     form_data = {}
-    wget_links = []
-    image_links = []
-    media_links = []
-    follow_links = []
     request_params = {}
     item_fields = {}
-         
+
+    
+    # urls
+    wget_urls = []
+    media_urls = []
+    image_urls = []
+    m3u8_urls = []
+    image_store_urls = []
+    file_store_urls = []
+    video_urls = []
+    follow_urls = []
+    
     # outputs
     extracted_xpaths = []
     extracted_selectors = []
@@ -74,7 +82,10 @@ class BaseSpider(scrapy.Spider):
         for request in requests:
             self.request = request
             yield self.request
-        
+     
+    def get_current_url(self, response:Response = None):
+        if response:
+            return response.url
             
     def parse(self, response):
         self.extract_requests(response)
@@ -90,7 +101,7 @@ class BaseSpider(scrapy.Spider):
         
         # generate image links
         return {
-                'image_urls': self.image_links
+                'image_urls': self.image_store_urls
         }
            
      
@@ -101,6 +112,7 @@ class BaseSpider(scrapy.Spider):
       
     def extract_requests(self, response:Response):
          # append to request and response arrays
+        self.current_url = response.url
         if self.save_requests:
             self.response = get_json_response(response)        
             self.request = get_json_request(response.request)
@@ -109,23 +121,23 @@ class BaseSpider(scrapy.Spider):
             self.requests.append(self.request)
     
     def extract_data(self, response):  
+        
         # extract text 
         self.extracted_xpaths = extract_from_xpaths(self.xpaths, response)       
         self.extracted_selectors = extract_from_selectors(self.selectors, response)
         self.extracted_items = extract_items(self.item_fields, response)
   
         # extract links
-        self.wget_links = extract_links(self.wget_links, response)
-        self.follow_links = extract_links(self.follow_links, response)
-        self.media_links  = extract_links(self.media_links, response) 
-        self.image_links = extract_links(self.image_links, response)    
-           
-        # get relative links 
-        self.media_links = get_relative_links(self.media_links, response)
-
+        self.wget_urls = extract_links(self.wget_urls, response, self.current_url)
+        self.follow_urls = extract_links(self.follow_urls, response,self.current_url)
+        self.media_urls  = extract_links(self.media_urls, response,self.current_url)
+        self.image_store_urls = extract_links(self.image_store_urls, response, self.current_url)
+        
         # downloaders
-        download_media(self.media_links)
-        wget_download(self.wget_links)
+        self.image_urls, self.video_urls, self.m3u8_urls = download_media(self.media_urls)
+        print(self.image_urls)
+          
+        wget_download(self.wget_urls)
        
         
     def closed(self, reason):

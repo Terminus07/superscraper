@@ -55,9 +55,13 @@ import requests
 # 5) Save cookie to request/response object
 # 6) Start next spider
 
-ArgParser.spider({'type': [GOOGLE_DIRECTORY]})
-ArgParser.crawl({})
+# base = 'https://en.wikipedia.org/wiki/Eiffel_Tower'
+# r = ['upload.wikimedia.org/wikipedia/commons/thumb/8/85/Tour_Eiffel_Wikimedia_Commons_%28cropped%29.jpg/250px-Tour_Eiffel_Wikimedia_Commons_%28cropped%29.jpg']
+# print(get_relative_link(base, r))
 
+
+ArgParser.spider({'type': [TEST_DIRECTORY2]})
+ArgParser.crawl({})
 
 
 # opts = webdriver.FirefoxOptions()

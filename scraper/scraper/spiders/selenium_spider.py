@@ -26,7 +26,7 @@ class SeleniumSpider(BaseSpider):
         self.close(self, 'finished')
 
     def closed(self, reason):
-       
+        self.current_url = self.driver.get_current_url()
         self.body = self.driver.get_html_response()
         self.response = Selector(text=self.body)  # get driver response in selector format
         
@@ -34,7 +34,7 @@ class SeleniumSpider(BaseSpider):
         if self.save_requests:
             self.requests = get_json_requests(self.driver.requests)
             self.responses = get_json_responses(self.driver.responses)
-            
+        
         self.extract_data(self.response)
         
         return super().closed(reason)
