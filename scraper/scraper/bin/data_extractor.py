@@ -32,10 +32,12 @@ class M3U8Playlist():
         self.uri = playlist.get("uri", None)
      
 
-def download_media(media_urls, file_name=None):
+def download_media(media_urls, file_path=None):
     # extract video urls
     m3u8_content_types = ['application/mpegurl', 'application/x-mpegurl',
                             'audio/mpegurl', 'audio/x-mpegurl']
+    
+    segment_content_types = []
     
     video_content_types = ['video/mp4', 'video/x-flv', 
                     'video/3gpp', 'video/ogg', 'video/webm']
@@ -43,64 +45,67 @@ def download_media(media_urls, file_name=None):
     image_content_types = ['image/apng', 'image/avif', 'image/gif', 
                            'image/jpeg', 'image/svg+xml', 'image/png',
                            'image/webp']
-    
+    base_extension = ''
     video_urls = []
     image_urls = []
     m3u8_urls = []
+    segment_urls = []
     
     
-    for url in media_urls:
+    
+    for i,url in enumerate(media_urls):
+    
        # check if valid url
-       try:
-        r = requests.get(url, stream=True)
-        content_type = r.headers.get('Content-Type', None)
-        content_length = r.headers.get('content-length', None)
-        content_disposition = r.headers.get('content-disposition', None)
- 
-        if content_type:
-            content_type = content_type.lower()
+        try:
+            r = requests.get(url, stream=True)
+            content_type = r.headers.get('Content-Type', None)
+            content_length = r.headers.get('content-length', None)
+            content_disposition = r.headers.get('content-disposition', None)
 
-        if content_type in video_content_types:
-            video_urls.append(url)
-        
-        if content_type in image_content_types:
-            image_urls.append(url)
+            base_extension = ''
+            extension = ''
+            file_path = ''
             
-        # m3u8 response content types
-        if content_type in m3u8_content_types:
-            m3u8_urls.append(url)
-            playlist = get_m3u8_playlist(r,url)
-            r = requests.get(playlist.uri)
-            segments = m3u8.loads(r.text).data.get('segments')
+            # convert content_type to lowercase
+            if content_type:
+                content_type = content_type.lower() 
+
+            # create list of urls for each type
+            if content_type in video_content_types:
+                video_urls.append(url)
+                base_extension = '.mp4'
             
-            copy_cmd = 'copy /b '
-            for idx,segment in enumerate(segments):
-                # connect segments together 
-                r = requests.get(segment['uri'])
-                filename = str(idx) +'.ts' 
-                save_file(r, filename, content_length, 1024)
-                
-                if idx == len(segments)-1:
-                    copy_cmd+= filename
-                    copy_cmd+= ' all.ts'
+            if content_type in image_content_types:
+                image_urls.append(url)
+                base_extension = '.jpeg'
+            
+            if content_type in segment_content_types:
+                segment_urls.append(url)
+
+            if content_type in m3u8_content_types:
+                m3u8_urls.append(url)
+                base_extension = '.m3u8'
+   
+            # check extension
+            extension = mimetypes.guess_extension(content_type)
+          
+            if not extension:
+                extension = base_extension
+
+            # get file path name
+            if not file_path:
+                if content_disposition:
+                    file_path = re.findall("filename=(.+)", content_disposition)[0]
                 else:
-                    copy_cmd+= filename + '+'
-            print(copy_cmd)
-            ffmpeg_cmd = 'ffmpeg -i all.ts -bsf:a aac_adtstoasc -acodec copy -vcodec copy all.mp4'
-            # os.system(copy_cmd)  
-        extension = mimetypes.guess_extension(content_type)
-    
-        if not file_name:
-            if content_disposition:
-                file_name = re.findall("filename=(.+)", content_disposition)[0]
-            else:
-                file_name = "file"
-        file_name = file_name + extension
-        save_file(r, file_name, content_length)   
-        
-       except Exception as e:
-            print(e)
-    return image_urls, video_urls, m3u8_urls
+                    file_path = str(i)
+            file_path = file_path + extension
+            
+            save_file(r, file_path, content_length)
+            print("INDEX",i, content_type, extension)
+            
+        except Exception as e:
+                print(e)
+    return image_urls, video_urls, m3u8_urls, segment_urls
 
 def save_file(response, file_name, content_length=None, chunk_size=256):
     dl = 0
@@ -112,17 +117,30 @@ def save_file(response, file_name, content_length=None, chunk_size=256):
                 print(dl, "/", content_length)
             f.write(chunk)
 
-def get_m3u8_playlist(response,resolution=None):
+def get_m3u8_playlist(file_path,resolution=None):
     playlists = []
-    m3u8_object = m3u8.loads(response.text)
+    m3u8_object = m3u8.loads(file_path)
  
     playlists = m3u8_object.data.get("playlists", [])
     playlists = [M3U8Playlist(p) for p in playlists]
     for p in playlists:
         if resolution == p.stream_info.resolution:
             return p
-    print(len(playlists))
     return playlists[0]
+
+
+def segments_download(segments, dest=None):
+    pass
+
+def m3u8_download(m3u8_file, dest):
+
+    try:
+        # convert ts/m3u8 to mp4
+        ffmpeg_command = "ffmpeg -i {0} -acodec copy -bsf:a aac_adtstoasc -vcodec copy {1}".format(m3u8_file, dest)
+        os.system(ffmpeg_command)
+    except Exception as e:
+        print(e)  
+    # os.system(copy_cmd)  
 
 def wget_download(links):
     for link in links:

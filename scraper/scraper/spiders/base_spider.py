@@ -32,12 +32,12 @@ class BaseSpider(scrapy.Spider):
     request_params = {}
     item_fields = {}
 
-    
     # urls
     wget_urls = []
     media_urls = []
     image_urls = []
     m3u8_urls = []
+    segment_urls = []
     image_store_urls = []
     file_store_urls = []
     video_urls = []
@@ -134,11 +134,10 @@ class BaseSpider(scrapy.Spider):
         self.image_store_urls = extract_links(self.image_store_urls, response, self.current_url)
         
         # downloaders
-        self.image_urls, self.video_urls, self.m3u8_urls = download_media(self.media_urls)
-        print(self.image_urls)
-          
+        file_path =  self.custom_settings.get("FILES_STORE",None)
+        self.image_urls, self.video_urls, self.m3u8_urls, self.segment_urls = download_media(self.media_urls, file_path)
         wget_download(self.wget_urls)
-       
+        
         
     def closed(self, reason):
         
