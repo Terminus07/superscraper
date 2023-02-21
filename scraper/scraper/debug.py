@@ -11,21 +11,59 @@ from main import ArgParser
 from bin.data_extractor import *
 import requests
 
-# base = 'https://en.wikipedia.org/wiki/Eiffel_Tower'
-# r = ['upload.wikimedia.org/wikipedia/commons/thumb/8/85/Tour_Eiffel_Wikimedia_Commons_%28cropped%29.jpg/250px-Tour_Eiffel_Wikimedia_Commons_%28cropped%29.jpg']
-# print(get_relative_link(base, r))
 
-# p = {
-#     "titles": [["red", "green", "blue","red"], ["red","red"], ["rega"]],
-#     "s": [["re"], ["rega"], ["red", "green", "blue"]],
-#     "sas": [["re"], ["rega"], ["red", "green", "blue"]]
-# }
+
+p = {
+    "titles": [["red", "green"], 'red', 0, 1, 2 ,3],
+    "s": [["re"], ["rega"], 'sex', ['re'],'s',["red", "green", "blue"],'ggg'],
+    "sas": [["re"], ["rega"], ["red", "green", "blue"]]
+}
+
+keys = []
+values = []
+max_length = 0
+k_index = 0
+
+for k,v in p.items():
+    keys.append(k)
+    for i,l in enumerate(v):
+        if not isinstance(l, list):
+            l = [l]
+            p[k][i] = l
+    
+    if max_length < len(v):
+        max_length = len(v)
+    
+for key in p.keys():
+    val = p[key]
+    if len(val) < max_length: # add none types
+        diff = max_length - len(val)
+        iterable = [None for i in range(0, diff)]
+        val[len(val):] = iterable
+        p[key] = val
+
+titles = p.get('titles')
+s = p.get('s')
+sas = p.get('sas')
+
+for k in zip(titles, s, sas):
+    print(k)
+
+
+ 
+# iterable = [None for i in range(0, 3)]
+# arr = [0,1]
+# arr[len(arr):] = iterable
+# print(arr)
+# print(max_length)
+
+
 
 # print(os.path.join('images', 'red.js'))
 
 
-ArgParser.spider({'type': [TEST_DIRECTORY2]})
-ArgParser.crawl({})
+# ArgParser.spider({'type': [TEST_DIRECTORY2]})
+# ArgParser.crawl({})
 
 # opts = webdriver.FirefoxOptions()
 # driver = webdriver.Firefox()
