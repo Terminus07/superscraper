@@ -42,7 +42,7 @@ In order to scrape data from the web we need to create a `spiders.json` file, wh
 
 ### Modify your newly created spiders.json file
 
-Edit your `spiders.json` file to your liking. You can read the documentation, for more information about the template structure.
+Edit your `spiders.json` file to your liking. You can read the [documentation](https://www.google.com), for more information about the template structure.
 
 ### Run spiders
 
