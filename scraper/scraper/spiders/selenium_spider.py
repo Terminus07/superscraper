@@ -20,12 +20,17 @@ class SeleniumSpider(BaseSpider):
     
     def start_requests(self):
         self.driver = SeleniumDriver(self.json_settings)
-        self.driver.start_driver()
-        self.driver.load_urls()
-        self.driver.handle_events()
+        try:
+            self.driver.start_driver()
+            self.driver.load_urls()
+            self.driver.handle_events()
+        except Exception as e:
+            
+            print(e)
         self.close(self, 'finished')
 
     def closed(self, reason):
+        print("MEDIA", self.media_urls)
         self.current_url = self.driver.get_current_url()
         self.body = self.driver.get_html_response()
         self.response = Selector(text=self.body)  # get driver response in selector format

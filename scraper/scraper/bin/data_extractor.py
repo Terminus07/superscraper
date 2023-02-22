@@ -8,7 +8,8 @@ import m3u8
 import os
 import mimetypes
 import re
-     
+import sys
+
 def download_media(media_urls, file_path=''):
     # extract video urls
     m3u8_content_types = ['application/mpegurl', 'application/x-mpegurl',
@@ -64,6 +65,7 @@ def download_media(media_urls, file_path=''):
                 m3u8_urls.append(url)
                 base_extension = '.m3u8'
                 save = False
+                m3u8_download(r)
    
             # check extension
             extension = mimetypes.guess_extension(content_type)
@@ -85,22 +87,27 @@ def download_media(media_urls, file_path=''):
                 save_file(r, file_path, content_length)
                   
         except Exception as e:
-                print(e)
+            exc_type, exc_obj, exc_tb = sys.exc_info()
+            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+            print(exc_type, fname, exc_tb.tb_lineno, exc_obj)
+                
     return image_urls, video_urls, m3u8_urls, segment_urls
 
 def save_file(response, file_name, content_length=None, chunk_size=256):
     dl = 0
-    content_length = int(content_length)
+    
     with open(file_name, "wb") as f:
         for chunk in response.iter_content(chunk_size=chunk_size):
             if content_length: # content length exists
+                content_length = int(content_length)
                 dl += len(chunk) 
                 print(dl, "/", content_length)
             f.write(chunk)
 
-def m3u8_download(response,resolution=None):
+def m3u8_download(response:Response,resolution=None):
+    print("M3U8")
     playlists = []
-    m3u8_object = m3u8.loads(response)
+    m3u8_object = m3u8.loads(response.text)
     
     playlists = m3u8_object.data.get("playlists", [])
     print(playlists)
@@ -163,6 +170,7 @@ def extract_links(values, response = None, current_url = None):
             value = xpaths
     
         values[idx] = value
+         
 
     return flatten(values)
 

@@ -132,6 +132,8 @@ class BaseSpider(scrapy.Spider):
         self.media_urls  = extract_links(self.media_urls, response,self.current_url)
         self.image_store_urls = extract_links(self.image_store_urls, response, self.current_url)
         
+        # print("MEDIA",self.media_urls)
+        
         # downloaders
         file_path = self.get_file_path()
         self.image_urls, self.video_urls, self.m3u8_urls, self.segment_urls = download_media(self.media_urls, file_path)

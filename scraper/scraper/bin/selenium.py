@@ -135,11 +135,12 @@ class SeleniumDriver():
         for event in self.events:
             event:SeleniumEvent
             event.handle_event()
+       
             global driver
             for request in driver.requests:
                 self.requests.append(request)
                 self.responses.append(request.response)
-                
+
     def get_html_response(self):
         global driver
         if driver:

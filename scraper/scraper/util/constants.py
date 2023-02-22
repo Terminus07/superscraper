@@ -10,11 +10,11 @@ GOOGLE_DIRECTORY = DIRECTORY + '/selenium/google.json'
 TEST_DIRECTORY = DIRECTORY + '/selenium/test.json'
 FRED_DIRECTORY = DIRECTORY + '/selenium/fred.json'
 MAIL_DIRECTORY = DIRECTORY + '/selenium/webmail.json'
-
+IMDB_DIRECTORY = DIRECTORY + '/selenium/imdb.json'
 
 # base tests
 TEST_DIRECTORY2 = DIRECTORY + '/base/test.json'
-QUOTES_DIRECTORY = DIRECTORY + '/base/quotes.json'
+QUOTES_DIRECTORY2 = DIRECTORY + '/base/quotes.json'
 
 # "quotes": "//div[contains(@class, 'quote')]/span[contains(@class, 'text')]/text()",
 # "authors": "//div[contains(@class, 'quote')]/span/small/text()",
