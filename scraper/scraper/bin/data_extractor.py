@@ -8,30 +8,7 @@ import m3u8
 import os
 import mimetypes
 import re
-
-class StreamInfo():
-    bandwidth = None
-    codecs = None
-    audio = None
-    resolution = None
-    info = None
-    def __init__(self, info) -> None:
-        self.info = info
-        if info:
-            self.bandwidth = info.get("bandwidth")
-            self.resolution = info.get("resolution")
-    def __str__(self):
-        return str(self.info)
-    
-class M3U8Playlist():
-    stream_info:StreamInfo = None
-    uri = None
-    
-    def __init__(self, playlist) -> None:
-        self.stream_info = StreamInfo(playlist.get("stream_info", None))
-        self.uri = playlist.get("uri", None)
      
-
 def download_media(media_urls, file_path=''):
     # extract video urls
     m3u8_content_types = ['application/mpegurl', 'application/x-mpegurl',
@@ -65,6 +42,7 @@ def download_media(media_urls, file_path=''):
             base_extension = ''
             extension = ''
             file_name = ''
+            save = True
             
             # convert content_type to lowercase
             if content_type:
@@ -85,6 +63,7 @@ def download_media(media_urls, file_path=''):
             if content_type in m3u8_content_types:
                 m3u8_urls.append(url)
                 base_extension = '.m3u8'
+                save = False
    
             # check extension
             extension = mimetypes.guess_extension(content_type)
@@ -101,10 +80,10 @@ def download_media(media_urls, file_path=''):
             t = file_name + extension
             file_path = os.path.join(original_path, t)
             file_path = '/'.join(file_path.split('\\'))
-          
-            save_file(r, file_path, content_length)
-           
-            
+
+            if save:
+                save_file(r, file_path, content_length)
+                  
         except Exception as e:
                 print(e)
     return image_urls, video_urls, m3u8_urls, segment_urls
@@ -119,30 +98,22 @@ def save_file(response, file_name, content_length=None, chunk_size=256):
                 print(dl, "/", content_length)
             f.write(chunk)
 
-def get_m3u8_playlist(file_path,resolution=None):
+def m3u8_download(response,resolution=None):
     playlists = []
-    m3u8_object = m3u8.loads(file_path)
- 
+    m3u8_object = m3u8.loads(response)
+    
     playlists = m3u8_object.data.get("playlists", [])
-    playlists = [M3U8Playlist(p) for p in playlists]
-    for p in playlists:
-        if resolution == p.stream_info.resolution:
-            return p
-    return playlists[0]
-
+    print(playlists)
+    
+    # try:
+    #     # convert ts/m3u8 to mp4
+    #     ffmpeg_command = "ffmpeg -i {0} -acodec copy -bsf:a aac_adtstoasc -vcodec copy {1}".format(m3u8_file, dest)
+    #     os.system(ffmpeg_command)
+    # except Exception as e:
+    #     print(e) 
 
 def segments_download(segments, dest=None):
     pass
-
-def m3u8_download(m3u8_file, dest):
-
-    try:
-        # convert ts/m3u8 to mp4
-        ffmpeg_command = "ffmpeg -i {0} -acodec copy -bsf:a aac_adtstoasc -vcodec copy {1}".format(m3u8_file, dest)
-        os.system(ffmpeg_command)
-    except Exception as e:
-        print(e)  
-    # os.system(copy_cmd)  
 
 def wget_download(links):
     for link in links:
@@ -203,33 +174,10 @@ def extract_from_selectors(selectors, response) -> None:
 
 
 def extract_items(dictionary:dict, response=None):
-   
-    keys = []
-    max_length = 0
     try:
-        for key,d_value in dictionary.items():
-            keys.append(key)
-            d_value = validate_xpath(d_value, response)
-            print(d_value)
-            for value in d_value:
-                if not isinstance(value, list):
-                    value = [value]
-                    dictionary[key] = value
-
-            if max_length < len(d_value) and isinstance(d_value, list):
-                max_length = len(d_value)
-                print(max_length)
-            
-        for key in dictionary.keys():
-            val = dictionary[key]
-            print(val)
-            if len(val) < max_length: # add none types
-                diff = max_length - len(val)
-                iterable = [None for i in range(0, diff)]
-                val[len(val):] = iterable
-                dictionary[key] = val
-        
-        print("DIC",dictionary)
+        for k,v in dictionary.items():
+            dictionary[k] = validate_xpath(v, response)
+             
     except Exception as e:
         import sys
         exc_type, exc_obj, exc_tb = sys.exc_info()

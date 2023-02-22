@@ -30,7 +30,6 @@ class BaseSpider(scrapy.Spider):
     selectors = []
     form_data = {}
     request_params = {}
-    item_fields = {}
 
     # urls
     wget_urls = []
@@ -42,11 +41,11 @@ class BaseSpider(scrapy.Spider):
     file_store_urls = []
     video_urls = []
     follow_urls = []
-    
+
     # outputs
     extracted_xpaths = []
     extracted_selectors = []
-    extracted_items = []
+    extracted_items = {}
     requests = []
     responses = []
     response = {}
@@ -125,7 +124,7 @@ class BaseSpider(scrapy.Spider):
         # extract text 
         self.extracted_xpaths = extract_from_xpaths(self.xpaths, response)       
         self.extracted_selectors = extract_from_selectors(self.selectors, response)
-        self.extracted_items = extract_items(self.item_fields, response)
+        self.extracted_items = extract_items(self.extracted_items, response)
   
         # extract links
         self.wget_urls = extract_links(self.wget_urls, response, self.current_url)
