@@ -4,18 +4,18 @@ import wget
 import requests
 import validators
 import lxml.etree
-import m3u8
 import os
 import mimetypes
 import re
 import sys
+import m3u8
 
 def download_media(media_urls, file_path=''):
     # extract video urls
     m3u8_content_types = ['application/mpegurl', 'application/x-mpegurl',
                             'audio/mpegurl', 'audio/x-mpegurl']
     
-    segment_content_types = []
+    segment_content_types = ['video/mp2t']
     
     video_content_types = ['video/mp4', 'video/x-flv', 
                     'video/3gpp', 'video/ogg', 'video/webm']
@@ -36,10 +36,11 @@ def download_media(media_urls, file_path=''):
        # check if valid url
         try:
             r = requests.get(url, stream=True)
+      
             content_type = r.headers.get('Content-Type', None)
             content_length = r.headers.get('content-length', None)
             content_disposition = r.headers.get('content-disposition', None)
-
+            
             base_extension = ''
             extension = ''
             file_name = ''
@@ -60,16 +61,17 @@ def download_media(media_urls, file_path=''):
             
             if content_type in segment_content_types:
                 segment_urls.append(url)
+                base_extension = '.ts'
 
             if content_type in m3u8_content_types:
                 m3u8_urls.append(url)
                 base_extension = '.m3u8'
                 save = False
-                m3u8_download(r)
+                m3u8_download(url, str(i))
    
             # check extension
             extension = mimetypes.guess_extension(content_type)
-          
+         
             if not extension:
                 extension = base_extension
 
@@ -85,7 +87,7 @@ def download_media(media_urls, file_path=''):
 
             if save:
                 save_file(r, file_path, content_length)
-                  
+               
         except Exception as e:
             exc_type, exc_obj, exc_tb = sys.exc_info()
             fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
@@ -104,24 +106,34 @@ def save_file(response, file_name, content_length=None, chunk_size=256):
                 print(dl, "/", content_length)
             f.write(chunk)
 
-def m3u8_download(response:Response,resolution=None):
-    print("M3U8")
-    playlists = []
-    m3u8_object = m3u8.loads(response.text)
+def m3u8_download(url, index):
+    try:
+        # convert m3u8 to mp4
+        ffmpeg_command = """ffmpeg -i "{0}" -c copy -bsf:a aac_adtstoasc {1}.mp4""".format(url, index)
+        os.system(ffmpeg_command)
+    except Exception as e:
+        print(e) 
+
+def get_m3u8_playlist(m3u8_url_response):
     
+    m3u8_object = m3u8.loads(m3u8_url_response.text)
     playlists = m3u8_object.data.get("playlists", [])
-    print(playlists)
+    # segments = m3u8_object.data.get("segments")
+    for p in playlists:
+        stream_info = p.get("stream_info",None)
+        resolution = stream_info.get('resolution', None)
+        uri = p.get("uri", None)
+        print(uri)
+
+def get_m3u8_segments(m3u8):
+    print()
+
+def segments_to_m3u8(segments):
+    ffmpeg_command = """ffmpeg -i {0}"""
+    for segment in segments:
+        print(segment)
+        os.system(ffmpeg_command)
     
-    # try:
-    #     # convert ts/m3u8 to mp4
-    #     ffmpeg_command = "ffmpeg -i {0} -acodec copy -bsf:a aac_adtstoasc -vcodec copy {1}".format(m3u8_file, dest)
-    #     os.system(ffmpeg_command)
-    # except Exception as e:
-    #     print(e) 
-
-def segments_download(segments, dest=None):
-    pass
-
 def wget_download(links):
     for link in links:
         f = link.split("/")[-1]
@@ -151,21 +163,22 @@ def validate_xpath(value, response) -> None:
 
 def get_relative_link(base_url, link):
     if link[0:2] == '//':
+        # print("REP",link.replace('//','https://',1), link)
         return link.replace('//','https://',1)
     
     relative_link = base_url + link
+    # print("REL",relative_link)
     return relative_link if validators.url(relative_link) else link
 
 def extract_links(values, response = None, current_url = None):
     for idx, value in enumerate(values):
         if not validators.url(value):
             xpaths = validate_xpath(value, response)
-            if xpaths != value:
-                # if the xpath was not generated, extract relative links
-                rel = []
-                for xpath in xpaths:
-                    rel.append(get_relative_link(current_url, xpath)) # if relative link was not generated, extract original value
-                xpaths = rel
+            
+            if isinstance(xpaths, list):
+                for i,xpath in enumerate(xpaths):
+                    # check if url is relative or absolute
+                    xpaths[i] = get_relative_link(current_url, xpath)
 
             value = xpaths
     

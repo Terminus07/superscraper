@@ -11,6 +11,7 @@ TEST_DIRECTORY = DIRECTORY + '/selenium/test.json'
 FRED_DIRECTORY = DIRECTORY + '/selenium/fred.json'
 MAIL_DIRECTORY = DIRECTORY + '/selenium/webmail.json'
 IMDB_DIRECTORY = DIRECTORY + '/selenium/imdb.json'
+PORT_DIRECTORY = DIRECTORY + '/selenium/port.json'
 
 # base tests
 TEST_DIRECTORY2 = DIRECTORY + '/base/test.json'
