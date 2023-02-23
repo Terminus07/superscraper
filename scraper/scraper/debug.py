@@ -10,31 +10,27 @@ from util.constants import *
 from main import ArgParser
 from bin.data_extractor import *
 import requests
-
-# from urllib.parse import 
-# ArgParser.spider({'type': [PORT_DIRECTORY]})
-# ArgParser.crawl({})
-
-# print( "https://fores.web.ua.pt/wp-content/uploads/2022/06/EEA_grants@4x.png" ==   
-#       "https://fores.web.ua.pt/wp-content/uploads/2022/06/EEA_grants@4x.png")
-
-# opts = webdriver.FirefoxOptions()
-# driver = webdriver.Firefox()
-# driver.get("https://www.google.com")
-
-# selenium_json =  read_json_file(IMDB_DIRECTORY)
-# driver = SeleniumDriver(selenium_json)
-# driver.start_driver()
-# driver.load_urls()
-# driver.handle_events()
+from urllib.parse import urlparse,urlsplit, urlunsplit
 
 
-# driver = webdriver.Chrome()
-# driver.get('https://www.amazon.com')
-# element = driver.find_element(by="id", value="nav-link-accountList")
-# element.click()
-# download_media(["https://manifest.prod.boltdns.net/manifest/v1/hls/v4/clear/3588749423001/f88b79a8-9ab4-4c22-aa61-770bba024bb7/10s/master.m3u8?fastly_token=NjNmNmVjNTVfOGZlYmUyMmY0YTZlZThiNzI4MmEwNmI5ODk5MDQ3MDU1ZTBmZjUyMmY2ZTI1MTI0NWZjOTg2ZDM0ZmEzNzhlZA=="])
+ 
+# urls = [
+#      "http://www.example.com/some/path",
+#      "http://127.0.0.1/asdf/login.php?q=abc#stackoverflow",
+#      "https://en.wikipedia.org/wiki/Eiffel_Tower"
+#       
+    
+# ]
 
-download_media([
-    "https://house-fastly-signed-eu-west-1-prod.brightcovecdn.com/media/v1/hls/v4/clear/3588749423001/a278511c-1765-42a0-bfbf-5f99718f5aa7/bbb59805-4f2b-494b-9b7f-ca8a8168b9cc/5x/segment23.ts?fastly_token=NjNmNmVmMTRfZGExY2VkNzE5YWUzNzg0NDg1YTljZTE2OTYxYjA4MDFkNjQwNjg3ZmNjNTNlNzBlMDdmMjVlNmIzN2I3ZTM3Ml8vL2hvdXNlLWZhc3RseS1zaWduZWQtZXUtd2VzdC0xLXByb2QuYnJpZ2h0Y292ZWNkbi5jb20vbWVkaWEvdjEvaGxzL3Y0L2NsZWFyLzM1ODg3NDk0MjMwMDEvYTI3ODUxMWMtMTc2NS00MmEwLWJmYmYtNWY5OTcxOGY1YWE3L2JiYjU5ODA1LTRmMmItNDk0Yi05YjdmLWNhOGE4MTY4YjljYy8="
-])
+# for url in urls:
+#     split_url = urlsplit(url)
+#     clean_path = "".join(url.split(split_url.path)[0]) if split_url.path else url
+#     print(clean_path)
+    
+
+ArgParser.spider({'type': [TEST_DIRECTORY2]})
+ArgParser.crawl({})
+
+# download_media([
+#     "https://manifest.prod.boltdns.net/manifest/v1/hls/v4/clear/3588749423001/fcab68b1-23f0-4d78-b2e3-19b09e473e6e/10s/master.m3u8?fastly_token=NjNmODAyOTNfZDFlZWRlY2Y2NmU1MDRkYWQwZjJkMjRmMjhhYTQ4YjQ3YjI1NTdhMTQwMjVjNWQ2MTJhMTI0NWM3MTFmOWNhOA=="
+# ])

@@ -9,8 +9,10 @@ import mimetypes
 import re
 import sys
 import m3u8
+from urllib.parse import urlparse,urlsplit
 
-def download_media(media_urls, file_path=''):
+
+def download_media(media_urls, file_path='', base_resolution=None):
     # extract video urls
     m3u8_content_types = ['application/mpegurl', 'application/x-mpegurl',
                             'audio/mpegurl', 'audio/x-mpegurl']
@@ -39,7 +41,6 @@ def download_media(media_urls, file_path=''):
       
             content_type = r.headers.get('Content-Type', None)
             content_length = r.headers.get('content-length', None)
-            content_disposition = r.headers.get('content-disposition', None)
             
             base_extension = ''
             extension = ''
@@ -67,6 +68,8 @@ def download_media(media_urls, file_path=''):
                 m3u8_urls.append(url)
                 base_extension = '.m3u8'
                 save = False
+                # if base_resolution:
+                #    url = get_m3u8_playlist(r, base_resolution)
                 m3u8_download(url, str(i))
    
             # check extension
@@ -75,11 +78,7 @@ def download_media(media_urls, file_path=''):
             if not extension:
                 extension = base_extension
 
-            # get file path name
-            if content_disposition:
-                file_name = re.findall("filename=(.+)", content_disposition)[0]
-            else:
-                file_name = str(i)
+            file_name = str(i)
                 
             t = file_name + extension
             file_path = os.path.join(original_path, t)
@@ -114,16 +113,39 @@ def m3u8_download(url, index):
     except Exception as e:
         print(e) 
 
-def get_m3u8_playlist(m3u8_url_response):
+
+def get_screen_resolution_difference(r1:str, r2:str):
     
+    r1_width, r1_height = r1.split('x')
+    r2_width, r2_height = r2.split('x')
+    
+    width = abs(int(r1_width) - int(r2_width))
+    height = abs(int(r1_height) - int(r2_height))
+    return (width, height)
+
+def get_playlist_info(playlist):
+    resolution = playlist.get("stream_info").get('resolution')
+    uri = playlist.get("uri", None)
+    return uri, resolution
+
+def get_m3u8_playlist(m3u8_url_response:Response, resolution):
     m3u8_object = m3u8.loads(m3u8_url_response.text)
     playlists = m3u8_object.data.get("playlists", [])
-    # segments = m3u8_object.data.get("segments")
+    p_uri, p_resolution = get_playlist_info(playlists[0])
+    
+    res_diff = get_screen_resolution_difference(resolution, p_resolution)
+  
     for p in playlists:
-        stream_info = p.get("stream_info",None)
-        resolution = stream_info.get('resolution', None)
-        uri = p.get("uri", None)
-        print(uri)
+        p_uri, p_resolution = get_playlist_info(p)
+        
+        if p_resolution == resolution:
+            return p_uri
+        
+        diff = get_screen_resolution_difference(resolution, p_resolution)
+        if  diff < res_diff:
+            pass
+    
+    return p_uri
 
 def get_m3u8_segments(m3u8):
     print()
@@ -161,30 +183,31 @@ def validate_xpath(value, response) -> None:
         print(e)
         return value
 
-def get_relative_link(base_url, link):
-    if link[0:2] == '//':
-        # print("REP",link.replace('//','https://',1), link)
-        return link.replace('//','https://',1)
-    
-    relative_link = base_url + link
-    # print("REL",relative_link)
-    return relative_link if validators.url(relative_link) else link
+def get_relative_link(base_url:str, link):
+    if is_absolute(link):
+        return link.replace('//','https://',1) if link[0:2] == '//' else link
+    else:
+        # get real base url
+        split_url = urlsplit(base_url)
+        base_url = "".join(base_url.split(split_url.path)[0]) if split_url.path else base_url
+        relative_link = base_url + link
+        return relative_link if validators.url(relative_link) else link
+
+def is_absolute(url):
+   return bool(urlparse(url).netloc)
 
 def extract_links(values, response = None, current_url = None):
     for idx, value in enumerate(values):
-        if not validators.url(value):
+        if not validators.url(value): # if it's not a valid url
             xpaths = validate_xpath(value, response)
-            
             if isinstance(xpaths, list):
                 for i,xpath in enumerate(xpaths):
-                    # check if url is relative or absolute
                     xpaths[i] = get_relative_link(current_url, xpath)
 
             value = xpaths
     
         values[idx] = value
-         
-
+        
     return flatten(values)
 
 def extract_from_xpaths(xpaths, response) -> None:
