@@ -144,14 +144,17 @@ class BaseSpider(scrapy.Spider):
                     "segment_urls": self.segment_urls,
                     "video_urls": self.video_urls
             }
-            apply_url_rule(d, self.url_rules)
-
-         
+            
+            for rule in self.url_rules:
+                if d.get(rule.get('target_var')):
+                    d[rule.get('target_var')] = apply_url_rule( d[rule.get('target_var')], rule)
+                print(d[rule.get('target_var')])
         # downloaders
         file_path = self.get_file_path()
         self.image_urls, self.video_urls, self.m3u8_urls, self.segment_urls = download_media(self.media_urls, file_path)
         wget_download(self.wget_urls)
-    
+        
+       
     def get_file_path(self):
         cwd = os.getcwd()
         try:

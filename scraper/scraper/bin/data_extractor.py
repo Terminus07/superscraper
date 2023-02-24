@@ -10,13 +10,44 @@ import re
 import sys
 import m3u8
 from urllib.parse import urlparse,urlsplit
- 
 
 def apply_url_rule(urls:list, rule:dict):
+    
+    function_args_dict = {
+        "split" : [
+            "index",  
+            "value" 
+        ],
+        "regex": [
+            "type"
+            "value" 
+        ],
+        "format":[
+            "value",
+            "replicate" 
+        ]
+    }
+    
     for i,url in enumerate(urls):
-        functions = ["split", "regex"]
         function = rule.get('function', None)
-        urls[i] = url.split('http:')[0]
+        args = rule.get('args', None)
+       
+        # check if args are valid
+        is_rule_valid =  function in function_args_dict and list(args.keys()) in function_args_dict.values()
+        if is_rule_valid:
+            if function == 'split':
+                index = args.get('index', 0)
+                value = args.get('value', '')
+                print("INDEX", index)
+                urls[i] = url.split(value)[index]
+                #  print("INDEX", index)
+            
+            if function == 'regex':
+                type = args.get('type')
+                value = args.get('value', '')
+                m = re.match(value)
+                urls[i] = m.group(0)
+            
     return urls        
     
 
