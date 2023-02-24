@@ -49,7 +49,8 @@ from urllib.parse import urlparse,urlsplit, urlunsplit
              
 # print(wget_urls, follow_urls, media_urls)
 
-ArgParser.spider({'type': [TEST_DIRECTORY2]})
+
+ArgParser.spider({'type': [IMDB_DIRECTORY]})
 ArgParser.crawl({})
 
 # download_media([

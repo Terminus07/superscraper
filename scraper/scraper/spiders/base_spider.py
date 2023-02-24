@@ -167,7 +167,7 @@ class BaseSpider(scrapy.Spider):
             print(e)
             return cwd
         
-    def closed(self, reason):
+    def closed(self, reason, driver=None):
         
         # update json settings
         update_dict(vars(self), self.json_settings)
@@ -178,6 +178,6 @@ class BaseSpider(scrapy.Spider):
             self.controller.start_spider_process(self.index +1)
         else:
             print(reason)
-            # open output.json
-            # os.system("start code json_templates/secret/output.json")
+            if driver:
+                driver.stop_driver()
             os.kill(os.getpid(), signal.SIGINT)

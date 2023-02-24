@@ -25,7 +25,6 @@ class SeleniumSpider(BaseSpider):
             self.driver.load_urls()
             self.driver.handle_events()
         except Exception as e:
-            
             print(e)
         self.close(self, 'finished')
 
@@ -40,5 +39,5 @@ class SeleniumSpider(BaseSpider):
             self.responses = get_json_responses(self.driver.responses)
         
         self.extract_data(self.response)
-        
-        return super().closed(reason)
+        super().closed(reason, self.driver)
+
