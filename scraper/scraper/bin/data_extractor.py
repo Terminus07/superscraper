@@ -13,41 +13,33 @@ from urllib.parse import urlparse,urlsplit
 
 def apply_url_rule(urls:list, rule:dict):
     
-    function_args_dict = {
-        "split" : [
-            "index",  
-            "value" 
-        ],
-        "regex": [
-            "type"
-            "value" 
-        ],
-        "format":[
-            "value",
-            "replicate" 
-        ]
-    }
+    valid_functions = ["split", "match", "search"]
     
     for i,url in enumerate(urls):
         function = rule.get('function', None)
         args = rule.get('args', None)
        
-        # check if args are valid
-        is_rule_valid =  function in function_args_dict and list(args.keys()) in function_args_dict.values()
+        # check if rule is valid
+        is_rule_valid =  function in valid_functions
         if is_rule_valid:
+         try:
             if function == 'split':
                 index = args.get('index', 0)
                 value = args.get('value', '')
-                print("INDEX", index)
                 urls[i] = url.split(value)[index]
-                #  print("INDEX", index)
-            
-            if function == 'regex':
-                type = args.get('type')
+                
+            if function == 'match':
                 value = args.get('value', '')
-                m = re.match(value)
+                m = re.match(r'value', url)
                 urls[i] = m.group(0)
-            
+                
+            if function == 'search':
+                value = args.get('value', '')
+                m = re.search(value, url)
+                urls[i] = m.group(0)
+                
+         except Exception as e: 
+             print(e)   
     return urls        
     
 

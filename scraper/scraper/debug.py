@@ -14,7 +14,7 @@ from urllib.parse import urlparse,urlsplit, urlunsplit
 
 
 # wget_urls = [
-#      "http://www.example.com/some/path",
+#      "spam-egg",
 #      "http://127.0.0.1/asdf/login.php?q=abc#stackoverflow",
 #      "https://en.wikipedia.org/wiki/Eiffel_Tower"
 # ]
@@ -28,6 +28,13 @@ from urllib.parse import urlparse,urlsplit, urlunsplit
 
 # url_rules = [
         
+#         {
+#             "target_var": "wget_urls",
+#             "function": "search",
+#             "args": {
+#                 "value": "(?<=-)\w+"
+#             }
+#         } 
 #     ]
 
 # d = { 
@@ -41,13 +48,6 @@ from urllib.parse import urlparse,urlsplit, urlunsplit
 #             d[rule.get('target_var')] = apply_url_rule( d[rule.get('target_var')], rule)
              
 # print(wget_urls, follow_urls, media_urls)
-
-
-# for url in urls:
-#     split_url = urlsplit(url)
-#     clean_path = "".join(url.split(split_url.path)[0]) if split_url.path else url
-#     print(clean_path)
-    
 
 ArgParser.spider({'type': [TEST_DIRECTORY2]})
 ArgParser.crawl({})
