@@ -26,11 +26,11 @@ class BaseSpider(scrapy.Spider):
     start_urls = []
     current_url = None
     save_requests = False
+    meta = {}
     index = 0
     xpaths = []
     selectors = []
     form_data = {}
-    request_params = {}
 
     # urls
     url_rules = []
@@ -79,7 +79,7 @@ class BaseSpider(scrapy.Spider):
             error = "No start urls defined."
             raise AttributeError(error)
             
-        requests = get_requests(self.start_urls, self.request_params, self.controller, self.index)
+        requests = get_requests(self.start_urls, self.meta)
         for request in requests:
             self.request = request
             yield self.request
