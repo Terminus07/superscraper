@@ -8,6 +8,7 @@ from scrapy.selector import Selector
 from util.dict_util import update_dict
 from scraper.items import ImageItem
 
+
 class BaseSpider(scrapy.Spider):
     name = "base"
     
@@ -32,6 +33,7 @@ class BaseSpider(scrapy.Spider):
     request_params = {}
 
     # urls
+    url_rules = []
     wget_urls = []
     media_urls = []
     image_urls = []
@@ -132,8 +134,19 @@ class BaseSpider(scrapy.Spider):
         self.media_urls  = extract_links(self.media_urls, response,self.current_url)
         self.image_store_urls = extract_links(self.image_store_urls, response, self.current_url)
         
-        # print("MEDIA",self.media_urls)
-        
+        # apply url rules
+        if self.url_rules:
+            d = { "wget_urls": self.wget_urls, 
+                    "follow_urls": self.follow_urls, 
+                    "media_urls": self.media_urls, 
+                    "image_store_urls": self.image_store_urls,
+                    "m3u8_urls": self.m3u8_urls,
+                    "segment_urls": self.segment_urls,
+                    "video_urls": self.video_urls
+            }
+            apply_url_rule(d, self.url_rules)
+
+         
         # downloaders
         file_path = self.get_file_path()
         self.image_urls, self.video_urls, self.m3u8_urls, self.segment_urls = download_media(self.media_urls, file_path)
@@ -150,6 +163,7 @@ class BaseSpider(scrapy.Spider):
         except Exception as e:
             print(e)
             return cwd
+        
     def closed(self, reason):
         
         # update json settings

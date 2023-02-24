@@ -17,3 +17,4 @@ def create_object(vars,string:str, args=None):
         instance = o()
     
     return instance
+ 

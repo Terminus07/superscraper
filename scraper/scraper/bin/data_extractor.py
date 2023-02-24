@@ -10,7 +10,15 @@ import re
 import sys
 import m3u8
 from urllib.parse import urlparse,urlsplit
+ 
 
+def apply_url_rule(urls:list, rule:dict):
+    for i,url in enumerate(urls):
+        functions = ["split", "regex"]
+        function = rule.get('function', None)
+        urls[i] = url.split('http:')[0]
+    return urls        
+    
 
 def download_media(media_urls, file_path='', base_resolution=None):
     # extract video urls
@@ -177,9 +185,6 @@ def get_m3u8_segments(playlist):
     segments = m3u8.loads(r.text).data.get('segments', None)
     return segments
 
-
-
-    
 def wget_download(links):
     for link in links:
         f = link.split("/")[-1]
