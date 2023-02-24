@@ -68,9 +68,11 @@ def download_media(media_urls, file_path='', base_resolution=None):
                 m3u8_urls.append(url)
                 base_extension = '.m3u8'
                 save = False
-                # if base_resolution:
-                #    url = get_m3u8_playlist(r, base_resolution)
-                m3u8_download(url, str(i))
+                if base_resolution:
+                   url, playlist = get_m3u8_playlist(r, base_resolution)
+                   segments = get_m3u8_segments(playlist)
+                   segments_download(segments)
+                # m3u8_download(url, str(i))
    
             # check extension
             extension = mimetypes.guess_extension(content_type)
@@ -113,6 +115,25 @@ def m3u8_download(url, index):
     except Exception as e:
         print(e) 
 
+def segments_download(segments):
+    file_names  = []
+    print(segments)
+ 
+    for idx,segment in enumerate(segments):
+        # connect segments together 
+        uri = segment.get('uri', None)
+        r = requests.get(uri)
+        filename = str(idx) +'.ts' 
+        content_length = r.headers.get('content-length', None)
+        save_file(r, filename, content_length, 2048)
+        file_names.append(filename)
+
+    copy_cmd = 'copy /b {0} all.ts && del {1}'.format("+".join(file_names)," ".join(file_names))
+    ffmpeg_cmd = 'ffmpeg -i all.ts -bsf:a aac_adtstoasc -acodec copy -vcodec copy all.mp4'
+    delete_cmd = 'del all.ts'
+    os.system(copy_cmd)
+    os.system(ffmpeg_cmd)
+    os.system(delete_cmd)
 
 def get_screen_resolution_difference(r1:str, r2:str):
     
@@ -128,33 +149,36 @@ def get_playlist_info(playlist):
     uri = playlist.get("uri", None)
     return uri, resolution
 
-def get_m3u8_playlist(m3u8_url_response:Response, resolution):
-    m3u8_object = m3u8.loads(m3u8_url_response.text)
+def get_m3u8_playlist(response:Response, resolution):
+    m3u8_object = m3u8.loads(response.text)
     playlists = m3u8_object.data.get("playlists", [])
-    p_uri, p_resolution = get_playlist_info(playlists[0])
+    uri, res = get_playlist_info(playlists[0])
+    index =0 
+    res_diff = get_screen_resolution_difference(resolution, res)
+    print(res, resolution)
     
-    res_diff = get_screen_resolution_difference(resolution, p_resolution)
-  
-    for p in playlists:
+    for i,p in enumerate(playlists):
         p_uri, p_resolution = get_playlist_info(p)
         
         if p_resolution == resolution:
             return p_uri
         
         diff = get_screen_resolution_difference(resolution, p_resolution)
+        print("RES",resolution, p_resolution)
+        
         if  diff < res_diff:
-            pass
-    
-    return p_uri
+            uri = p_uri
+            res = p_resolution
+            index = i     
+    return uri, playlists[index]
 
-def get_m3u8_segments(m3u8):
-    print()
+def get_m3u8_segments(playlist):
+    r = requests.get(playlist.get('uri', None))
+    segments = m3u8.loads(r.text).data.get('segments', None)
+    return segments
 
-def segments_to_m3u8(segments):
-    ffmpeg_command = """ffmpeg -i {0}"""
-    for segment in segments:
-        print(segment)
-        os.system(ffmpeg_command)
+
+
     
 def wget_download(links):
     for link in links:

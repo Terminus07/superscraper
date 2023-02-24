@@ -30,7 +30,6 @@ class SeleniumSpider(BaseSpider):
         self.close(self, 'finished')
 
     def closed(self, reason):
-        print("MEDIA", self.media_urls)
         self.current_url = self.driver.get_current_url()
         self.body = self.driver.get_html_response()
         self.response = Selector(text=self.body)  # get driver response in selector format

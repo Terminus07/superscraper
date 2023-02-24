@@ -11,9 +11,6 @@ from main import ArgParser
 from bin.data_extractor import *
 import requests
 from urllib.parse import urlparse,urlsplit, urlunsplit
-
-
- 
 # urls = [
 #      "http://www.example.com/some/path",
 #      "http://127.0.0.1/asdf/login.php?q=abc#stackoverflow",
@@ -28,9 +25,10 @@ from urllib.parse import urlparse,urlsplit, urlunsplit
 #     print(clean_path)
     
 
-ArgParser.spider({'type': [TEST_DIRECTORY2]})
-ArgParser.crawl({})
+# ArgParser.spider({'type': [IMDB_DIRECTORY]})
+# ArgParser.crawl({})
 
-# download_media([
-#     "https://manifest.prod.boltdns.net/manifest/v1/hls/v4/clear/3588749423001/fcab68b1-23f0-4d78-b2e3-19b09e473e6e/10s/master.m3u8?fastly_token=NjNmODAyOTNfZDFlZWRlY2Y2NmU1MDRkYWQwZjJkMjRmMjhhYTQ4YjQ3YjI1NTdhMTQwMjVjNWQ2MTJhMTI0NWM3MTFmOWNhOA=="
-# ])
+download_media([
+    "https://manifest.prod.boltdns.net/manifest/v1/hls/v4/clear/3588749423001/2cb4e463-e7d6-4afc-ac2b-7b3c2984096c/10s/master.m3u8?fastly_token=NjNmODg3Y2ZfMzM3ODY2ODg5MzQwNzFkNGIzMzE1YmNmOThlNTkzZDIwNDc5YzA4MGQxNDdlYTVkNWI3N2IxMWEyMDcxOTc4MQ=="
+], base_resolution='1080x900')
+
