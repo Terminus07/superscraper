@@ -1,8 +1,11 @@
 {
     "name": "selenium",
     "start_urls": [
-        "http://quotes.toscrape.com/login"
+        "https://www.imdb.com/title/tt11126994/"
     ],
+    "custom_settings": {
+        "LOG_ENABLED": false
+    },
     "driver_settings": {
         "driver_type": "Chrome",
         "options": {
@@ -13,71 +16,74 @@
                 }
             ],
             "arguments": [
+                "user-agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.50 Safari/537.36",
                 "--headless",
-                "--no-sandbox"
+                "--ignore-certificate-errors",
+                "--disable-gpu",
+                "--allow-running-insecure-content"
             ]
         },
-        "capabilities": {
-            "platform": "WINDOWS",
-            "version": "10"
-        }
+        "executable_path": "",
+        "capabilities": {},
+        "proxy": ""
     },
+    "delay": 0,
     "events": [
         {
             "function": "find_element",
             "args": {
-                "by": "name",
-                "value": "_user"
+                "by": "xpath",
+                "value": "//*[@id='__next']/main/div/section[1]/section/div[3]/section/section/div[3]/div[1]/div/div[2]/div[2]/a[2]"
             },
-            "output": "username"
+            "output": "link"
+        },
+        {
+            "target": "link",
+            "function": "click",
+            "args": {}
         },
         {
             "function": "find_element",
             "args": {
-                "by": "name",
-                "value": "_pass"
+                "by": "xpath",
+                "value": "//*[@id='imdbnext-vp-jw-single']/div[2]/div[4]/video"
             },
-            "output": "password"
+            "output": "video"
         },
         {
-            "function": "find_element",
-            "args": {
-                "by": "name",
-                "value": "_host"
-            },
-            "output": "select"
+            "target": "video",
+            "function": "click",
+            "args": {}
         },
         {
-            "object_type": "Select",
-            "object_input": "select",
-            "args": {},
-            "output": "select_target"
+            "target": "video",
+            "function": "click",
+            "args": {}
         },
         {
-            "target": "select_target",
-            "function": "select_by_index",
-            "args": "1"
-        },
-        {
-            "target": "username",
-            "function": "send_keys",
-            "args": "u"
-        },
-        {
-            "target": "password",
-            "function": "send_keys",
-            "args": "p"
-        },
-        {
-            "target": "password",
-            "function": "send_keys",
-            "args": "\ue007"
+            "function": "quit",
+            "args": {}
         }
     ],
     "requests": [],
     "responses": [],
     "request_params": {},
-    "custom_settings": {
-        "LOG_ENABLED": false
-    }
+    "save_requests": true,
+    "xpaths": [
+        "//title/text()"
+    ],
+    "selectors": [],
+    "follow_urls": [],
+    "wget_urls": [],
+    "media_urls": [
+        "//*[@id='imdbnext-vp-jw-single']/div[2]/div[4]/video/@src"
+    ],
+    "image_urls": [],
+    "video_urls": [],
+    "m3u8_urls": [],
+    "segment_urls": [],
+    "item_fields": {},
+    "extracted_items": {},
+    "extracted_xpaths": [],
+    "extracted_selectors": []
 }

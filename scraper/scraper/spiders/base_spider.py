@@ -17,7 +17,6 @@ class BaseSpider(scrapy.Spider):
         
     # spider json objects
     previous_spider = None
-    next_spider = None
     previous_response_urls = []
     previous_response = None
     json_settings = []
@@ -60,14 +59,11 @@ class BaseSpider(scrapy.Spider):
         # get spider controller
         self.controller = SpiderController()
         self.previous_spider:Spider
-        self.next_spider:Spider
         
-        # get previous and next spiders, if they exist
+        # get previous spider, if it exists
         self.previous_spider = self.controller.get_previous_spider(self.index)
-        self.next_spider = self.controller.get_next_spider(self.index)
-    
-        super(BaseSpider, self).__init__(*args, **kwargs)    
-
+        super(BaseSpider, self).__init__(*args, **kwargs)
+        
     # override start_requests
     def start_requests(self):
         

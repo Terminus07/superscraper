@@ -1,24 +1,48 @@
 {
     "name": "base",
+    "custom_settings": {
+        "LOG_ENABLED": false,
+        "COOKIES_ENABLED": true,
+        "COOKIES_DEBUG": false,
+        "IMAGES_STORE": "images"
+    },
     "start_urls": [
-        "https://quotes.toscrape.com/page/1/"
+        "https://en.wikipedia.org/wiki/Eiffel_Tower"
     ],
+    "meta": {},
     "xpaths": [
         "//title/text()"
     ],
     "selectors": [],
-    "xpath_selectors": [],
     "form_data": {},
-    "custom_settings": {
-        "LOG_ENABLED": false
+    "follow_urls": [],
+    "wget_urls": [],
+    "media_urls": [
+        "//*[@id='mw-content-text']/div[1]/table[1]/tbody/tr[3]/td/a/img/@src"
+    ],
+    "url_rules": [
+        {
+            "target_var": "image_urls",
+            "function": "split",
+            "args": {
+                "index": 0,
+                "value": ""
+            }
+        }
+    ],
+    "image_urls": [],
+    "video_urls": [],
+    "m3u8_urls": [],
+    "segment_urls": [],
+    "image_store_urls": [],
+    "extracted_items": {
+        "titles": "//title/text()",
+        "has": "//h1//text()",
+        "red": "//h2//text()"
     },
-    "links": [],
-    "download_links": [],
-    "download_link_xpaths": [],
-    "output_xpaths": [],
-    "output_selectors": [],
-    "request": {},
-    "response": {},
-    "response_urls": [],
-    "response_url_xpaths": []
+    "extracted_xpaths": [],
+    "extracted_selectors": [],
+    "requests": [],
+    "responses": [],
+    "save_requests": false
 }
