@@ -21,6 +21,7 @@ def get_json_responses(responses):
    for r in responses:
      if isinstance(r,Response):
          arr.append({
+        
              "status_code": r.status_code,
              "headers": get_headers_json(r.headers),
              "date": str(r.date)

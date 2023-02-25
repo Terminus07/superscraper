@@ -6,6 +6,7 @@ from selenium.webdriver.support.ui import Select
 from bin.selenium_requests import *
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.proxy import Proxy, ProxyType
 
 driver:webdriver.Remote = None
 driver_outputs = []
@@ -26,7 +27,7 @@ class DriverSettings():
         2: DesiredCapabilities.FIREFOX,
         3: DesiredCapabilities.SAFARI
     }
-    
+    proxy = None
     driver_options = {
         0: "ChromeOptions",
         1: "EdgeOptions",
@@ -41,6 +42,7 @@ class DriverSettings():
         self.driver_settings = settings
         self.driver_type = self.get_driver_type()
         self.capabilities = self.get_capabilities()
+        self.get_proxy()
         self.options = self.get_options()
     
     def get_driver_type(self):
@@ -66,9 +68,20 @@ class DriverSettings():
     
     def get_capabilities(self):
         capabilities = self.driver_settings.get('capabilities', {})
+       
         capabilities_type = self.driver_capabilities.get(self.driver_type)
         capabilities.update(capabilities_type)
         return capabilities
+    
+    def get_proxy(self):
+        self.proxy = self.driver_settings.get("proxy", None)
+        if self.proxy:
+            proxy = Proxy()
+            proxy.proxy_type = ProxyType.MANUAL
+            proxy.http_proxy = self.proxy
+            proxy.ssl_proxy = self.proxy
+            proxy.add_to_capabilities(self.capabilities)
+        
     
     def get_options_dict(self):
         capabilities_key = "desired_capabilities" if self.driver_type == 0 else None

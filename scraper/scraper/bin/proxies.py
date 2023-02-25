@@ -22,7 +22,7 @@ def fetch_proxies(type=0):
     except Exception as e:
         print(e)
 
-def get_proxies(type=1, rand=False, index=None, filters:dict={}):
+def get_proxies(type=1, rand=False, index=None):
     file = types.get(type)
     proxies = read_json_file('{0}.json'.format(file), "ignore")
    
