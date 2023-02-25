@@ -1,6 +1,6 @@
 # superscraper
 
-Superscraper is a web scraping tool that allows you to extract data from the web in a programmer friendly format. It combines [Scrapy](https://docs.scrapy.org/en/latest/) and [Selenium](https://selenium-python.readthedocs.io/) libraries together, to make web crawling as easy as executing a single command!
+`superscraper` allows you to extract data from the web in JSON format. You can either use it as a CLI tool, or as a library in your own scripts to generate data on the fly.
 
 ## Installation
 

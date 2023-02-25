@@ -8,7 +8,6 @@ from scrapy.selector import Selector
 from util.dict_util import update_dict
 from scraper.items import ImageItem
 
-
 class BaseSpider(scrapy.Spider):
     name = "base"
     
