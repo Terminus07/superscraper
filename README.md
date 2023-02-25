@@ -6,7 +6,7 @@
 
 ### Pip (macOS, linux, unix, Windows)
 
-`pip install git+https://github.com/Terminus07/adb-wrapper@main`
+`pip install git+https://github.com/Terminus07/superscraper@main`
 
 ## Usage
 
