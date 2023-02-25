@@ -16,7 +16,7 @@ from bin.proxies import *
 # ArgParser.spider({'type': [TEST_DIRECTORY]})
 # ArgParser.crawl({})
 
-fetch_proxies()
+print(get_proxies(rand=True))
 
 # download_media([
 #     "https://manifest.prod.boltdns.net/manifest/v1/hls/v4/clear/3588749423001/2cb4e463-e7d6-4afc-ac2b-7b3c2984096c/10s/master.m3u8?fastly_token=NjNmODg3Y2ZfMzM3ODY2ODg5MzQwNzFkNGIzMzE1YmNmOThlNTkzZDIwNDc5YzA4MGQxNDdlYTVkNWI3N2IxMWEyMDcxOTc4MQ=="

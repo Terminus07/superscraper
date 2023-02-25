@@ -1,8 +1,8 @@
 import json
 import os
-def read_json_file(json_file):
+def read_json_file(json_file, errors=None):
     try:
-        with open(json_file, 'r') as file:
+        with open(json_file, 'r', errors=errors) as file:
             json_object = json.load(file)
             return json_object
     except Exception as e:
