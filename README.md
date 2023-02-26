@@ -33,6 +33,18 @@ alias superscraper="/path-to-release/superscraper/scraper/scraper/superscraper.s
 
 ## Usage
 
+### CLI Commands
+
+```bash
+spider [-h] {scrapy,selenium} - Create spiders.json file
+crawl [-h] [spiders.json] - Run spiders using a spiders.json file
+history - View command history
+settings - Shell settings
+help - Shell manual
+clear - Clears terminal
+exit - Exit
+```
+
 ### Create a spiders.json file
 
 A `spiders.json` file is divided into `Spider` objects, which can be used to define what data you wish to extract from any given website.
@@ -192,6 +204,8 @@ If a custom .json file is passed in, it must be structured appropriately.
 }
 ```
 
+For more information about how to define spiders, see [Spider Definition](#spider-definition)
+
 ### Crawl with spiders.json
 
 ```python
@@ -201,15 +215,6 @@ SuperScraper.crawl({'json': SPIDERS_DIRECTORY}) # optional json parameter, if yo
 
 An `output.json` file will be created with the extracted data from all the spiders, as previously defined in `spiders.json`.
 
-## CLI Commands
+## Spider Definition
 
-```
-COMMANDS:
-spider [-h] {scrapy,selenium} - Create spiders.json file
-crawl [-h] [spiders.json] - Run spiders using a spiders.json file
-history - View command history
-settings - Shell settings
-help - Shell manual
-clear - Clears terminal
-exit - Exit
-```
+### Scrapy Spider
