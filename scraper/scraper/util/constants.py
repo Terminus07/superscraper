@@ -1,5 +1,5 @@
 DIRECTORY = "json_templates/secret"
-BASE_DIRECTORY = DIRECTORY + "/base.json"
+BASE_DIRECTORY = DIRECTORY + "/scrapy.json"
 OUTPUT_DIRECTORY = DIRECTORY + "/output.json"
 SELENIUM_DIRECTORY = DIRECTORY + "/selenium.json"
 SPIDERS_DIRECTORY = DIRECTORY + "/spiders.json"

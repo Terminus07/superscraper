@@ -53,10 +53,14 @@ It can also be run within a Python script:
 
 ```python
 TEST_DIRECTORY = 'test.json'
-SuperScraper.spider({'type': ['base', 'selenium', TESTDIRECTORY]})
+SuperScraper.spider({'type': ['scrapy', 'selenium', TESTDIRECTORY]})
 ```
 
-You can either use the default JSON templates, or create custom ones.
+`Spider` objects will be created and appended to the `spiders.json` file based on the `type` parameter. `type` represents a `scrapy.json` or a `selenium.json` file.
+
+### Modify your Spider objects
+
+Once your `spiders.json` file is created, you can directly modify it if you choose to do so, before starting the crawling process.
 
 ### Crawl with spiders.json
 
@@ -71,8 +75,8 @@ An `output.json` file will be created with the extracted data from all the spide
 
 ```
 COMMANDS:
-spider [-h] {base,selenium} - Create spiders.json file
-crawl [-h] [spider.json] - Run spiders using a spiders.json file
+spider [-h] {scrapy,selenium} - Create spiders.json file
+crawl [-h] [spiders.json] - Run spiders using a spiders.json file
 history - View command history
 settings - Shell settings
 help - Shell manual

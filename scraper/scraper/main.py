@@ -13,8 +13,8 @@ class SuperScraper():
         
         # spider command
         spider = self.subparser.add_parser('spider')
-        choices = ['base', 'selenium']
-        spider.add_argument('type', type=lambda s:self.check_spider_type(s, choices), default='base', nargs='+')
+        choices = ['scrapy', 'selenium']
+        spider.add_argument('type', type=lambda s:self.check_spider_type(s, choices), default='scrapy', nargs='+')
         spider.add_argument('-d', '--directory', type=lambda s:self.check_file_extension(["json"],s), default=SPIDERS_DIRECTORY )
         
         # crawl command
