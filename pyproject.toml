@@ -1,7 +1,7 @@
 [project]
 name = "superscraper"
-version = "0.0.1"
-description = "A web scraping tool that allows you to extract any data from the web in a programmer friendly format."
+version = "1.0.0"
+description = "CLI web scraping tool and Python library that can be used to extract any data from the web."
 authors = [
     {name = "Terminus07"}
 ]
