@@ -1,26 +1,43 @@
 # superscraper
 
-`superscraper` allows you to extract data from the web in JSON format. You can either use it as a CLI tool, or as a library in your own scripts to generate data on the fly.
+`superscraper` allows you to extract data from the web in JSON format. You can either use it as a CLI tool, or as a Python library to generate data on the fly.
 
 ## Installation
 
-### Pip (macOS, linux, unix, Windows)
+### Pip
 
-`pip install git+https://github.com/Terminus07/superscraper@main`
+```bash
+pip install git+https://github.com/Terminus07/superscraper@main
+```
 
 ## Usage
 
-### CLI
-
 ### Create a spiders.json file
 
-In order to scrape data from the web we need to create a `spiders.json` file, which is divided into spider objects. Each spider object contains a set of properties which can be modified depending on your use case. Run the `spider` command to create it.
+A `spiders.json` file is divided into `Spider` objects, which can be used to define what data you wish to extract from any given website.
+To create it manually, run:
 
-### Modify your newly created spiders.json file
+```bash
+bash main.sh
+spider {base,selenium} # type can be either 'base', 'selenium' or a .json file of your choice
+```
 
-Edit your `spiders.json` file to your liking. You can read the [documentation](https://www.google.com), for more information about the template structure.
+Which is the same as running:
 
-### Run spiders
+```bash
+python main.py spider {base,selenium}
+```
+
+It can also be run within a Python script:
+
+```python
+TEST_DIRECTORY = 'test.json'
+SuperScraper.spider({'type': ['base', 'selenium', TESTDIRECTORY]})
+```
+
+You can either use the default JSON templates, or create custom ones.
+
+### Crawl with `spiders.json`
 
 Execute the crawl command. An `output.json` file will be created with the extracted data.
 

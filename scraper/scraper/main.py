@@ -4,7 +4,7 @@ from bin.spider import SpiderController
 from util.file_util import *
 from util.constants import DIRECTORY, SPIDERS_DIRECTORY, OUTPUT_DIRECTORY
 
-class ArgParser():
+class SuperScraper():
     parser = None
     
     def __init__(self) -> None:
@@ -76,5 +76,5 @@ class ArgParser():
         return fname
             
 if __name__ == "__main__":
-    parser = ArgParser()
+    parser = SuperScraper()
     

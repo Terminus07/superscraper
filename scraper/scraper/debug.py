@@ -7,14 +7,14 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import Select
 from util.constants import *
-from main import ArgParser
+from main import SuperScraper
 from bin.data_extractor import *
 import requests
 from urllib.parse import urlparse,urlsplit, urlunsplit
 from bin.proxies import *
 
-ArgParser.spider({'type': [TEST_DIRECTORY]})
-ArgParser.crawl({})
+SuperScraper.spider({'type': [TEST_DIRECTORY]})
+SuperScraper.crawl({})
 
 
 # print(get_proxies(rand=True))
