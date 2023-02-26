@@ -1,6 +1,6 @@
 # superscraper
 
-`superscraper` allows you to extract data from the web in JSON format, using the Selenium and Scrapy libraries. You can either use it as a CLI tool, or as a Python library to generate data on the fly.
+`superscraper` allows you to extract data from the web in any format, using the Selenium and Scrapy libraries. You can either use it as a CLI tool, or as a Python library to generate data on the fly.
 
 ## Installation
 
@@ -37,7 +37,7 @@ alias superscraper="/path-to-release/superscraper/scraper/scraper/superscraper.s
 
 ```bash
 spider [-h] {scrapy,selenium} - Create spiders.json file
-crawl [-h] [spiders.json] - Run spiders using a spiders.json file
+crawl [-h] [spiders.json] - Crawl spiders using a spiders.json file
 history - View command history
 settings - Shell settings
 help - Shell manual
@@ -70,6 +70,12 @@ SuperScraper.spider({'type': ['scrapy', 'selenium', TESTDIRECTORY]})
 
 `Spider` objects will be created and appended to the `spiders.json` file based on the `type` parameter. `type` represents a `scrapy.json` or a `selenium.json` file.
 If a custom .json file is passed in, it must be structured appropriately.
+
+For more information about how to define spiders, see [Spider Definition](#spider-definition)
+
+### Spider Definition
+
+A `Spider` object is used to define the behavior of the website(s) in question during the crawling process. `Spider` objects inherit from the base `scrapy.Spider` class, with the added benefit of translating crawling processes to .json files and vice versa.
 
 #### scrapy.json example
 
@@ -204,8 +210,6 @@ If a custom .json file is passed in, it must be structured appropriately.
 }
 ```
 
-For more information about how to define spiders, see [Spider Definition](#spider-definition)
-
 ### Crawl with spiders.json
 
 ```python
@@ -214,7 +218,3 @@ SuperScraper.crawl({'json': SPIDERS_DIRECTORY}) # optional json parameter, if yo
 ```
 
 An `output.json` file will be created with the extracted data from all the spiders, as previously defined in `spiders.json`.
-
-## Spider Definition
-
-### Scrapy Spider
