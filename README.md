@@ -1,13 +1,34 @@
 # superscraper
 
-`superscraper` allows you to extract data from the web in JSON format. You can either use it as a CLI tool, or as a Python library to generate data on the fly.
+`superscraper` allows you to extract data from the web in JSON format, using the Selenium and Scrapy libraries. You can either use it as a CLI tool, or as a Python library to generate data on the fly.
 
 ## Installation
 
-### Pip
+### Pip (Linux, Windows)
 
 ```bash
 pip install git+https://github.com/Terminus07/superscraper@main
+```
+
+### Manual installation
+
+1. Clone the git repository:
+
+```bash
+git clone https://github.com/Terminus07/superscraper.git
+```
+
+2. Install all package dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
+3. Create an alias in your .bashrc:
+
+```bash
+chmod +x /path-to-release/superscraper/scraper/scraper/main.sh
+alias superscraper="/path-to-release/superscraper/scraper/scraper/superscraper.sh"
 ```
 
 ## Usage
@@ -18,7 +39,7 @@ A `spiders.json` file is divided into `Spider` objects, which can be used to def
 To create it manually, run:
 
 ```bash
-bash main.sh
+bash superscraper.sh
 spider {base,selenium} # type can be either 'base', 'selenium' or a .json file of your choice
 ```
 
@@ -37,11 +58,16 @@ SuperScraper.spider({'type': ['base', 'selenium', TESTDIRECTORY]})
 
 You can either use the default JSON templates, or create custom ones.
 
-### Crawl with `spiders.json`
+### Crawl with spiders.json
 
-Execute the crawl command. An `output.json` file will be created with the extracted data.
+```python
+SPIDERS_DIRECTORY = 'spiders.json'
+SuperScraper.crawl({'json': SPIDERS_DIRECTORY}) # optional json parameter, if you want to pass spiders.json file
+```
 
-## Commands
+An `output.json` file will be created with the extracted data from all the spiders, as previously defined in `spiders.json`.
+
+## CLI Commands
 
 ```
 COMMANDS:
