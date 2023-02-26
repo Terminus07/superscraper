@@ -40,13 +40,13 @@ To create it manually, run:
 
 ```bash
 bash superscraper.sh
-spider {base,selenium} # type can be either 'base', 'selenium' or a .json file of your choice
+spider {scrapy,selenium} # type can be either 'scrapy', 'selenium' or a .json file of your choice
 ```
 
 Which is the same as running:
 
 ```bash
-python main.py spider {base,selenium}
+python main.py spider {scrapy,selenium}
 ```
 
 It can also be run within a Python script:
