@@ -1,5 +1,3 @@
-import threading
-import queue
 import requests
 from bin.data_extractor import save_file, flatten
 from util.file_util import read_json_file
